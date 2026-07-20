@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+main {
+    max-width: 600px;
+}
+
+main img {
+    width: 150px;
+    height: auto;
+}
+
+aside {
+    width: 300px;
+    margin: 1rem;
+    border: 1px solid #333;
+    padding: 1rem;
+    background-color: #eee;
+    color: #000;
+}
+
+aside img {
+    width: 200px;
+    height: auto;
+}
+
+p {
+    padding: 0;
+}
+
+footer {
+    margin-top: 1rem;
+    border-top: 1px solid #000;
+    text-align: center;
+}
