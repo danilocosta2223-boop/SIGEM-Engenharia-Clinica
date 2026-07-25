@@ -10,14 +10,24 @@ body {
     line-height: 1.6;
 }
 
+/* 1. Espaçamento geral entre seções */
+section {
+    margin-bottom: 40px;
+}
+
 /* Responsividade Global de Imagens */
 img {
     max-width: 100%;
     height: auto;
 }
 
-/* Padronização dos Títulos */
-h1, h2, h3 {
+/* Padronização dos Títulos Centralizados */
+h1, h2 {
+    text-align: center;
+    color: #0056b3;
+}
+
+h3 {
     color: #0056b3;
 }
 
@@ -58,8 +68,17 @@ nav a {
     padding: 5px 10px;
 }
 
+/* 2. Hover moderno do menu */
 nav a:hover {
     color: #0056b3;
+    background-color: #f0f6ff;
+    border-radius: 4px;
+}
+
+/* Link ativo da navegação */
+nav a.active {
+    color: #0056b3;
+    border-bottom: 2px solid #0056b3;
 }
 
 /* =========================================
@@ -136,35 +155,130 @@ nav a:hover {
 
 .history {
     display: grid;
-    grid-template-columns: 1fr 250px 1fr;
-    gap: 1rem;
+    grid-template-columns: 1fr 220px 1fr;
+    gap: 1.5rem;
     align-items: center;
     margin: 2rem 0;
+    background-color: #fafafa;
+    padding: 1.5rem;
+    border-radius: 8px;
 }
 
-.history img {
+.history-images {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.history-images img {
     width: 100%;
     border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease;
+}
+
+.history-images img:hover {
+    transform: scale(1.02);
 }
 
 /* =========================================
-   5. GALERIA (SOBRE) E PASSEIOS
+   5. MISSÃO, VALORES E BENEFÍCIOS
+========================================= */
+.mission {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: #eef6ff;
+    border-left: 6px solid #0056b3;
+    border-radius: 8px;
+}
+
+.values {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.values ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.values li {
+    background-color: #f4f4f4;
+    margin: 10px auto;
+    padding: 10px;
+    max-width: 600px;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+    font-weight: 500;
+}
+
+.benefits {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.benefits ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.benefits li {
+    background-color: #eef5ff;
+    margin: 10px auto;
+    padding: 12px;
+    max-width: 600px;
+    border-radius: 5px;
+    border: 1px solid #cce5ff;
+    color: #004085;
+    font-weight: bold;
+}
+
+/* =========================================
+   6. GALERIA DE AVENTURAS E PASSEIOS
 ========================================= */
 .adventure {
     text-align: center;
-    margin: 2rem 0;
+    margin: 2.5rem 0;
 }
 
 .adventure figure {
     display: inline-block;
     width: 18%;
-    margin: 5px;
+    margin: 0.5%;
     vertical-align: top;
+    background-color: #ffffff;
+    padding: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease;
+}
+
+.adventure figure:hover {
+    transform: translateY(-4px);
 }
 
 .adventure img {
     width: 100%;
+    height: 120px;
+    object-fit: cover;
     border-radius: 4px;
+}
+
+.adventure figcaption {
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-top: 8px;
+    color: #444;
 }
 
 .trips-header {
@@ -184,7 +298,7 @@ nav a:hover {
 }
 
 /* =========================================
-   6. TABELA DE PASSEIOS
+   7. TABELA DE PASSEIOS
 ========================================= */
 .table-container {
     margin: 2rem 0;
@@ -206,8 +320,13 @@ th {
     background-color: #dddddd;
 }
 
+/* 4. Leitura facilitada com linhas alternadas (Zebra Striping) */
+tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
 /* =========================================
-   7. PÁGINA DE CONTATO (contato.html)
+   8. PÁGINA DE CONTATO (contato.html)
 ========================================= */
 .contact-header {
     text-align: center;
@@ -247,6 +366,13 @@ th {
     font-family: inherit;
 }
 
+/* 3. Destaque visual no foco dos campos de texto */
+.contact-form input:focus,
+.contact-form textarea:focus,
+.newsletter input:focus {
+    outline: 2px solid #0056b3;
+}
+
 .contact-form button {
     background-color: #0056b3;
     color: white;
@@ -263,7 +389,7 @@ th {
 }
 
 /* =========================================
-   8. NEWSLETTER (index.html)
+   9. NEWSLETTER (index.html)
 ========================================= */
 .newsletter {
     text-align: center;
@@ -304,8 +430,9 @@ th {
 }
 
 /* =========================================
-   9. RODAPÉ (FOOTER)
+   10. RODAPÉ (FOOTER)
 ========================================= */
+/* 5. Footer refinado com fundo suave e bordas arredondadas superiores */
 footer {
     display: flex;
     justify-content: space-between;
@@ -313,6 +440,15 @@ footer {
     margin-top: 2rem;
     padding: 1rem;
     border-top: 1px solid #ccc;
+    background-color: #fafafa;
+    border-radius: 8px 8px 0 0;
+}
+
+.footer-tagline {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 4px;
+    font-style: italic;
 }
 
 .social img {
@@ -321,7 +457,7 @@ footer {
 }
 
 /* =========================================
-   10. BOTÃO WHATSAPP
+   11. BOTÃO WHATSAPP
 ========================================= */
 .whatsapp {
     display: inline-block;
@@ -338,7 +474,7 @@ footer {
 }
 
 /* =========================================
-   11. AJUSTES RESPONSIVOS (MOBILE)
+   12. AJUSTES RESPONSIVOS (MOBILE)
 ========================================= */
 @media (max-width: 768px) {
     header {
@@ -358,12 +494,17 @@ footer {
     }
 
     .adventure figure {
-        width: 45%;
+        width: 100%;
+        margin: 10px 0;
     }
 
     footer {
         flex-direction: column;
         gap: 15px;
         text-align: center;
+    }
+
+    .social img {
+        margin: 5px;
     }
 }
