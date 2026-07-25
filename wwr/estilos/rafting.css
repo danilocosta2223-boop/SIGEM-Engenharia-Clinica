@@ -53,6 +53,16 @@ nav a:hover {
     object-fit: cover;
 }
 
+.hero h1 {
+    margin: 20px 0 10px 0;
+}
+
+.hero p {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    color: #555;
+}
+
 .cta {
     display: inline-block;
     background-color: #0056b3;
@@ -217,6 +227,14 @@ th {
     background-color: #f4f4f4;
 }
 
+.newsletter form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 .newsletter input {
     padding: 8px;
     margin: 5px;
@@ -251,4 +269,21 @@ footer {
 .social img {
     width: 40px;
     margin-left: 10px;
+}
+
+/* =========================================
+   10. BOTÃO WHATSAPP
+========================================= */
+.whatsapp {
+    display: inline-block;
+    background-color: #25D366;
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.whatsapp:hover {
+    background-color: #1fa851;
 }
