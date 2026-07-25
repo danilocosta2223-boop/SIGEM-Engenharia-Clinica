@@ -9,6 +9,10 @@
     <meta name="description" content="Rafting Brasil oferece aventuras emocionantes, passeios seguros e experiências inesquecíveis em rios e corredeiras.">
     <meta name="author" content="Danilo Rafael da Silva Costa">
 
+    <!-- Favicon -->
+    <link rel="icon" href="imagens/logo.png" type="image/png">
+
+    <!-- CSS Externo -->
     <link rel="stylesheet" href="estilos/rafting.css">
 </head>
 <body>
@@ -29,24 +33,26 @@
         <!-- Seção Hero Completa -->
         <section class="hero">
             <img src="imagens/hero2.jpg" alt="Aventura de Rafting no Rio">
-            <h1>Viva a Aventura do Rafting!</h1>
-            <p>
-                Descubra experiências emocionantes em rios e corredeiras
-                com segurança, diversão e guias especializados.
-            </p>
-            <a href="passeios.html" class="cta">Ver Passeios</a>
+            <div class="hero-content">
+                <h1>Viva a Aventura do Rafting!</h1>
+                <p>
+                    Descubra experiências emocionantes em rios e corredeiras
+                    com segurança, diversão e guias especializados.
+                </p>
+                <a href="passeios.html" class="cta">Ver Passeios</a>
+            </div>
         </section>
 
-        <!-- Newsletter com method="post" -->
+        <!-- Newsletter -->
         <section class="newsletter">
             <h2>Receba nossas novidades</h2>
 
             <form method="post">
                 <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome" required>
+                <input type="text" id="nome" name="nome" placeholder="Seu nome" required>
 
                 <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
 
                 <button type="submit">Inscrever-se</button>
             </form>
@@ -72,13 +78,13 @@
         <p>©2026 Rafting Brasil | Danilo Rafael da Silva Costa</p>
 
         <div class="social">
-            <a href="https://facebook.com" target="_blank" rel="noopener">
+            <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook">
                 <img src="imagens/facebook.png" alt="Facebook">
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener">
+            <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram">
                 <img src="imagens/instagram.png" alt="Instagram">
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener">
+            <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter">
                 <img src="imagens/twitter.png" alt="Twitter">
             </a>
         </div>
