@@ -88,7 +88,7 @@ nav a:hover {
     position: absolute;
     bottom: 20px;
     left: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--cor-clara);
     padding: 15px;
     max-width: 600px;
     border-radius: 5px;
@@ -110,7 +110,7 @@ section {
 }
 
 section h2 {
-    color: var(--cor-primaria);
+    color: var(--cor-secundaria);
     margin-bottom: 15px;
 }
 
