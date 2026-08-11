@@ -115,7 +115,7 @@ section h2 {
 }
 
 /* =========================
-   GALERIA
+   GALERIA (.adventure)
 ========================= */
 
 .adventure {
@@ -158,16 +158,16 @@ footer {
     border-radius: 8px 8px 0 0;
 }
 
-.redes-sociais {
+.socialmedia {
     display: flex;
     gap: 15px;
 }
 
-.redes-sociais a {
+.socialmedia a {
     text-decoration: none;
 }
 
-.redes-sociais img {
+.socialmedia img {
     width: 30px;
     height: 30px;
 }
