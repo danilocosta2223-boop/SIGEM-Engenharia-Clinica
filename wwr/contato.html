@@ -3,76 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contato | Rafting Brasil</title>
-
-    <meta name="description" content="Entre em contato com a Rafting Brasil para tirar dúvidas, solicitar informações ou agendar sua aventura de rafting.">
+    <title>Fale Conosco | Rafting Brasil</title>
+    <meta name="description" content="Entre em contato com a Rafting Brasil para reservas, dúvidas, sugestões e informações sobre nossos passeios.">
     <meta name="author" content="Danilo Rafael da Silva Costa">
-
     <link rel="stylesheet" href="estilos/rafting.css">
 </head>
 <body>
 
     <header>
-        <img src="imagens/logo.png" alt="Logo Rafting Brasil">
-
+        <img src="imagens/logo.png" alt="Logotipo Rafting Brasil">
         <nav>
             <a href="index.html">Página Inicial</a>
             <a href="sobre.html">Sobre Nós</a>
             <a href="passeios.html">Passeios</a>
-            <a href="contato.html">Contato</a>
+            <a href="contato.html">Fale Conosco</a>
         </nav>
     </header>
 
     <main>
+        <h1>Fale Conosco</h1>
 
-        <section class="contact-header">
-            <h1>Entre em Contato</h1>
-            <p>
-                Estamos prontos para ajudar você a planejar sua próxima aventura.
-                Entre em contato para obter informações, fazer reservas ou enviar dúvidas.
-            </p>
-        </section>
-
-        <section class="contact-info">
+        <section>
             <h2>Informações da Empresa</h2>
-            <p><strong>Telefone:</strong> (11) 4000-1234</p>
-            <p><strong>E-mail:</strong> contato@raftingbrasil.com</p>
-            <p><strong>Endereço:</strong> Avenida das Corredeiras, 1000 - São Paulo - SP</p>
+            <p>Endereço: Avenida das Aventuras, 123, São Paulo - SP</p>
+            <p>Telefone: (11) 99999-9999</p>
+            <p>E-mail: contato@raftingbrasil.com</p>
         </section>
 
-        <section class="contact-form">
-            <h2>Envie uma Mensagem</h2>
+        <section>
+            <h2>Localização</h2>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.197387168994!2d-46.65657392374354!3d-23.56134846158223!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f4331f2f8a70c!2sAv.%2F!5e0!3m2!1spt-BR!2sbr!4v1710000000000!5m2!1spt-BR!2sbr" width="600" height="300" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </section>
 
+        <section>
+            <h2>Nossa Equipe</h2>
+            <div class="adventure">
+                <figure>
+                    <img src="imagens/funcionario1.jpg" alt="Guia de rafting">
+                    <figcaption>Carlos Silva - Guia Chefe</figcaption>
+                </figure>
+                
+                <figure>
+                    <img src="imagens/funcionario2.jpg" alt="Coordenadora de reservas">
+                    <figcaption>Ana Souza - Reservas</figcaption>
+                </figure>
+                
+                <figure>
+                    <img src="imagens/funcionario3.jpg" alt="Instrutor de rafting">
+                    <figcaption>João Oliveira - Instrutor</figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section>
+            <h2>Envie uma Mensagem</h2>
             <form>
-                <label for="nome">Nome:</label>
+                <label for="nome">Nome</label>
                 <input type="text" id="nome" name="nome" required>
 
-                <label for="email">E-mail:</label>
+                <label for="email">E-mail</label>
                 <input type="email" id="email" name="email" required>
 
-                <label for="mensagem">Mensagem:</label>
-                <textarea id="mensagem" name="mensagem" rows="5" required></textarea>
+                <p>Finalidade da mensagem</p>
+                <label>
+                    <input type="radio" name="assunto" value="consulta-geral" required> Consulta Geral
+                </label>
+                <label>
+                    <input type="radio" name="assunto" value="reserva"> Pergunta sobre Reserva
+                </label>
+                <label>
+                    <input type="radio" name="assunto" value="sugestao"> Sugestão de Site
+                </label>
 
-                <button type="submit">Enviar Mensagem</button>
+                <label for="mensagem">Mensagem</label>
+                <textarea id="mensagem" name="mensagem" rows="6" required></textarea>
+
+                <label>
+                    <input type="checkbox" name="newsletter"> Quero receber a newsletter mensal
+                </label>
+
+                <button type="submit">Enviar Minha Mensagem</button>
             </form>
         </section>
-
     </main>
 
     <footer>
-        <p>©2026 Rafting Brasil | Danilo Rafael da Silva Costa</p>
-
-        <div class="social">
+        <p>&copy;2026 Rafting Brasil | Danilo Rafael da Silva Costa</p>
+        
+        <nav class="socialmedia">
             <a href="https://facebook.com" target="_blank" rel="noopener">
                 <img src="imagens/facebook.png" alt="Facebook">
             </a>
+            
             <a href="https://instagram.com" target="_blank" rel="noopener">
                 <img src="imagens/instagram.png" alt="Instagram">
             </a>
+            
             <a href="https://twitter.com" target="_blank" rel="noopener">
                 <img src="imagens/twitter.png" alt="Twitter">
             </a>
-        </div>
+        </nav>
     </footer>
 
 </body>

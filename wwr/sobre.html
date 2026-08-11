@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobre Nós | Rafting Brasil</title>
-    <meta name="description" content="Conheça a história da Rafting Brasil e descubra nossas aventuras em corredeiras.">
+    <title>Fale Conosco | Rafting Brasil</title>
+    <meta name="description" content="Entre em contato com a Rafting Brasil para reservas, dúvidas, sugestões e informações sobre nossos passeios.">
     <meta name="author" content="Danilo Rafael da Silva Costa">
     <link rel="stylesheet" href="estilos/rafting.css">
 </head>
@@ -21,53 +21,67 @@
     </header>
 
     <main>
-        <div class="hero">
-            <img src="imagens/hero2.jpg" alt="Aventura de rafting">
-            <h1>Rafting Brasil</h1>
-            
-            <article>
-                <img src="imagens/historia.jpg" alt="Cliente feliz">
-                <p>
-                    Somos especialistas em aventuras de rafting, oferecendo experiências seguras e inesquecíveis para pessoas de todas as idades.
-                </p>
-            </article>
-        </div>
+        <h1>Fale Conosco</h1>
 
         <section>
-            <h2>História</h2>
-            <p>
-                Nossa empresa nasceu da paixão pelos esportes de aventura e pela natureza.
-                Hoje oferecemos experiências incríveis para aventureiros de todas as idades,
-                sempre com foco em segurança, diversão e respeito ao meio ambiente.
-            </p>
+            <h2>Informações da Empresa</h2>
+            <p>Endereço: Avenida das Aventuras, 123, São Paulo - SP</p>
+            <p>Telefone: (11) 99999-9999</p>
+            <p>E-mail: contato@raftingbrasil.com</p>
         </section>
 
         <section>
-            <h2>A aventura está te esperando!</h2>
+            <h2>Localização</h2>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.197387168994!2d-46.65657392374354!3d-23.56134846158223!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f4331f2f8a70c!2sAv.%2F!5e0!3m2!1spt-BR!2sbr!4v1710000000000!5m2!1spt-BR!2sbr" width="600" height="300" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </section>
+
+        <section>
+            <h2>Nossa Equipe</h2>
             <figure>
-                <img src="imagens/aventura1.jpg" alt="Rafting Brasil">
-                <figcaption>Rafting Brasil</figcaption>
+                <img src="imagens/funcionario1.jpg" alt="Guia de rafting">
+                <figcaption>Carlos Silva - Guia Chefe</figcaption>
             </figure>
             
             <figure>
-                <img src="imagens/aventura2.jpg" alt="São Paulo">
-                <figcaption>São Paulo</figcaption>
+                <img src="imagens/funcionario2.jpg" alt="Coordenadora de reservas">
+                <figcaption>Ana Souza - Reservas</figcaption>
             </figure>
             
             <figure>
-                <img src="imagens/aventura3.jpg" alt="Paisagem">
-                <figcaption>Paisagens Incríveis</figcaption>
+                <img src="imagens/funcionario3.jpg" alt="Instrutor de rafting">
+                <figcaption>João Oliveira - Instrutor</figcaption>
             </figure>
-            
-            <figure>
-                <img src="imagens/aventura4.jpg" alt="Guias Especializados">
-                <figcaption>Guias Especializados</figcaption>
-            </figure>
-            
-            <figure>
-                <img src="imagens/aventura5.jpg" alt="Experiências Memoráveis">
-                <figcaption>Experiências Memoráveis</figcaption>
-            </figure>
+        </section>
+
+        <section>
+            <h2>Envie uma Mensagem</h2>
+            <form>
+                <label for="nome">Nome</label>
+                <input type="text" id="nome" name="nome" required>
+
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required>
+
+                <p>Finalidade da mensagem</p>
+                <label>
+                    <input type="radio" name="assunto" value="consulta-geral" required> Consulta Geral
+                </label>
+                <label>
+                    <input type="radio" name="assunto" value="reserva"> Pergunta sobre Reserva
+                </label>
+                <label>
+                    <input type="radio" name="assunto" value="sugestao"> Sugestão de Site
+                </label>
+
+                <label for="mensagem">Mensagem</label>
+                <textarea id="mensagem" name="mensagem" rows="6" required></textarea>
+
+                <label>
+                    <input type="checkbox" name="newsletter"> Quero receber a newsletter mensal
+                </label>
+
+                <button type="submit">Enviar Minha Mensagem</button>
+            </form>
         </section>
     </main>
 

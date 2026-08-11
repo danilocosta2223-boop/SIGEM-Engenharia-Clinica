@@ -144,6 +144,64 @@ figcaption {
 }
 
 /* =========================
+   CONTATO & FORMULÁRIO
+========================= */
+
+iframe {
+    border: 0;
+    width: 100%;
+    max-width: 600px;
+    border-radius: 8px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 600px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input,
+textarea,
+button {
+    padding: 10px;
+    font-size: 1rem;
+}
+
+input,
+textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    width: auto;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    background-color: var(--cor-primaria);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: var(--cor-secundaria);
+}
+
+/* =========================
    FOOTER
 ========================= */
 
