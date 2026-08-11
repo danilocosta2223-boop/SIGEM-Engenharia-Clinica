@@ -1,231 +1,99 @@
-:root {
-    --cor-primaria: #005f73;
-    --cor-secundaria: #004c5c;
-    --cor-clara: #f8f9fa;
-    --cor-escura: #333333;
-}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passeios | Rafting Brasil</title>
+    <meta name="description" content="Conheça os passeios de rafting da Rafting Brasil, desde opções para iniciantes até corredeiras extremas. Reserve já!">
+    <meta name="author" content="Danilo Rafael da Silva Costa">
+    <link rel="stylesheet" href="estilos/rafting.css">
+</head>
+<body>
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    <header>
+        <img src="imagens/logo.png" alt="Logotipo Rafting Brasil">
+        <nav>
+            <a href="index.html">Página Inicial</a>
+            <a href="sobre.html">Sobre Nós</a>
+            <a href="passeios.html">Passeios</a>
+            <a href="contato.html">Fale Conosco</a>
+        </nav>
+    </header>
 
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-    color: var(--cor-escura);
-    background-color: #ffffff;
-    line-height: 1.6;
-}
+    <main>
+        <section class="cta">
+            <h1>Passeios da Rafting Brasil</h1>
+            <p>Escolha a aventura ideal para o seu nível de experiência e venha se divertir nas corredeiras.</p>
+            <a href="contato.html" class="botao-cta">Reserve Agora</a>
+        </section>
 
-/* =========================
-   HEADER
-========================= */
+        <section class="tour-grid">
+            <article>
+                <img src="imagens/aventura1.jpg" alt="Rafting Iniciante">
+                <h2>Rafting Iniciante</h2>
+                <p>Ideal para famílias, passeios escolares e iniciantes que buscam diversão com total segurança e tranquilidade.</p>
+            </article>
+            <article>
+                <img src="imagens/aventura2.jpg" alt="Rafting Intermediário">
+                <h2>Rafting Intermediário</h2>
+                <p>Mais emoção, ondas maiores e corredeiras desafiadoras para quem já tem um pouco de espírito aventureiro.</p>
+            </article>
+            <article>
+                <img src="imagens/aventura3.jpg" alt="Rafting Extremo">
+                <h2>Rafting Extremo</h2>
+                <p>Para aventureiros experientes que buscam descidas radicais em trechos de alta intensidade e pura adrenalina.</p>
+            </article>
+        </section>
 
-header {
-    background-color: var(--cor-primaria);
-    padding: 1rem;
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    align-items: center;
-    border-radius: 0 0 8px 8px;
-}
+        <section>
+            <h2>Tabela de Preços e Duração</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Passeio</th>
+                        <th>Duração</th>
+                        <th>Nível</th>
+                        <th>Preço</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Iniciante</td>
+                        <td>2 horas</td>
+                        <td>Fácil</td>
+                        <td>R$ 120</td>
+                    </tr>
+                    <tr>
+                        <td>Intermediário</td>
+                        <td>4 horas</td>
+                        <td>Médio</td>
+                        <td>R$ 220</td>
+                    </tr>
+                    <tr>
+                        <td>Extremo</td>
+                        <td>6 horas</td>
+                        <td>Difícil</td>
+                        <td>R$ 350</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
 
-header img {
-    width: 100px;
-    height: auto;
-}
+    <footer>
+        <p>&copy;2026 Rafting Brasil | Danilo Rafael da Silva Costa</p>
+        <nav class="redes-sociais">
+            <a href="https://facebook.com" target="_blank" rel="noopener">
+                <img src="imagens/facebook.png" alt="Ícone do Facebook">
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener">
+                <img src="imagens/instagram.png" alt="Ícone do Instagram">
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener">
+                <img src="imagens/twitter.png" alt="Ícone do Twitter">
+            </a>
+        </nav>
+    </footer>
 
-nav {
-    display: flex;
-    justify-content: flex-end;
-    gap: 20px;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 8px 12px;
-    border-radius: 4px;
-}
-
-nav a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* =========================
-   HERO
-========================= */
-
-.hero {
-    position: relative;
-    margin: 20px 0;
-}
-
-.hero img {
-    width: 100%;
-    height: 500px;
-    object-fit: cover;
-    display: block;
-    border-radius: 8px;
-}
-
-.hero h1 {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 15px;
-    border-radius: 5px;
-}
-
-.hero article {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    background-color: var(--cor-clara);
-    padding: 15px;
-    max-width: 600px;
-    border-radius: 5px;
-}
-
-.hero article img {
-    float: right;
-    width: 125px;
-    height: auto;
-    margin-left: 15px;
-}
-
-/* =========================
-   SEÇÕES
-========================= */
-
-section {
-    margin: 30px 0;
-}
-
-section h2 {
-    color: var(--cor-secundaria);
-    margin-bottom: 15px;
-}
-
-/* =========================
-   GALERIA (.adventure)
-========================= */
-
-.adventure {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-}
-
-figure {
-    flex: 1 1 180px;
-    max-width: 200px;
-    text-align: center;
-}
-
-figure img {
-    width: 100%;
-    height: 120px;
-    object-fit: cover;
-    border-radius: 5px;
-}
-
-figcaption {
-    margin-top: 8px;
-    font-weight: bold;
-}
-
-/* =========================
-   CONTATO & FORMULÁRIO
-========================= */
-
-iframe {
-    border: 0;
-    width: 100%;
-    max-width: 600px;
-    border-radius: 8px;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 600px;
-}
-
-label {
-    font-weight: bold;
-}
-
-input,
-textarea,
-button {
-    padding: 10px;
-    font-size: 1rem;
-}
-
-input,
-textarea {
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-input[type="radio"],
-input[type="checkbox"] {
-    width: auto;
-}
-
-textarea {
-    resize: vertical;
-}
-
-button {
-    background-color: var(--cor-primaria);
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-}
-
-button:hover {
-    background-color: var(--cor-secundaria);
-}
-
-/* =========================
-   FOOTER
-========================= */
-
-footer {
-    background-color: var(--cor-primaria);
-    color: white;
-    padding: 20px;
-    margin-top: 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 8px 8px 0 0;
-}
-
-.redes-sociais {
-    display: flex;
-    gap: 15px;
-}
-
-.redes-sociais a {
-    text-decoration: none;
-}
-
-.redes-sociais img {
-    width: 30px;
-    height: 30px;
-}
+</body>
+</html>
