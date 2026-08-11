@@ -15,11 +15,15 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 1rem;
     color: var(--cor-escura);
-    background-color: white;
+    background-color: #ffffff;
+    line-height: 1.6;
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 
 header {
     background-color: var(--cor-primaria);
@@ -27,10 +31,12 @@ header {
     display: grid;
     grid-template-columns: 120px 1fr;
     align-items: center;
+    border-radius: 0 0 8px 8px;
 }
 
 header img {
     width: 100px;
+    height: auto;
 }
 
 nav {
@@ -43,17 +49,21 @@ nav a {
     color: white;
     text-decoration: none;
     font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 4px;
 }
 
 nav a:hover {
-    text-decoration: underline;
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* HERO */
+/* =========================
+   HERO
+========================= */
 
 .hero {
     position: relative;
-    margin-bottom: 2rem;
+    margin: 20px 0;
 }
 
 .hero img {
@@ -61,6 +71,7 @@ nav a:hover {
     height: 500px;
     object-fit: cover;
     display: block;
+    border-radius: 8px;
 }
 
 .hero h1 {
@@ -90,10 +101,12 @@ nav a:hover {
     margin-left: 15px;
 }
 
-/* SEÇÕES */
+/* =========================
+   SEÇÕES
+========================= */
 
 section {
-    padding: 20px;
+    margin: 30px 0;
 }
 
 section h2 {
@@ -101,17 +114,20 @@ section h2 {
     margin-bottom: 15px;
 }
 
-/* GALERIA */
+/* =========================
+   GALERIA
+========================= */
 
 .adventure {
     display: flex;
-    justify-content: space-between;
-    gap: 15px;
     flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
 }
 
 figure {
-    width: 180px;
+    flex: 1 1 180px;
+    max-width: 200px;
     text-align: center;
 }
 
@@ -127,21 +143,28 @@ figcaption {
     font-weight: bold;
 }
 
-/* FOOTER */
+/* =========================
+   FOOTER
+========================= */
 
 footer {
     background-color: var(--cor-primaria);
     color: white;
     padding: 20px;
-    margin-top: 20px;
+    margin-top: 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-radius: 8px 8px 0 0;
 }
 
 .redes-sociais {
     display: flex;
     gap: 15px;
+}
+
+.redes-sociais a {
+    text-decoration: none;
 }
 
 .redes-sociais img {
