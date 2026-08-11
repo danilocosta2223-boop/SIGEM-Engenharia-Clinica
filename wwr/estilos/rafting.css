@@ -1,161 +1,150 @@
 :root {
-  --cor-primaria: #005f73;
+    --cor-primaria: #005f73;
+    --cor-secundaria: #0a9396;
+    --cor-clara: #f8f9fa;
+    --cor-escura: #333333;
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  color: #333;
-  line-height: 1.6;
-  background-color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    color: var(--cor-escura);
+    background-color: white;
 }
 
+/* HEADER */
+
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--cor-primaria);
-  padding: 1rem;
-  border-radius: 0 0 8px 8px;
+    background-color: var(--cor-primaria);
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    align-items: center;
 }
 
 header img {
-  width: 80px;
-  height: auto;
+    width: 100px;
 }
 
 nav {
-  display: flex;
-  gap: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
 }
 
 nav a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
-  padding: 5px 10px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
 }
 
 nav a:hover {
-  text-decoration: underline;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+    text-decoration: underline;
 }
 
-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem 0;
-}
+/* HERO */
 
 .hero {
-  position: relative;
-  margin-bottom: 2rem;
-  border-radius: 8px;
-  overflow: hidden;
+    position: relative;
+    margin-bottom: 2rem;
 }
 
 .hero img {
-  display: block;
-  width: 100%;
-  height: auto;
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    display: block;
 }
 
 .hero h1 {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    border-radius: 5px;
 }
 
 .hero article {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 1rem;
-  max-width: 400px;
-  border-radius: 4px;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    max-width: 600px;
+    border-radius: 5px;
 }
 
 .hero article img {
-  float: right;
-  width: 125px;
-  height: auto;
-  margin-left: 1rem;
+    float: right;
+    width: 125px;
+    height: auto;
+    margin-left: 15px;
 }
 
+/* SEÇÕES */
+
 section {
-  margin-bottom: 2rem;
+    padding: 20px;
 }
 
 section h2 {
-  margin-bottom: 1rem;
-  color: var(--cor-primaria);
-  text-align: left;
+    color: var(--cor-primaria);
+    margin-bottom: 15px;
 }
 
+/* GALERIA */
+
 .adventure {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 figure {
-  flex: 1 1 200px;
-  text-align: center;
-  background-color: #fafafa;
-  padding: 8px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+    width: 180px;
+    text-align: center;
 }
 
 figure img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 4px;
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 5px;
 }
 
 figcaption {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #444;
+    margin-top: 8px;
+    font-weight: bold;
 }
 
+/* FOOTER */
+
 footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #333;
-  color: #fff;
-  padding: 1rem;
-  margin-top: 2rem;
-  border-radius: 8px 8px 0 0;
+    background-color: var(--cor-primaria);
+    color: white;
+    padding: 20px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .redes-sociais {
-  display: flex;
-  gap: 1rem;
-}
-
-.redes-sociais a {
-  text-decoration: none;
+    display: flex;
+    gap: 15px;
 }
 
 .redes-sociais img {
-  width: 30px;
-  height: auto;
+    width: 30px;
+    height: 30px;
 }
