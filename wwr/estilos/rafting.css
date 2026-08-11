@@ -1,6 +1,6 @@
 :root {
     --cor-primaria: #005f73;
-    --cor-secundaria: #0a9396;
+    --cor-secundaria: #004c5c;
     --cor-clara: #f8f9fa;
     --cor-escura: #333333;
 }
@@ -216,16 +216,16 @@ footer {
     border-radius: 8px 8px 0 0;
 }
 
-.socialmedia {
+.redes-sociais {
     display: flex;
     gap: 15px;
 }
 
-.socialmedia a {
+.redes-sociais a {
     text-decoration: none;
 }
 
-.socialmedia img {
+.redes-sociais img {
     width: 30px;
     height: 30px;
 }

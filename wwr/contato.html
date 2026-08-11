@@ -65,22 +65,23 @@
                 <input type="email" id="email" name="email" required>
 
                 <p>Finalidade da mensagem</p>
-                <label>
-                    <input type="radio" name="assunto" value="consulta-geral" required> Consulta Geral
-                </label>
-                <label>
-                    <input type="radio" name="assunto" value="reserva"> Pergunta sobre Reserva
-                </label>
-                <label>
-                    <input type="radio" name="assunto" value="sugestao"> Sugestão de Site
-                </label>
+                
+                <input type="radio" id="consulta" name="assunto" value="consulta-geral" required>
+                <label for="consulta">Consulta Geral</label>
+                
+                <input type="radio" id="reserva" name="assunto" value="reserva">
+                <label for="reserva">Pergunta sobre Reserva</label>
+                
+                <input type="radio" id="sugestao" name="assunto" value="sugestao">
+                <label for="sugestao">Sugestão de Site</label>
 
                 <label for="mensagem">Mensagem</label>
                 <textarea id="mensagem" name="mensagem" rows="6" required></textarea>
 
-                <label>
-                    <input type="checkbox" name="newsletter"> Quero receber a newsletter mensal
-                </label>
+                <div>
+                    <input type="checkbox" id="newsletter" name="newsletter">
+                    <label for="newsletter">Quero receber a newsletter mensal</label>
+                </div>
 
                 <button type="submit">Enviar Minha Mensagem</button>
             </form>
@@ -90,7 +91,7 @@
     <footer>
         <p>&copy;2026 Rafting Brasil | Danilo Rafael da Silva Costa</p>
         
-        <nav class="socialmedia">
+        <nav class="redes-sociais">
             <a href="https://facebook.com" target="_blank" rel="noopener">
                 <img src="imagens/facebook.png" alt="Facebook">
             </a>
