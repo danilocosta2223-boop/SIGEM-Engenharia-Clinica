@@ -3,21 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM - Relatórios Gerenciais</title>
-    <!-- Caminho correto para o CSS conforme sua estrutura -->
+    <title>SIGEM - Sistema de Gestão de Equipamentos Médicos</title>
     <link rel="stylesheet" href="estilos/style.css">
-    <style>
-        /* Estilo recomendado para os KPIs */
-        .numero-kpi {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #0056b3;
-        }
-    </style>
 </head>
 <body>
     <header>
-        <h1>SIGEM - Sistema de Gestão de Equipamentos Médicos</h1>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 1.5rem; font-weight: bold;">SIGEM</span>
+        </div>
         <nav>
             <a href="cadastro.html">➕ Cadastro</a>
             <a href="equipamentos.html">📋 Equipamentos</a>
@@ -28,10 +21,10 @@
 
     <main class="container">
         <h2>📊 Central de Relatórios Gerenciais</h2>
-        <p>Indicadores estratégicos do parque tecnológico hospitalar.</p>
+        <p style="margin-bottom: 20px;">Indicadores estratégicos do parque tecnológico hospitalar.</p>
 
         <div style="margin-bottom: 25px;">
-            <a href="cadastro.html" class="btn-acao" style="display: inline-block; text-decoration: none; padding: 10px 15px; background: #0056b3; color: white; border-radius: 5px; font-weight: bold;">
+            <a href="cadastro.html" class="btn-acao" style="display: inline-block; text-decoration: none;">
                 ➕ Cadastrar Novo Equipamento
             </a>
         </div>
@@ -73,10 +66,9 @@
             </div>
         </section>
 
-        <hr>
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #ccc;">
 
-        <!-- Seção: Resumo Executivo -->
-        <section class="card" style="margin-bottom: 30px; background: #f8f9fa; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <section class="card" style="margin-bottom: 30px; text-align: left;">
             <h2>📌 Resumo Executivo</h2>
             <ul style="margin-top: 10px; padding-left: 20px; line-height: 1.6;">
                 <li>Total de ativos monitorados e cadastrados no sistema.</li>
@@ -87,70 +79,62 @@
             </ul>
         </section>
 
-        <hr>
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #ccc;">
 
-        <!-- Relatórios Executivos em grade padronizada -->
         <section class="relatorios-especiais home-grid">
-            <div class="card">
+            <div class="card" style="text-align: left;">
                 <h3>Disponibilidade Operacional</h3>
-                <p>Equipamentos ativos em relação ao total do parque.</p>
+                <p style="font-size: 1rem; font-weight: normal; margin-top: 10px;">Equipamentos ativos em relação ao total do parque.</p>
             </div>
 
-            <div class="card">
+            <div class="card" style="text-align: left;">
                 <h3>Valor Patrimonial</h3>
-                <p>Avaliação financeira dos equipamentos cadastrados.</p>
+                <p style="font-size: 1rem; font-weight: normal; margin-top: 10px;">Avaliação financeira dos equipamentos cadastrados.</p>
             </div>
 
-            <div class="card">
+            <div class="card" style="text-align: left;">
                 <h3>Manutenção Preventiva</h3>
-                <p>Controle de equipamentos com necessidade de intervenção técnica.</p>
+                <p style="font-size: 1rem; font-weight: normal; margin-top: 10px;">Controle de equipamentos com necessidade de intervenção técnica.</p>
             </div>
 
-            <div class="card">
+            <div class="card" style="text-align: left;">
                 <h3>Conformidade Regulatória</h3>
-                <p>Apoio à rastreabilidade e gestão da Engenharia Clínica.</p>
+                <p style="font-size: 1rem; font-weight: normal; margin-top: 10px;">Apoio à rastreabilidade e gestão da Engenharia Clínica.</p>
             </div>
         </section>
 
-        <hr>
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #ccc;">
 
-        <section>
+        <section class="alertas">
             <h2>📂 Exportação e Backup</h2>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
+                <button id="exportarCSV" class="btn-acao">
+                    📊 Exportar CSV
+                </button>
 
-            <button id="exportarCSV" class="btn-acao">
-                📊 Exportar CSV
-            </button>
+                <button id="exportarJSON" class="btn-acao" style="background: linear-gradient(135deg, var(--purple), #b57edc);">
+                    📁 Backup JSON
+                </button>
 
-            <button id="exportarJSON" class="btn-acao">
-                📁 Backup JSON
-            </button>
-
-            <button onclick="limparSistema()" class="btn-acao">
-                🗑 Limpar Sistema
-            </button>
+                <button onclick="limparSistema()" class="btn-acao" style="background: linear-gradient(135deg, var(--danger), #ff5a5a);">
+                    🗑 Limpar Sistema
+                </button>
+            </div>
         </section>
 
-        <hr>
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #ccc;">
 
-        <section>
+        <section class="alertas">
             <h2>ℹ Informações do Sistema</h2>
-
-            <p id="contadorEquipamentos"></p>
-
-            <p>
-                Sistema desenvolvido para controle de ativos médicos,
-                rastreabilidade patrimonial e gestão de manutenção
-                em Engenharia Clínica.
+            <p id="contadorEquipamentos" style="font-weight: bold; margin-top: 10px;"></p>
+            <p style="margin-top: 8px;">
+                Sistema desenvolvido para controle de ativos médicos, rastreabilidade patrimonial e gestão de manutenção em Engenharia Clínica.
             </p>
-
-            <p>
-                Última atualização:
-                <span id="ultimaAtualizacao"></span>
+            <p style="margin-top: 8px;">
+                Última atualização: <span id="ultimaAtualizacao" style="font-weight: 500;"></span>
             </p>
-
-            <p>
-                Versão do Sistema:
-                <strong>SIGEM v1.0.0</strong>
+            <p style="margin-top: 8px;">
+                Versão do Sistema: <strong>SIGEM v1.0.0</strong>
             </p>
         </section>
     </main>
@@ -160,7 +144,6 @@
         <p>Engenharia Clínica • Gestão Patrimonial • Tecnologia Hospitalar</p>
     </footer>
 
-    <!-- Chamada correta do script dentro da pasta scripts/ -->
     <script src="scripts/app.js"></script>
 </body>
 </html>

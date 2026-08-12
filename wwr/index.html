@@ -8,8 +8,8 @@
 </head>
 <body>
     <header>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <span style="font-size: 1.8rem; font-weight: 900; letter-spacing: 1px;">SIGEM</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 1.5rem; font-weight: bold;">SIGEM</span>
         </div>
         <nav>
             <a href="cadastro.html">➕ Cadastro</a>
@@ -17,64 +17,84 @@
             <a href="relatorios.html">📊 Relatórios</a>
             <a href="index.html" class="ativo">🏠 Dashboard</a>
         </nav>
-        <div class="usuario">
-            <span>Engenharia Clínica</span>
-        </div>
     </header>
 
-    <main>
-        <div class="hero">
-            <h1>Gestão Inteligente de Equipamentos Médicos</h1>
-            <p style="margin-top: 10px; font-size: 1.1rem; opacity: 0.9;">Controle total do parque tecnológico, manutenção e conformidade com excelência corporativa.</p>
-            <div style="margin-top: 20px;">
-                <a href="cadastro.html" class="btn-acao">➕ Cadastrar Equipamento</a>
-            </div>
-        </div>
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <img src="imagens/banner-hospital.jpg" alt="Hospital Banner">
+            <h1>Gestão Inteligente em Engenharia Clínica</h1>
+            <p style="margin-top: 15px; font-size: 1.1rem; text-shadow: 0 2px 5px rgba(0,0,0,0.5);">
+                Controle completo do parque tecnológico, rastreabilidade patrimonial e indicadores estratégicos para instituições de saúde.
+            </p>
+        </section>
 
-        <div class="home-grid">
+        <h2>📊 Indicadores do Parque Tecnológico</h2>
+        <p style="margin-bottom: 20px;">Visão geral e em tempo real dos ativos hospitalares.</p>
+
+        <!-- Grade de KPIs -->
+        <section class="home-grid">
             <div class="card">
                 <h3>Total de Equipamentos</h3>
-                <p class="numero-kpi" id="kpi-total">0</p>
+                <p id="kpi-total" class="numero-kpi">0</p>
             </div>
-            <div class="card card-ativo">
+
+            <div class="card">
                 <h3>Equipamentos Ativos</h3>
-                <p class="numero-kpi" id="kpi-ativos">0</p>
+                <p id="kpi-ativos" class="numero-kpi">0</p>
             </div>
-            <div class="card card-manutencao">
+
+            <div class="card">
                 <h3>Em Manutenção</h3>
-                <p class="numero-kpi" id="kpi-manutencao">0</p>
+                <p id="kpi-manutencao" class="numero-kpi">0</p>
             </div>
-            <div class="card card-baixado">
-                <h3>Baixados / Inativos</h3>
-                <p class="numero-kpi" id="kpi-baixados">0</p>
-            </div>
-        </div>
 
-        <div class="home-grid">
             <div class="card">
-                <h3>Valor Total do Parque</h3>
-                <p class="numero-kpi" id="kpi-valor-total">R$ 0,00</p>
+                <h3>Baixados</h3>
+                <p id="kpi-baixados" class="numero-kpi">0</p>
             </div>
-            <div class="card">
-                <h3>Fabricantes Únicos</h3>
-                <p class="numero-kpi" id="kpi-fabricantes">0</p>
-            </div>
-            <div class="card">
-                <h3>Setores Atendidos</h3>
-                <p class="numero-kpi" id="kpi-setores">0</p>
-            </div>
-        </div>
+        </section>
 
-        <div class="alertas">
-            <h3>Status do Sistema</h3>
-            <p>Última sincronização e carregamento automático realizados em: <strong id="ultimaAtualizacao">-</strong></p>
-            <p id="contadorEquipamentos" style="margin-top: 5px; color: var(--accent); font-weight: 600;"></p>
-        </div>
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #ccc;">
+
+        <!-- Seção de Ações Rápidas -->
+        <section class="alertas">
+            <h2>⚡ Ações Rápidas</h2>
+            <p style="margin: 10px 0 20px 0;">Navegue rapidamente pelas principais funcionalidades do sistema:</p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <a href="cadastro.html" class="btn-acao" style="text-decoration: none; display: inline-block;">
+                    ➕ Cadastrar Novo Equipamento
+                </a>
+                <a href="equipamentos.html" class="btn-acao" style="text-decoration: none; display: inline-block; background: linear-gradient(135deg, var(--accent), var(--primary-dark));">
+                    📋 Listar Equipamentos
+                </a>
+                <a href="relatorios.html" class="btn-acao" style="text-decoration: none; display: inline-block; background: linear-gradient(135deg, var(--purple), #6f42c1);">
+                    📊 Ver Relatórios Gerenciais
+                </a>
+            </div>
+        </section>
+
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #ccc;">
+
+        <!-- Informações do Sistema -->
+        <section class="alertas">
+            <h2>ℹ Sobre o SIGEM</h2>
+            <p id="contadorEquipamentos" style="font-weight: bold; margin-top: 10px;"></p>
+            <p style="margin-top: 8px;">
+                O SIGEM foi desenvolvido para otimizar a rotina da Engenharia Clínica, assegurando conformidade com normas regulatórias e alta disponibilidade dos equipamentos de suporte à vida.
+            </p>
+            <p style="margin-top: 8px;">
+                Última atualização: <span id="ultimaAtualizacao" style="font-weight: 500;"></span>
+            </p>
+            <p style="margin-top: 8px;">
+                Versão do Sistema: <strong>SIGEM v1.0.0</strong>
+            </p>
+        </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 SIGEM - Sistema de Gestão de Equipamentos Médicos. Todos os direitos reservados.</p>
-        <p style="font-size: 0.85rem; opacity: 0.8;">Desenvolvido para Engenharia Clínica</p>
+        <p>SIGEM v1.0.0</p>
+        <p>Engenharia Clínica • Gestão Patrimonial • Tecnologia Hospitalar</p>
     </footer>
 
     <script src="scripts/app.js"></script>
