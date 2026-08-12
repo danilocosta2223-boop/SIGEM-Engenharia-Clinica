@@ -1,7 +1,6 @@
-/* =========================================
-   SIGEM v1.0.0 - MASTERPIECE CSS (COMPLETO)
+/* ========================================
+   SIGEM v1.0.0 - OBRA-PRIMA CSS (COMPLETO)
    ========================================= */
-
 :root {
     --primary: #005f73;
     --primary-dark: #003845;
@@ -131,7 +130,7 @@ h1, h2, h3 {
     letter-spacing: 0.5px;
 }
 
-/* Hero Overlay & Elegância */
+/* Sobreposição de Herói e Elegância */
 .hero {
     position: relative;
     overflow: hidden;
@@ -174,7 +173,7 @@ h1, h2, h3 {
     text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Grid Global */
+/* Grade Global */
 .home-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -182,7 +181,7 @@ h1, h2, h3 {
     margin: 30px 0;
 }
 
-/* Cards Executivos (KPIs) com Brilho Premium */
+/* Cartões Executivos (KPIs) com Brilho Premium */
 .card {
     position: relative;
     overflow: hidden;
@@ -388,19 +387,19 @@ footer {
 
 /* Responsividade Mobile */
 @media (max-width: 768px) {
-    header { 
-        flex-direction: column; 
-        gap: 15px; 
+    header {
+        flex-direction: column;
+        gap: 15px;
     }
-    nav { 
-        flex-wrap: wrap; 
-        justify-content: center; 
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
     }
-    .hero h1 { 
-        font-size: 2rem; 
+    .hero h1 {
+        font-size: 2rem;
     }
-    .card p { 
-        font-size: 2.2rem; 
+    .card p {
+        font-size: 2.2rem;
     }
 }
 
