@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Relatórios Gerenciais</title>
+    <!-- Caminho correto para o CSS conforme sua estrutura -->
+    <link rel="stylesheet" href="estilos/style.css">
+    <style>
+        /* Estilo recomendado para os KPIs */
+        .numero-kpi {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SIGEM - Sistema de Gestão de Equipamentos Médicos</h1>
+        <nav>
+            <a href="cadastro.html">➕ Cadastro</a>
+            <a href="equipamentos.html">📋 Equipamentos</a>
+            <a href="relatorios.html" class="ativo">📊 Relatórios</a>
+            <a href="index.html">🏠 Dashboard</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>📊 Central de Relatórios Gerenciais</h2>
+        <p>Indicadores estratégicos do parque tecnológico hospitalar.</p>
+
+        <div style="margin-bottom: 25px;">
+            <a href="cadastro.html" class="btn-acao" style="display: inline-block; text-decoration: none; padding: 10px 15px; background: #0056b3; color: white; border-radius: 5px; font-weight: bold;">
+                ➕ Cadastrar Novo Equipamento
+            </a>
+        </div>
+
+        <section class="home-grid">
+            <div class="card">
+                <h3>Total de Equipamentos</h3>
+                <p id="kpi-total" class="numero-kpi">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Equipamentos Ativos</h3>
+                <p id="kpi-ativos" class="numero-kpi">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Em Manutenção</h3>
+                <p id="kpi-manutencao" class="numero-kpi">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Baixados</h3>
+                <p id="kpi-baixados" class="numero-kpi">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Valor do Parque Tecnológico</h3>
+                <p id="kpi-valor-total" class="numero-kpi">R$ 0,00</p>
+            </div>
+
+            <div class="card">
+                <h3>Fabricantes</h3>
+                <p id="kpi-fabricantes" class="numero-kpi">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Setores</h3>
+                <p id="kpi-setores" class="numero-kpi">0</p>
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- Seção: Resumo Executivo -->
+        <section class="card" style="margin-bottom: 30px; background: #f8f9fa; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2>📌 Resumo Executivo</h2>
+            <ul style="margin-top: 10px; padding-left: 20px; line-height: 1.6;">
+                <li>Total de ativos monitorados e cadastrados no sistema.</li>
+                <li>Equipamentos atualmente em manutenção preventiva ou corretiva.</li>
+                <li>Avaliação financeira consolidada do parque tecnológico.</li>
+                <li>Mapeamento completo dos fabricantes atendidos.</li>
+                <li>Gestão setorial e distribuição dos ativos hospitalares.</li>
+            </ul>
+        </section>
+
+        <hr>
+
+        <!-- Relatórios Executivos em grade padronizada -->
+        <section class="relatorios-especiais home-grid">
+            <div class="card">
+                <h3>Disponibilidade Operacional</h3>
+                <p>Equipamentos ativos em relação ao total do parque.</p>
+            </div>
+
+            <div class="card">
+                <h3>Valor Patrimonial</h3>
+                <p>Avaliação financeira dos equipamentos cadastrados.</p>
+            </div>
+
+            <div class="card">
+                <h3>Manutenção Preventiva</h3>
+                <p>Controle de equipamentos com necessidade de intervenção técnica.</p>
+            </div>
+
+            <div class="card">
+                <h3>Conformidade Regulatória</h3>
+                <p>Apoio à rastreabilidade e gestão da Engenharia Clínica.</p>
+            </div>
+        </section>
+
+        <hr>
+
+        <section>
+            <h2>📂 Exportação e Backup</h2>
+
+            <button id="exportarCSV" class="btn-acao">
+                📊 Exportar CSV
+            </button>
+
+            <button id="exportarJSON" class="btn-acao">
+                📁 Backup JSON
+            </button>
+
+            <button onclick="limparSistema()" class="btn-acao">
+                🗑 Limpar Sistema
+            </button>
+        </section>
+
+        <hr>
+
+        <section>
+            <h2>ℹ Informações do Sistema</h2>
+
+            <p id="contadorEquipamentos"></p>
+
+            <p>
+                Sistema desenvolvido para controle de ativos médicos,
+                rastreabilidade patrimonial e gestão de manutenção
+                em Engenharia Clínica.
+            </p>
+
+            <p>
+                Última atualização:
+                <span id="ultimaAtualizacao"></span>
+            </p>
+
+            <p>
+                Versão do Sistema:
+                <strong>SIGEM v1.0.0</strong>
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>SIGEM v1.0.0</p>
+        <p>Engenharia Clínica • Gestão Patrimonial • Tecnologia Hospitalar</p>
+    </footer>
+
+    <!-- Chamada correta do script dentro da pasta scripts/ -->
+    <script src="scripts/app.js"></script>
+</body>
+</html>

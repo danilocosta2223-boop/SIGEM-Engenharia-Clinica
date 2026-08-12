@@ -1,0 +1,15 @@
+[
+  {
+    "status": "Ativo",
+    "data": "12/08/2026",
+    "responsavel": "Danilo Costa",
+    "patrimonio": "123456",
+    "equipamento": "Monitor Multiparamétrico",
+    "ativoPai": "UTI01",
+    "setor": "UTI Adulto",
+    "classificacao": "Equipamento Médico",
+    "instalacao": "Hospital Central",
+    "serie": "MP123456",
+    "notaFiscal": "NF987654"
+  }
+]

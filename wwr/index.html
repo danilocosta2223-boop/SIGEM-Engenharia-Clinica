@@ -3,91 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobre Nós | Rafting Brasil</title>
-    <meta name="description" content="Conheça a história da Rafting Brasil e descubra nossas aventuras em corredeiras.">
-    <meta name="author" content="Danilo Rafael da Silva Costa">
-    <link rel="stylesheet" href="estilos/rafting.css">
+    <title>SIGEM - Sistema de Gestão de Equipamentos Médicos</title>
+    <link rel="stylesheet" href="estilos/style.css">
 </head>
 <body>
-
     <header>
-        <img src="imagens/logo.png" alt="Logotipo Rafting Brasil">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="font-size: 1.8rem; font-weight: 900; letter-spacing: 1px;">SIGEM</span>
+        </div>
         <nav>
-            <a href="index.html">Página Inicial</a>
-            <a href="sobre.html">Sobre Nós</a>
-            <a href="passeios.html">Passeios</a>
-            <a href="contato.html">Fale Conosco</a>
+            <a href="cadastro.html">➕ Cadastro</a>
+            <a href="equipamentos.html">📋 Equipamentos</a>
+            <a href="relatorios.html">📊 Relatórios</a>
+            <a href="index.html" class="ativo">🏠 Dashboard</a>
         </nav>
+        <div class="usuario">
+            <span>Engenharia Clínica</span>
+        </div>
     </header>
 
     <main>
         <div class="hero">
-            <img src="imagens/hero2.jpg" alt="Aventura de rafting">
-            <h1>Rafting Brasil</h1>
-            
-            <article>
-                <img src="imagens/historia.jpg" alt="Cliente feliz">
-                <p>
-                    Somos especialistas em aventuras de rafting, oferecendo experiências seguras e inesquecíveis para pessoas de todas as idades.
-                </p>
-            </article>
+            <h1>Gestão Inteligente de Equipamentos Médicos</h1>
+            <p style="margin-top: 10px; font-size: 1.1rem; opacity: 0.9;">Controle total do parque tecnológico, manutenção e conformidade com excelência corporativa.</p>
+            <div style="margin-top: 20px;">
+                <a href="cadastro.html" class="btn-acao">➕ Cadastrar Equipamento</a>
+            </div>
         </div>
 
-        <section>
-            <h2>História</h2>
-            <p>
-                Nossa empresa nasceu da paixão pelos esportes de aventura e pela natureza.
-                Hoje oferecemos experiências incríveis para aventureiros de todas as idades,
-                sempre com foco em segurança, diversão e respeito ao meio ambiente.
-            </p>
-        </section>
+        <div class="home-grid">
+            <div class="card">
+                <h3>Total de Equipamentos</h3>
+                <p class="numero-kpi" id="kpi-total">0</p>
+            </div>
+            <div class="card card-ativo">
+                <h3>Equipamentos Ativos</h3>
+                <p class="numero-kpi" id="kpi-ativos">0</p>
+            </div>
+            <div class="card card-manutencao">
+                <h3>Em Manutenção</h3>
+                <p class="numero-kpi" id="kpi-manutencao">0</p>
+            </div>
+            <div class="card card-baixado">
+                <h3>Baixados / Inativos</h3>
+                <p class="numero-kpi" id="kpi-baixados">0</p>
+            </div>
+        </div>
 
-        <section>
-            <h2>A aventura está te esperando!</h2>
-            <figure>
-                <img src="imagens/aventura1.jpg" alt="Rafting Brasil">
-                <figcaption>Rafting Brasil</figcaption>
-            </figure>
-            
-            <figure>
-                <img src="imagens/aventura2.jpg" alt="São Paulo">
-                <figcaption>São Paulo</figcaption>
-            </figure>
-            
-            <figure>
-                <img src="imagens/aventura3.jpg" alt="Paisagem">
-                <figcaption>Paisagens Incríveis</figcaption>
-            </figure>
-            
-            <figure>
-                <img src="imagens/aventura4.jpg" alt="Guias Especializados">
-                <figcaption>Guias Especializados</figcaption>
-            </figure>
-            
-            <figure>
-                <img src="imagens/aventura5.jpg" alt="Experiências Memoráveis">
-                <figcaption>Experiências Memoráveis</figcaption>
-            </figure>
-        </section>
+        <div class="home-grid">
+            <div class="card">
+                <h3>Valor Total do Parque</h3>
+                <p class="numero-kpi" id="kpi-valor-total">R$ 0,00</p>
+            </div>
+            <div class="card">
+                <h3>Fabricantes Únicos</h3>
+                <p class="numero-kpi" id="kpi-fabricantes">0</p>
+            </div>
+            <div class="card">
+                <h3>Setores Atendidos</h3>
+                <p class="numero-kpi" id="kpi-setores">0</p>
+            </div>
+        </div>
+
+        <div class="alertas">
+            <h3>Status do Sistema</h3>
+            <p>Última sincronização e carregamento automático realizados em: <strong id="ultimaAtualizacao">-</strong></p>
+            <p id="contadorEquipamentos" style="margin-top: 5px; color: var(--accent); font-weight: 600;"></p>
+        </div>
     </main>
 
     <footer>
-        <p>&copy;2026 Rafting Brasil | Danilo Rafael da Silva Costa</p>
-        
-        <nav class="socialmedia">
-            <a href="https://facebook.com" target="_blank" rel="noopener">
-                <img src="imagens/facebook.png" alt="Facebook">
-            </a>
-            
-            <a href="https://instagram.com" target="_blank" rel="noopener">
-                <img src="imagens/instagram.png" alt="Instagram">
-            </a>
-            
-            <a href="https://twitter.com" target="_blank" rel="noopener">
-                <img src="imagens/twitter.png" alt="Twitter">
-            </a>
-        </nav>
+        <p>&copy; 2026 SIGEM - Sistema de Gestão de Equipamentos Médicos. Todos os direitos reservados.</p>
+        <p style="font-size: 0.85rem; opacity: 0.8;">Desenvolvido para Engenharia Clínica</p>
     </footer>
 
+    <script src="scripts/app.js"></script>
 </body>
 </html>

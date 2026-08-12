@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Cadastrar Equipamento</title>
+    <!-- Adicione seus arquivos CSS aqui -->
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <h1>SIGEM - Sistema de Gestão de Equipamentos Médicos</h1>
+        <nav>
+            <a href="index.html">Início / Dashboard</a>
+            <a href="equipamentos.html">Lista de Equipamentos</a>
+            <a href="cadastro.html">Novo Cadastro</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Cadastrar Novo Equipamento</h2>
+        
+        <!-- O formulário precisa exatamente deste ID e IDs de campos -->
+        <form id="formEquipamento">
+            <div class="form-grupo">
+                <label for="patrimonio">Nº do Patrimônio:</label>
+                <input type="text" id="patrimonio" required placeholder="Ex: 123456">
+            </div>
+
+            <div class="form-grupo">
+                <label for="equipamento">Nome do Equipamento:</label>
+                <input type="text" id="equipamento" required placeholder="Ex: Monitor Multiparamétrico">
+            </div>
+
+            <div class="form-grupo">
+                <label for="fabricante">Fabricante:</label>
+                <input type="text" id="fabricante" required placeholder="Ex: Philips">
+            </div>
+
+            <div class="form-grupo">
+                <label for="modelo">Modelo:</label>
+                <input type="text" id="modelo" required placeholder="Ex: IntelliVue MX700">
+            </div>
+
+            <div class="form-grupo">
+                <label for="setor">Setor:</label>
+                <input type="text" id="setor" required placeholder="Ex: UTI Adulto">
+            </div>
+
+            <div class="form-grupo">
+                <label for="status">Status:</label>
+                <select id="status" required>
+                    <option value="ativo">Ativo</option>
+                    <option value="manutencao">Manutenção</option>
+                    <option value="baixado">Baixado</option>
+                </select>
+            </div>
+
+            <div class="form-grupo">
+                <label for="responsavel">Responsável:</label>
+                <input type="text" id="responsavel" required placeholder="Ex: Engenharia Clínica">
+            </div>
+
+            <div class="form-grupo">
+                <label for="valor">Valor (R$):</label>
+                <input type="number" id="valor" step="0.01" required placeholder="Ex: 45000">
+            </div>
+
+            <button type="submit" class="btn-acao">Salvar Equipamento</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>SIGEM v1.0.0</p>
+        <p>Última atualização: <span id="ultimaAtualizacao"></span></p>
+    </footer>
+
+    <!-- Script principal do sistema -->
+    <script src="scripts/app.js"></script>
+</body>
+</html>

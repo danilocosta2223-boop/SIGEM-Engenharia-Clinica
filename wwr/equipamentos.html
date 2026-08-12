@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Lista de Equipamentos</title>
+    <!-- Adicione seus arquivos CSS aqui -->
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <h1>SIGEM - Sistema de Gestão de Equipamentos Médicos</h1>
+        <nav>
+            <a href="index.html">Início / Dashboard</a>
+            <a href="equipamentos.html">Lista de Equipamentos</a>
+            <a href="cadastro.html">Novo Cadastro</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h2>Parque Tecnológico e Equipamentos</h2>
+
+        <!-- Seção de KPIs (Opcional, mas exibe métricas completas) -->
+        <section class="kpis-container" style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div>Total: <span id="kpi-total">0</span></div>
+            <div>Ativos: <span id="kpi-ativos">0</span></div>
+            <div>Manutenção: <span id="kpi-manutencao">0</span></div>
+            <div>Baixados: <span id="kpi-baixados">0</span></div>
+            <div>Valor Total: <span id="kpi-valor-total">R$ 0,00</span></div>
+            <div>Fabricantes: <span id="kpi-fabricantes">0</span></div>
+            <div>Setores: <span id="kpi-setores">0</span></div>
+        </section>
+
+        <!-- Barra de Ferramentas: Pesquisa, Filtros e Ações -->
+        <div class="toolbar" style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+            <input type="text" id="pesquisa-patrimonio" placeholder="Pesquisar por patrimônio, nome, setor..." style="padding: 8px; flex: 1;">
+            
+            <select id="filtro-status" style="padding: 8px;">
+                <option value="">Todos os Status</option>
+                <option value="ativo">Ativo</option>
+                <option value="manutencao">Manutenção</option>
+                <option value="baixado">Baixado</option>
+            </select>
+
+            <select id="filtro-setor" style="padding: 8px;">
+                <option value="">Todos os Setores</option>
+                <option value="UTI Adulto">UTI Adulto</option>
+                <option value="Centro Cirúrgico">Centro Cirúrgico</option>
+                <option value="UTI Neonatal">UTI Neonatal</option>
+            </select>
+
+            <button id="exportarCSV" class="btn-acao">Exportar CSV</button>
+            <button id="exportarJSON" class="btn-acao" style="background: purple;">Backup JSON</button>
+            <button onclick="limparSistema()" class="btn-acao" style="background: red;">Limpar Sistema</button>
+        </div>
+
+        <p id="contadorEquipamentos" style="font-weight: bold; margin-bottom: 10px;"></p>
+
+        <!-- Tabela de Listagem -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Patrimônio</th>
+                    <th>Equipamento</th>
+                    <th>Fabricante</th>
+                    <th>Modelo</th>
+                    <th>Setor</th>
+                    <th>Responsável</th>
+                    <th>Valor</th>
+                    <th>Última Atualização</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- O JavaScript preencherá os dados aqui automaticamente -->
+            </tbody>
+        </table>
+    </main>
+
+    <footer>
+        <p>SIGEM v1.0.0</p>
+        <p>Última atualização: <span id="ultimaAtualizacao"></span></p>
+    </footer>
+
+    <!-- Script principal do sistema -->
+    <script src="scripts/app.js"></script>
+</body>
+</html>
