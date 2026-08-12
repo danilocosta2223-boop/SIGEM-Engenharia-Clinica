@@ -403,11 +403,26 @@ footer {
     }
 }
 
-/* Estilização otimizada para os números dos KPIs */
+/* Classes Adicionais Integradas */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
 .numero-kpi {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: 900;
     color: var(--primary);
-    margin-top: 15px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+input,
+select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+table {
+    margin-top: 20px;
 }
