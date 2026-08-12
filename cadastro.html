@@ -4,78 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIGEM - Cadastrar Equipamento</title>
-    <!-- Adicione seus arquivos CSS aqui -->
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="estilos/style.css">
 </head>
 <body>
     <header>
-        <h1>SIGEM - Sistema de Gestão de Equipamentos Médicos</h1>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 1.5rem; font-weight: bold;">SIGEM</span>
+        </div>
         <nav>
-            <a href="index.html">Início / Dashboard</a>
-            <a href="equipamentos.html">Lista de Equipamentos</a>
-            <a href="cadastro.html">Novo Cadastro</a>
+            <a href="cadastro.html" class="ativo">➕ Cadastro</a>
+            <a href="equipamentos.html">📋 Equipamentos</a>
+            <a href="relatorios.html">📊 Relatórios</a>
+            <a href="index.html">🏠 Dashboard</a>
         </nav>
     </header>
 
     <main class="container">
-        <h2>Cadastrar Novo Equipamento</h2>
+        <h2>➕ Cadastrar Novo Equipamento</h2>
+        <p style="margin-bottom: 25px;">Preencha os dados abaixo para registrar um novo ativo no parque tecnológico hospitalar.</p>
         
-        <!-- O formulário precisa exatamente deste ID e IDs de campos -->
-        <form id="formEquipamento">
-            <div class="form-grupo">
-                <label for="patrimonio">Nº do Patrimônio:</label>
-                <input type="text" id="patrimonio" required placeholder="Ex: 123456">
-            </div>
+        <section class="alertas" style="background: white; padding: 30px; border-radius: 16px; box-shadow: var(--shadow-sm);">
+            <form id="formEquipamento" style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="filtros-wrapper" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 0;">
+                    <div class="filtro-grupo">
+                        <label for="patrimonio">Nº do Patrimônio:</label>
+                        <input type="text" id="patrimonio" required placeholder="Ex: 123456" style="width: 100%; height: 45px; border-radius: 10px; border: 1px solid #ccc; padding: 0 15px; font-size: 1rem;">
+                    </div>
 
-            <div class="form-grupo">
-                <label for="equipamento">Nome do Equipamento:</label>
-                <input type="text" id="equipamento" required placeholder="Ex: Monitor Multiparamétrico">
-            </div>
+                    <div class="filtro-grupo">
+                        <label for="equipamento">Nome do Equipamento:</label>
+                        <input type="text" id="equipamento" required placeholder="Ex: Monitor Multiparamétrico" style="width: 100%; height: 45px; border-radius: 10px; border: 1px solid #ccc; padding: 0 15px; font-size: 1rem;">
+                    </div>
 
-            <div class="form-grupo">
-                <label for="fabricante">Fabricante:</label>
-                <input type="text" id="fabricante" required placeholder="Ex: Philips">
-            </div>
+                    <div class="filtro-grupo">
+                        <label for="fabricante">Fabricante:</label>
+                        <input type="text" id="fabricante" required placeholder="Ex: Philips" style="width: 100%; height: 45px; border-radius: 10px; border: 1px solid #ccc; padding: 0 15px; font-size: 1rem;">
+                    </div>
 
-            <div class="form-grupo">
-                <label for="modelo">Modelo:</label>
-                <input type="text" id="modelo" required placeholder="Ex: IntelliVue MX700">
-            </div>
+                    <div class="filtro-grupo">
+                        <label for="modelo">Modelo:</label>
+                        <input type="text" id="modelo" required placeholder="Ex: IntelliVue MX700" style="width: 100%; height: 45px; border-radius: 10px; border: 1px solid #ccc; padding: 0 15px; font-size: 1rem;">
+                    </div>
 
-            <div class="form-grupo">
-                <label for="setor">Setor:</label>
-                <input type="text" id="setor" required placeholder="Ex: UTI Adulto">
-            </div>
+                    <div class="filtro-grupo">
+                        <label for="setor">Setor:</label>
+                        <input type="text" id="setor" required placeholder="Ex: UTI Adulto" style="width: 100%; height: 45px; border-radius: 10px; border: 1px solid #ccc; padding: 0 15px; font-size: 1rem;">
+                    </div>
 
-            <div class="form-grupo">
-                <label for="status">Status:</label>
-                <select id="status" required>
-                    <option value="ativo">Ativo</option>
-                    <option value="manutencao">Manutenção</option>
-                    <option value="baixado">Baixado</option>
-                </select>
-            </div>
+                    <div class="filtro-grupo">
+                        <label for="status">Status:</label>
+                        <select id="status" required style="width: 100%; height: 45px; border-radius: 10px; border: 1px solid #ccc; padding: 0 15px; font-size: 1rem; background: white;">
+                            <option value="ativo">Ativo</option>
+                            <option value="manutencao">Manutenção</option>
+                            <option value="baixado">Baixado</option>
+                        </select>
+                    </div>
 
-            <div class="form-grupo">
-                <label for="responsavel">Responsável:</label>
-                <input type="text" id="responsavel" required placeholder="Ex: Engenharia Clínica">
-            </div>
+                    <div class="filtro-grupo">
+                        <label for="responsavel">Responsável:</label>
+                        <input type="text" id="responsavel" required placeholder="Ex: Engenharia Clínica" style="width: 100%; height: 45px; border-radius: 10px; border: 1px solid #ccc; padding: 0 15px; font-size: 1rem;">
+                    </div>
 
-            <div class="form-grupo">
-                <label for="valor">Valor (R$):</label>
-                <input type="number" id="valor" step="0.01" required placeholder="Ex: 45000">
-            </div>
+                    <div class="filtro-grupo">
+                        <label for="valor">Valor (R$):</label>
+                        <input type="number" id="valor" step="0.01" required placeholder="Ex: 45000" style="width: 100%; height: 45px; border-radius: 10px; border: 1px solid #ccc; padding: 0 15px; font-size: 1rem;">
+                    </div>
+                </div>
 
-            <button type="submit" class="btn-acao">Salvar Equipamento</button>
-        </form>
+                <div style="margin-top: 10px;">
+                    <button type="submit" class="btn-acao" style="padding: 12px 25px; font-size: 1.05rem;">Salvar Equipamento</button>
+                </div>
+            </form>
+        </section>
     </main>
 
     <footer>
         <p>SIGEM v1.0.0</p>
-        <p>Última atualização: <span id="ultimaAtualizacao"></span></p>
+        <p>Engenharia Clínica • Gestão Patrimonial • Tecnologia Hospitalar</p>
+        <p style="font-size: 0.85rem; opacity: 0.8; margin-top: 5px;">Última atualização: <span id="ultimaAtualizacao"></span></p>
     </footer>
 
-    <!-- Script principal do sistema -->
     <script src="scripts/app.js"></script>
 </body>
 </html>
