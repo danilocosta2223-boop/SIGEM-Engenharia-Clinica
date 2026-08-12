@@ -1,954 +1,333 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM - Grupo Fleury | Cadastro Corporativo de Equipamentos</title>
-    <link rel="stylesheet" href="estilos/style.css">
+    <title>SIGEM v2.7 | Gestão Clínica</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #005b8f;
-            --primary-dark: #003f63;
-            --accent: #00a3ad;
-            --purple: #6b46c1;
-            --success: #2e7d32;
-            --warning: #ed8936;
-            --danger: #e53e3e;
-            --bg-gradient: #f7fafc;
-            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
+        :root { --bg: #f8fafc; --text: #1e293b; --card-bg: white; --primary: #2563eb; }
+        [data-theme="dark"] { --bg: #0f172a; --text: #f8fafc; --card-bg: #1e293b; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 20px; transition: 0.3s; box-sizing: border-box; }
+        
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .card { background: var(--card-bg); padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: var(--card-bg); min-width: 600px; }
+        th, td { padding: 12px; border: 1px solid #444; text-align: left; vertical-align: middle; }
+        
+        form, .search-container { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid #444; margin-bottom: 15px; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn-acao { background: var(--primary); color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; }
+        .tabela-foto { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .tabela-foto:hover { transform: scale(1.1); }
+        
+        #resultadoPatrimonio { font-size: 0.85rem; margin-top: 2px; font-weight: bold; }
+        
+        /* Modal de Imagem Ampliada */
+        #modalFoto { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
+        #modalFoto img { max-width: 90%; max-height: 90%; border-radius: 8px; }
 
-        body {
-            background-color: var(--bg-gradient);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            color: #2d3748;
-            margin: 0;
-            padding: 0;
-        }
-
-        header {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow-sm);
-        }
-
-        header nav a {
-            text-decoration: none;
-            color: #4a5568;
-            font-weight: 600;
-            margin-left: 20px;
-            padding: 8px 14px;
-            border-radius: 8px;
-            transition: 0.2s;
-        }
-
-        header nav a:hover, header nav a.ativo {
-            background: #e6fffa;
-            color: var(--accent);
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        /* Layout Principal com Dashboard Lateral */
-        .layout-grid {
-            display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 30px;
-            align-items: start;
-        }
-
-        @media (max-width: 1100px) {
-            .layout-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Hero Executivo Grupo Fleury */
-        .hero {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            padding: 40px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            color: white;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::after {
-            content: "🏥";
-            position: absolute;
-            right: -20px;
-            bottom: -30px;
-            font-size: 10rem;
-            opacity: 0.08;
-        }
-
-        /* Selos de Conformidade */
-        .selos-container {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
-        }
-
-        .selo-badge {
-            background: white;
-            color: var(--primary);
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid #e2e8f0;
-        }
-
-        /* KPIs Executivos Estilo Fleury com Prisma */
-        .home-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* Dashboard Lateral Fixo */
-        .dashboard-lateral {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid #e2e8f0;
-            box-shadow: var(--shadow-lg);
-            position: sticky;
-            top: 20px;
-        }
-
-        /* Preview da Foto */
-        .preview-box {
-            width: 100%;
-            height: 220px;
-            border: 2px dashed #cbd5e1;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8fafc;
-            color: #64748b;
-            text-align: center;
-            overflow: hidden;
-            position: relative;
-            margin-top: 10px;
-        }
-
-        .preview-box img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 12px;
-            object-fit: cover;
-            box-shadow: var(--shadow-lg);
-        }
-
-        /* Barra de Progresso e Score Ponderado */
-        .progress-container {
-            background: #e2e8f0;
-            border-radius: 10px;
-            height: 10px;
-            width: 100%;
-            overflow: hidden;
-            margin-top: 8px;
-            margin-bottom: 15px;
-        }
-
-        .progress-bar {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            height: 100%;
-            width: 0%;
-            transition: width 0.4s ease;
-            border-radius: 10px;
-        }
-
-        /* Timeline Corporativa */
-        .timeline {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .etapa {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: #a0aec0;
-            font-size: 0.95rem;
-            position: relative;
-        }
-
-        .etapa.ativa {
-            color: var(--primary);
-        }
-
-        /* Fieldsets e Grupos */
-        fieldset {
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 25px;
-            background: white;
-            box-shadow: var(--shadow-sm);
-        }
-
-        legend {
-            font-weight: 700;
-            color: var(--primary-dark);
-            background: #edf2f7;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-size: 1rem;
-            border: 1px solid #cbd5e1;
-        }
-
-        .form-grupo {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .form-grupo label {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #4a5568;
-        }
-
-        .form-grupo input, .form-grupo select, .form-grupo textarea {
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: 1px solid #cbd5e1;
-            font-size: 1rem;
-            background: #fff;
-            transition: 0.2s;
-        }
-
-        .form-grupo input:focus, .form-grupo select:focus, .form-grupo textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 163, 173, 0.15);
-        }
-
-        .btn-acao {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
-            border: none;
-            padding: 0 24px;
-            height: 50px;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-acao:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        footer {
-            text-align: center;
-            padding: 30px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            margin-top: 50px;
-            color: #718096;
+        @media(max-width:768px){
+            body { padding: 10px; }
+            .dashboard { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 1.8rem;">🏥</span>
-            <div style="display: flex; flex-direction: column;">
-                <span style="font-size: 1.4rem; font-weight: 800; color: var(--primary);">SIGEM</span>
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 600;">Grupo Fleury • Engenharia Clínica</span>
-            </div>
+
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1>SIGEM <small>v2.7</small></h1>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button onclick="alternarTema()" class="btn-acao" style="background:#475569;"><i class="fa-solid fa-circle-half-stroke"></i></button>
+            <label class="btn-acao" style="cursor: pointer; margin: 0; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-upload"></i> Importar <input type="file" id="importarJson" accept=".json" onchange="importarBackup(event)" style="display: none;">
+            </label>
+            <button onclick="baixarBackup()" class="btn-acao"><i class="fa-solid fa-download"></i> JSON</button>
         </div>
-        <nav>
-            <a href="cadastro.html" class="ativo" aria-label="Página de Cadastro de Equipamentos">➕ Cadastro</a>
-            <a href="equipamentos.html" aria-label="Lista de Equipamentos">📋 Equipamentos</a>
-            <a href="relatorios.html" aria-label="Relatórios Executivos">📊 Relatórios</a>
-            <a href="index.html" aria-label="Dashboard Principal">🏠 Dashboard</a>
-        </nav>
     </header>
 
-    <main class="container">
-        <!-- Hero Executivo -->
-        <div class="hero">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">VERSÃO ENTERPRISE</span>
-                <span style="background: rgba(0,163,173,0.4); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">🟢 SISTEMA ATIVO</span>
-            </div>
-            <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 8px;">Cadastro Corporativo de Equipamentos</h1>
-            <p style="opacity: 0.9; font-size: 1.05rem; max-width: 900px;">Gestão integrada dos ativos tecnológicos, engenharia clínica, rastreabilidade patrimonial e integração com o sistema Prisma.</p>
+    <div class="dashboard">
+        <div class="card">TOTAL<div id="kpi-total">0</div></div>
+        <div class="card">OPERACIONAIS<div id="kpi-operacionais">0</div></div>
+        <div class="card">CONFORMIDADE<div id="kpi-conformidade">100%</div></div>
+        <div class="card">UNIDADES<div id="kpi-unidades">0</div></div>
+    </div>
+
+    <!-- Verificação rápida antes do cadastro -->
+    <div class="search-container">
+        <input type="text" id="buscaPatrimonio" placeholder="🔍 Verificar patrimônio antes de cadastrar..." onkeyup="verificarPatrimonioRapido()">
+        <div id="resultadoPatrimonio"></div>
+    </div>
+
+    <form id="form-equipamento" onsubmit="salvarEquipamento(event)">
+        <input type="hidden" id="editIndex" value="">
+        <input type="text" id="patrimonio" required placeholder="Patrimônio (Obrigatório)">
+        <input type="text" id="nomeEquipamento" required placeholder="Nome do Equipamento (Obrigatório)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <input type="text" id="unidade" required placeholder="Unidade (Obrigatório)">
+            <input type="text" id="localDetalhado" placeholder="Sala, leito ou setor (Opcional)">
         </div>
+        <input type="date" id="dataCadastro">
+        <select id="status"><option>Operacional</option><option>Manutenção</option><option>Inativo</option></select>
+        <input type="file" id="fotoInput" accept="image/*" onchange="previewImagem()">
+        <img id="previewFoto" style="max-width: 100px; display: none; margin-top: 5px;">
+        <textarea id="observacao" placeholder="Observações (Opcional)"></textarea>
+        <button type="submit" id="btnSalvar" class="btn-acao">Salvar Equipamento</button>
+    </form>
 
-        <!-- Selos de Conformidade e Qualidade -->
-        <div class="selos-container">
-            <div class="selo-badge">✅ ANVISA Rastreável</div>
-            <div class="selo-badge">✅ Certificado ONA Pleno</div>
-            <div class="selo-badge">✅ ISO 9001 / 13485</div>
-            <div class="selo-badge">🛡️ Engenharia Clínica Fleury</div>
-        </div>
+    <input type="text" id="busca" placeholder="🔍 Buscar por patrimônio, nome, unidade, local ou status..." onkeyup="filtrarTabela()" style="margin-top:20px">
 
-        <!-- KPIs Executivos com Prisma e Totalizadores Dinâmicos -->
-        <section class="home-grid">
-            <div class="card">
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">TOTAL CADASTRADOS</span>
-                <p id="totalEquipamentos" style="font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-top: 5px;">0</p>
-            </div>
-            <div class="card">
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">CADASTRADOS NO PRISMA</span>
-                <p id="kpiPrismaCadastrado" style="font-size: 1.6rem; font-weight: 800; color: var(--success); margin-top: 5px;">0</p>
-            </div>
-            <div class="card">
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">PENDENTES NO PRISMA</span>
-                <p id="kpiPrismaPendente" style="font-size: 1.6rem; font-weight: 800; color: var(--warning); margin-top: 5px;">0</p>
-            </div>
-            <div class="card">
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">EM VALIDAÇÃO</span>
-                <p id="kpiPrismaValidacao" style="font-size: 1.6rem; font-weight: 800; color: var(--purple); margin-top: 5px;">0</p>
-            </div>
-            <div class="card">
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">EM OPERAÇÃO</span>
-                <p id="kpiOperacionais" style="font-size: 1.6rem; font-weight: 800; color: var(--success); margin-top: 5px;">0</p>
-            </div>
-        </section>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Patrimônio</th>
+                    <th>Nome</th>
+                    <th>Localização</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-corpo"></tbody>
+        </table>
+    </div>
 
-        <!-- Layout em Grid com Dashboard Lateral -->
-        <div class="layout-grid">
-            
-            <!-- Formulário Principal -->
-            <form id="formEquipamento">
-                
-                <!-- 1. Identificação do Ativo -->
-                <fieldset>
-                    <legend>📋 Identificação do Ativo</legend>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 15px;">
-                        <div class="form-grupo">
-                            <label for="patrimonio">Nº do Patrimônio:</label>
-                            <div style="display: flex; gap: 10px;">
-                                <input type="text" id="patrimonio" required placeholder="Ex: PAT-123456" style="flex: 1;" class="campo-monitorado" aria-label="Número do Patrimônio">
-                                <button type="button" class="btn-acao" style="min-width: auto; padding: 0 15px; height: 48px; font-size: 0.9rem;" title="Ler QR Code via Câmera">📷 QR</button>
-                            </div>
-                        </div>
+    <!-- Modal para foto ampliada -->
+    <div id="modalFoto" onclick="fecharModalFoto()">
+        <img id="imgAmpliada">
+    </div>
 
-                        <div class="form-grupo">
-                            <label for="equipamento">Nome do Equipamento:</label>
-                            <input type="text" id="equipamento" required placeholder="Ex: Monitor Multiparamétrico" class="campo-monitorado" aria-label="Nome do Equipamento">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="criticidade">Criticidade:</label>
-                            <select id="criticidade" required class="campo-monitorado" aria-label="Criticidade do Equipamento">
-                                <option value="Baixo">🟢 Baixo</option>
-                                <option value="Médio">🟡 Médio</option>
-                                <option value="Alto">🟠 Alto</option>
-                                <option value="Crítico" selected>🔴 Crítico</option>
-                            </select>
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="fotoEquipamento">Foto do Ativo:</label>
-                            <input type="file" id="fotoEquipamento" accept="image/*" style="padding: 8px; background: white;" class="campo-monitorado" aria-label="Foto do Ativo">
-                        </div>
-
-                        <!-- Preview Premium da Foto -->
-                        <div class="form-grupo" style="grid-column: 1 / -1;">
-                            <label>Preview Executivo da Imagem:</label>
-                            <div id="previewContainer" class="preview-box">
-                                <span>Nenhuma imagem selecionada</span>
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <!-- 2. Bloco Engenharia Clínica & Regulatório -->
-                <fieldset>
-                    <legend>🔧 Informações da Engenharia Clínica & Regulatório</legend>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 15px;">
-                        <div class="form-grupo">
-                            <label for="fabricante">Fabricante:</label>
-                            <input type="text" id="fabricante" required list="listaFabricantes" placeholder="Ex: Philips" class="campo-monitorado" aria-label="Fabricante">
-                            <datalist id="listaFabricantes">
-                                <option value="Philips">
-                                <option value="Mindray">
-                                <option value="GE Healthcare">
-                                <option value="Siemens Healthineers">
-                                <option value="Dräger">
-                            </datalist>
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="modelo">Modelo:</label>
-                            <input type="text" id="modelo" required list="listaModelos" placeholder="Ex: IntelliVue MX700" class="campo-monitorado" aria-label="Modelo">
-                            <datalist id="listaModelos">
-                                <option value="IntelliVue MX700">
-                                <option value="IntelliVue MX800">
-                                <option value="Efficia CM12">
-                                <option value="BeneView T8">
-                            </datalist>
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="numeroSerie">Número de Série:</label>
-                            <input type="text" id="numeroSerie" required placeholder="Ex: SN-98765432" class="campo-monitorado" aria-label="Número de Série">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="anvisa">Registro ANVISA:</label>
-                            <input type="text" id="anvisa" placeholder="Ex: 80102510123" class="campo-monitorado" aria-label="Registro ANVISA">
-                            <span id="alertaAnvisa" style="font-size: 0.8rem; color: #718096; margin-top: 2px;">⚠ Informe o registro padrão de 10 a 13 dígitos</span>
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="classeAnvisa">Classe ANVISA:</label>
-                            <select id="classeAnvisa" class="campo-monitorado" aria-label="Classe ANVISA">
-                                <option value="Classe I">Classe I (Baixo Risco)</option>
-                                <option value="Classe II">Classe II (Risco Médio)</option>
-                                <option value="Classe III" selected>Classe III (Alto Risco)</option>
-                                <option value="Classe IV">Classe IV (Máximo Risco)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="respTecnico">Responsável Técnico:</label>
-                            <input type="text" id="respTecnico" placeholder="Ex: Eng. Carlos Mendes" class="campo-monitorado" aria-label="Responsável Técnico">
-                        </div>
-                    </div>
-                </fieldset>
-
-                <!-- 3. Integração com Sistema Prisma & Situação -->
-                <fieldset>
-                    <legend>🔄 Integração com Sistema Prisma & Operação</legend>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 15px;">
-                        <div class="form-grupo">
-                            <label for="numeroOS">Número da OS (Automático):</label>
-                            <input type="text" id="numeroOS" readonly style="background: #edf2f7; color: #4a5568; font-weight: 700;" class="campo-monitorado" aria-label="Número da OS">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="statusOS">Status da OS:</label>
-                            <select id="statusOS" class="campo-monitorado" aria-label="Status da OS">
-                                <option value="Aberta" selected>Aberta</option>
-                                <option value="Em Andamento">Em Andamento</option>
-                                <option value="Concluída">Concluída</option>
-                                <option value="Cancelada">Cancelada</option>
-                            </select>
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="situacaoEquipamento">Situação do Equipamento:</label>
-                            <select id="situacaoEquipamento" class="campo-monitorado" aria-label="Situação do Equipamento">
-                                <option value="novo">🆕 Novo</option>
-                                <option value="instalado">✅ Instalado</option>
-                                <option value="operacao" selected>🏥 Em Operação</option>
-                                <option value="manutencao">🔧 Em Manutenção</option>
-                                <option value="baixado">♻️ Baixado</option>
-                            </select>
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="statusPrisma">Status no Prisma:</label>
-                            <select id="statusPrisma" class="campo-monitorado" aria-label="Status no Prisma">
-                                <option value="pendente">⏳ Não cadastrado</option>
-                                <option value="cadastrado">✅ Cadastrado no Prisma</option>
-                                <option value="validacao">🔍 Em validação</option>
-                                <option value="erro">❌ Divergência</option>
-                            </select>
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="dataPrisma">Data Cadastro Prisma:</label>
-                            <input type="date" id="dataPrisma" class="campo-monitorado" aria-label="Data Cadastro Prisma">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="responsavelPrisma">Responsável Prisma:</label>
-                            <input type="text" id="responsavelPrisma" placeholder="Ex: Ana Souza" class="campo-monitorado" aria-label="Responsável Prisma">
-                        </div>
-
-                        <div class="form-grupo" style="grid-column: 1 / -1;">
-                            <label for="historico">Histórico de Movimentação / Observações:</label>
-                            <textarea id="historico" rows="3" placeholder="Ex: Cadastro inicial realizado e validado para operação no Grupo Fleury." class="campo-monitorado" aria-label="Histórico de Movimentação"></textarea>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <!-- 4. Unidades Grupo Fleury -->
-                <fieldset>
-                    <legend>🏢 Unidade e Localização Hospitalar</legend>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 15px;">
-                        <div class="form-grupo">
-                            <label for="unidadeFleury">Unidade Fleury / Hospital:</label>
-                            <select id="unidadeFleury" required class="campo-monitorado" aria-label="Unidade Fleury">
-                                <option value="Fleury Paraíso">Fleury Paraíso</option>
-                                <option value="Fleury Morumbi">Fleury Morumbi</option>
-                                <option value="Hospital Alvorada">Hospital Alvorada</option>
-                                <option value="Hospital 9 de Julho">Hospital 9 de Julho</option>
-                            </select>
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="predio">Bloco / Prédio:</label>
-                            <input type="text" id="predio" placeholder="Ex: Bloco A" required class="campo-monitorado" aria-label="Bloco ou Prédio">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="andar">Andar:</label>
-                            <input type="text" id="andar" placeholder="Ex: 3º Andar" required class="campo-monitorado" aria-label="Andar">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="sala">Sala / Leito:</label>
-                            <input type="text" id="sala" placeholder="Ex: Sala 302" required class="campo-monitorado" aria-label="Sala ou Leito">
-                        </div>
-                    </div>
-                </fieldset>
-
-                <!-- 5. Controle Financeiro (CAPEX / OPEX) -->
-                <fieldset>
-                    <legend>💰 Controle Financeiro e Custos</legend>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 15px;">
-                        <div class="form-grupo">
-                            <label for="valor">Valor de Aquisição (R$):</label>
-                            <input type="number" id="valor" step="0.01" min="0" required placeholder="Ex: 45000.00" class="campo-monitorado" aria-label="Valor de Aquisição">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="dataAquisicao">Data de Aquisição:</label>
-                            <input type="date" id="dataAquisicao" required class="campo-monitorado" aria-label="Data de Aquisição">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="centroCusto">Centro de Custo:</label>
-                            <input type="text" id="centroCusto" placeholder="Ex: CC-ENG-CLINICA-01" class="campo-monitorado" aria-label="Centro de Custo">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="tipoCusto">Classificação Orçamentária:</label>
-                            <select id="tipoCusto" class="campo-monitorado" aria-label="Classificação Orçamentária">
-                                <option value="CAPEX">CAPEX (Investimento Ativo)</option>
-                                <option value="OPEX">OPEX (Operacional / Locação)</option>
-                            </select>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <!-- 6. Manutenção e Garantia -->
-                <fieldset>
-                    <legend>🔧 Gestão de Manutenção e Garantia</legend>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 15px;">
-                        <div class="form-grupo">
-                            <label for="status">Status Operacional:</label>
-                            <select id="status" required class="campo-monitorado" aria-label="Status Operacional">
-                                <option value="ativo">✅ Operacional</option>
-                                <option value="manutencao">🔧 Em Manutenção</option>
-                                <option value="baixado">♻ Baixado</option>
-                            </select>
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="empresaManutencao">Empresa / Fornecedor:</label>
-                            <input type="text" id="empresaManutencao" placeholder="Ex: Philips Medical Systems" class="campo-monitorado" aria-label="Empresa de Manutenção">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="fimGarantia">Fim da Garantia:</label>
-                            <input type="date" id="fimGarantia" class="campo-monitorado" aria-label="Fim da Garantia">
-                        </div>
-
-                        <div class="form-grupo">
-                            <label for="proximaManutencao">Próxima Preventiva:</label>
-                            <input type="date" id="proximaManutencao" class="campo-monitorado" aria-label="Próxima Manutenção Preventiva">
-                        </div>
-                    </div>
-                </fieldset>
-
-                <!-- 7. Assinatura Digital -->
-                <fieldset>
-                    <legend>✍️ Validação Corporativa</legend>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 15px; align-items: center;">
-                        <div class="form-grupo">
-                            <label>Responsável pelo Registro:</label>
-                            <input type="text" value="Danilo Rafael da Silva Costa" readonly style="background: #edf2f7; color: #4a5568;">
-                        </div>
-                        <div class="form-grupo">
-                            <label>Data de Emissão:</label>
-                            <input type="text" value="12/08/2026" readonly style="background: #edf2f7; color: #4a5568;">
-                        </div>
-                        <div class="form-grupo" style="grid-column: 1 / -1;">
-                            <label style="font-weight: normal; display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem;">
-                                <input type="checkbox" id="confirmaExatidao" required style="width: 18px; height: 18px;" class="campo-monitorado" aria-label="Confirmo exatidão">
-                                <strong>Confirmo a exatidão das informações técnicas e regulatórias para auditoria do Grupo Fleury.</strong>
-                            </label>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <!-- Botões de Ação -->
-                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 30px;">
-                    <button type="submit" class="btn-acao">💾 Salvar Equipamento</button>
-                    <button type="button" id="btnRascunho" style="background: #6c757d; color: white; padding: 0 20px; height: 50px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600;">📝 Salvar Rascunho</button>
-                    <button type="button" id="btnLimpar" style="background: #e2e8f0; color: #334155; padding: 0 20px; height: 50px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600;">🔄 Limpar</button>
-                </div>
-            </form>
-
-            <!-- Dashboard Lateral Fixo -->
-            <aside class="dashboard-lateral">
-                <h3 style="color: var(--primary-dark); margin-bottom: 15px; border-bottom: 2px solid #edf2f7; padding-bottom: 8px;">📊 Resumo Executivo</h3>
-                
-                <div style="margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; color: #4a5568;">
-                        <span>Score de Qualidade</span>
-                        <span id="scoreTexto">0/100</span>
-                    </div>
-                    <div class="progress-container">
-                        <div id="barraProgresso" class="progress-bar"></div>
-                    </div>
-                </div>
-
-                <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem; margin-bottom: 20px;">
-                    <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <span style="font-size: 0.75rem; color: #718096; display: block;">PATRIMÔNIO</span>
-                        <strong id="resumo-patrimonio" style="color: var(--primary);">--</strong>
-                    </div>
-                    <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <span style="font-size: 0.75rem; color: #718096; display: block;">EQUIPAMENTO</span>
-                        <strong id="resumo-equipamento" style="color: var(--primary);">--</strong>
-                    </div>
-                    <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <span style="font-size: 0.75rem; color: #718096; display: block;">CRITICIDADE</span>
-                        <strong id="resumo-criticidade" style="color: var(--danger);">🔴 Crítico</strong>
-                    </div>
-                    <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <span style="font-size: 0.75rem; color: #718096; display: block;">VALOR TOTAL</span>
-                        <strong id="resumo-valor" style="color: var(--success);">--</strong>
-                    </div>
-                    <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <span style="font-size: 0.75rem; color: #718096; display: block;">VALIDAÇÃO ANVISA</span>
-                        <strong id="resumo-anvisa" style="color: var(--warning);">⚠ Não informado</strong>
-                    </div>
-                    <div style="background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                        <span style="font-size: 0.75rem; color: #718096; display: block;">STATUS PRISMA</span>
-                        <strong id="resumo-prisma" style="color: var(--warning);">⏳ Não cadastrado</strong>
-                    </div>
-                </div>
-
-                <div id="alertaInteligente" style="background: #fff5f5; border-left: 4px solid var(--danger); padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #c53030;">
-                    ⚠ Preencha os dados regulatórios para validação de auditoria.
-                </div>
-            </aside>
-        </div>
-
-        <!-- Timeline do Ciclo de Vida do Ativo -->
-        <div class="timeline">
-            <div class="etapa ativa">📦 1. Aquisição</div>
-            <div class="etapa">📍 2. Instalação</div>
-            <div class="etapa">✅ 3. Operação Assistencial</div>
-            <div class="etapa">🔧 4. Manutenção Preventiva</div>
-            <div class="etapa">♻ 5. Baixa Patrimonial</div>
-        </div>
-    </main>
-
-    <footer>
-        <p>Grupo Fleury • Engenharia Clínica</p>
-        <p style="font-weight: 600; color: var(--primary); margin-top: 4px;">SIGEM v1.0.0 • Plataforma Corporativa de Gestão Tecnológica</p>
-        <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 6px;">Última atualização: 12/08/2026</p>
-    </footer>
-
-    <!-- Script de Dinamismo, Controles e Persistência Real -->
     <script>
-        // Função para gerar número de OS automático sequencial
-        function gerarNumeroOS() {
-            let contadorOS = Number(localStorage.getItem('sigemContadorOS')) || 153;
-            contadorOS++;
-            localStorage.setItem('sigemContadorOS', contadorOS);
-            return `OS-2026-${String(contadorOS).padStart(6, '0')}`;
+        let lista = JSON.parse(localStorage.getItem('sigem_equipamentos') || '[]');
+
+        function definirDataHoje() {
+            document.getElementById("dataCadastro").value = new Date().toISOString().split("T")[0];
         }
 
-        // Inicializa a OS automática ao carregar a página se não houver rascunho
-        window.addEventListener('load', () => {
-            const rascunho = JSON.parse(localStorage.getItem('sigemRascunho'));
-            if (!rascunho || !rascunho.numeroOS) {
-                document.getElementById('numeroOS').value = gerarNumeroOS();
-            }
-            atualizarKPIsGlobais();
-        });
-
-        // Verificação de patrimônio duplicado
-        function verificarPatrimonio(patrimonio) {
-            const equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
-            return equipamentos.some(eq => eq.patrimonio === patrimonio);
-        }
-
-        // Atualização dos KPIs Globais na Tela
-        function atualizarKPIsGlobais() {
-            const equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
+        function verificarPatrimonioRapido() {
+            const termo = document.getElementById('buscaPatrimonio').value.trim().toLowerCase();
+            const resDiv = document.getElementById('resultadoPatrimonio');
+            const inputPat = document.getElementById('buscaPatrimonio');
             
-            document.getElementById('totalEquipamentos').textContent = equipamentos.length;
-            
-            const cadPrisma = equipamentos.filter(eq => eq.statusPrisma === 'cadastrado').length;
-            const pendPrisma = equipamentos.filter(eq => eq.statusPrisma === 'pendente' || !eq.statusPrisma).length;
-            const valPrisma = equipamentos.filter(eq => eq.statusPrisma === 'validacao').length;
-            const operacionais = equipamentos.filter(eq => eq.situacaoEquipamento === 'operacao').length;
-
-            document.getElementById('kpiPrismaCadastrado').textContent = cadPrisma;
-            document.getElementById('kpiPrismaPendente').textContent = pendPrisma;
-            document.getElementById('kpiPrismaValidacao').textContent = valPrisma;
-            document.getElementById('kpiOperacionais').textContent = operacionais;
-        }
-
-        // Preview da foto com estilo corporativo
-        document.getElementById('fotoEquipamento').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const container = document.getElementById('previewContainer');
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    container.innerHTML = `<img src="${event.target.result}" alt="Preview do Equipamento">`;
-                }
-                reader.readAsDataURL(file);
-            } else {
-                container.innerHTML = '<span>Nenhuma imagem selecionada</span>';
-            }
-            atualizarSistema();
-        });
-
-        // Validação realista ANVISA (/^\d{10,13}$/)
-        document.getElementById('anvisa').addEventListener('input', function(e) {
-            const val = e.target.value.trim();
-            const badgeAnvisa = document.getElementById('resumo-anvisa');
-            const alertaAnvisa = document.getElementById('alertaAnvisa');
-            
-            if (/^\d{10,13}$/.test(val)) {
-                badgeAnvisa.textContent = '✅ ANVISA Regular';
-                badgeAnvisa.style.color = 'var(--success)';
-                alertaAnvisa.textContent = '✅ Registro ANVISA válido (10-13 dígitos)';
-                alertaAnvisa.style.color = 'var(--success)';
-            } else {
-                badgeAnvisa.textContent = '⚠ Não informado';
-                badgeAnvisa.style.color = 'var(--warning)';
-                alertaAnvisa.textContent = '⚠ Informe o registro padrão de 10 a 13 dígitos';
-                alertaAnvisa.style.color = '#718096';
-            }
-            atualizarSistema();
-        });
-
-        // Atualização em tempo real do Dashboard Lateral
-        document.getElementById('patrimonio').addEventListener('input', (e) => {
-            document.getElementById('resumo-patrimonio').textContent = e.target.value || '--';
-            atualizarSistema();
-        });
-        document.getElementById('equipamento').addEventListener('input', (e) => {
-            document.getElementById('resumo-equipamento').textContent = e.target.value || '--';
-            atualizarSistema();
-        });
-        document.getElementById('criticidade').addEventListener('change', (e) => {
-            const criticidades = {
-                'Baixo': '🟢 Baixo',
-                'Médio': '🟡 Médio',
-                'Alto': '🟠 Alto',
-                'Crítico': '🔴 Crítico'
-            };
-            document.getElementById('resumo-criticidade').textContent = criticidades[e.target.value] || '🔴 Crítico';
-            atualizarSistema();
-        });
-        document.getElementById('valor').addEventListener('input', (e) => {
-            const val = e.target.value;
-            const formatador = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-            document.getElementById('resumo-valor').textContent = val ? formatador.format(val) : '--';
-            atualizarSistema();
-        });
-        document.getElementById('statusPrisma').addEventListener('change', (e) => {
-            const statusMap = {
-                'pendente': '⏳ Não cadastrado',
-                'cadastrado': '✅ Cadastrado no Prisma',
-                'validacao': '🔍 Em validação',
-                'erro': '❌ Divergência'
-            };
-            document.getElementById('resumo-prisma').textContent = statusMap[e.target.value] || '⏳ Não cadastrado';
-            atualizarSistema();
-        });
-
-        // Sistema de Pesos para o Score de Qualidade
-        const pesos = {
-            patrimonio: 15,
-            equipamento: 15,
-            anvisa: 20,
-            numeroSerie: 10,
-            fabricante: 10,
-            modelo: 10,
-            valor: 10,
-            confirmaExatidao: 10
-        };
-
-        const campos = document.querySelectorAll('.campo-monitorado');
-        function atualizarSistema() {
-            let pontosObtidos = 0;
-            let pontosTotais = 0;
-
-            campos.forEach(campo => {
-                const peso = pesos[campo.id] || 5;
-                pontosTotais += peso;
-
-                if (campo.type === 'checkbox' && campo.checked) {
-                    pontosObtidos += peso;
-                } else if (campo.type !== 'checkbox' && campo.value.trim() !== '') {
-                    pontosObtidos += peso;
-                }
-            });
-
-            const score = Math.min(100, Math.round((pontosObtidos / pontosTotais) * 100)) || 0;
-            
-            document.getElementById('barraProgresso').style.width = score + '%';
-            document.getElementById('scoreTexto').textContent = score + '/100';
-
-            const alerta = document.getElementById('alertaInteligente');
-            if (score > 80) {
-                alerta.style.background = '#f0fff4';
-                alerta.style.borderColor = 'var(--success)';
-                alerta.style.color = '#22543d';
-                alerta.innerHTML = '✅ Cadastro pronto para auditoria e submissão na Engenharia Clínica.';
-            } else {
-                alerta.style.background = '#fff5f5';
-                alerta.style.borderColor = 'var(--danger)';
-                alerta.style.color = '#c53030';
-                alerta.innerHTML = '⚠ Preencha os campos obrigatórios e regulatórios para atingir 100% de conformidade.';
-            }
-        }
-
-        campos.forEach(campo => {
-            campo.addEventListener('input', atualizarSistema);
-            campo.addEventListener('change', atualizarSistema);
-        });
-
-        // Evento de Submissão do Formulário (Salvar Definitivo com Validação de Duplicidade e Data de Cadastro)
-        document.getElementById('formEquipamento').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const patrimonioVal = document.getElementById('patrimonio').value.trim();
-
-            if (verificarPatrimonio(patrimonioVal)) {
-                alert("Erro: Este número de patrimônio já foi cadastrado no sistema.");
+            if (!termo) {
+                resDiv.innerHTML = "";
+                inputPat.style.borderColor = "#ddd";
                 return;
             }
-
-            const dadosNovoEquipamento = {};
-            campos.forEach(campo => {
-                dadosNovoEquipamento[campo.id] = campo.type === 'checkbox' ? campo.checked : campo.value;
-            });
-
-            // Adiciona data do registro automaticamente
-            dadosNovoEquipamento.dataCadastro = new Date().toLocaleDateString('pt-BR');
-
-            const equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
-            equipamentos.push(dadosNovoEquipamento);
-            localStorage.setItem("sigemEquipamentos", JSON.stringify(equipamentos));
-
-            // Remove rascunho e atualiza KPIs e nova OS
-            localStorage.removeItem('sigemRascunho');
-            atualizarKPIsGlobais();
-
-            alert('Equipamento salvo e integrado ao sistema Prisma com sucesso!');
             
-            // Limpa formulário e gera nova OS
-            document.getElementById('formEquipamento').reset();
-            document.getElementById('numeroOS').value = gerarNumeroOS();
-            document.getElementById('previewContainer').innerHTML = '<span>Nenhuma imagem selecionada</span>';
-            atualizarSistema();
-        });
-
-        // Salvar Rascunho no LocalStorage
-        document.getElementById('btnRascunho').addEventListener('click', () => {
-            const dados = {};
-            campos.forEach(campo => {
-                dados[campo.id] = campo.type === 'checkbox' ? campo.checked : campo.value;
-            });
-            localStorage.setItem('sigemRascunho', JSON.stringify(dados));
-            alert('Rascunho salvo com sucesso no navegador!');
-        });
-
-        // Carregamento automático do rascunho salvo
-        window.addEventListener('load', () => {
-            const dados = JSON.parse(localStorage.getItem('sigemRascunho'));
-            if (!dados) return;
-
-            Object.keys(dados).forEach(id => {
-                const campo = document.getElementById(id);
-                if (!campo) return;
-
-                if (campo.type === 'checkbox') {
-                    campo.checked = dados[id];
-                } else {
-                    campo.value = dados[id];
-                }
-            });
-
-            // Dispara atualizações visuais após carregar o rascunho
-            const valInput = document.getElementById('valor');
-            if (valInput && valInput.value) {
-                const formatador = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-                document.getElementById('resumo-valor').textContent = formatador.format(valInput.value);
+            const encontrado = lista.find(i => i.patrimonio.toLowerCase() === termo);
+            if (encontrado) {
+                inputPat.style.borderColor = "#ef4444";
+                resDiv.innerHTML = "⚠ Patrimônio já cadastrado";
+                resDiv.style.color = "#ef4444";
+            } else {
+                inputPat.style.borderColor = "#22c55e";
+                resDiv.innerHTML = "✅ Patrimônio disponível";
+                resDiv.style.color = "#22c55e";
             }
-            const patInput = document.getElementById('patrimonio');
-            if (patInput && patInput.value) document.getElementById('resumo-patrimonio').textContent = patInput.value;
-            const eqInput = document.getElementById('equipamento');
-            if (eqInput && eqInput.value) document.getElementById('resumo-equipamento').textContent = eqInput.value;
+        }
+
+        async function salvarEquipamento(e) {
+            e.preventDefault();
+            const pat = document.getElementById('patrimonio').value;
+            const editIndex = document.getElementById('editIndex').value;
+
+            // Validação de duplicidade para novos e edições
+            if (editIndex !== "") {
+                const duplicado = lista.some((item, index) => item.patrimonio === pat && index != editIndex);
+                if (duplicado) {
+                    alert("Já existe outro equipamento com este patrimônio.");
+                    return;
+                }
+            } else {
+                if (lista.some(item => item.patrimonio === pat)) {
+                    alert("Este patrimônio já está cadastrado.");
+                    return;
+                }
+            }
+
+            const historicoExistente = editIndex !== "" ? (lista[editIndex].historico || []) : [];
+            historicoExistente.push({
+                data: new Date().toISOString(),
+                acao: editIndex !== "" ? "Editado" : "Criado"
+            });
+
+            const dadosEquipamento = {
+                patrimonio: pat,
+                nome: document.getElementById('nomeEquipamento').value,
+                unidade: document.getElementById('unidade').value,
+                localDetalhado: document.getElementById('localDetalhado').value,
+                status: document.getElementById('status').value,
+                data: document.getElementById('dataCadastro').value,
+                obs: document.getElementById('observacao').value,
+                foto: document.getElementById('previewFoto').src || '',
+                historico: historicoExistente
+            };
+
+            if (editIndex !== "") {
+                lista[editIndex] = dadosEquipamento;
+                document.getElementById('editIndex').value = "";
+                document.getElementById('btnSalvar').innerText = "Salvar Equipamento";
+            } else {
+                lista.push(dadosEquipamento);
+            }
+
+            localStorage.setItem('sigem_equipamentos', JSON.stringify(lista));
+            e.target.reset();
+            document.getElementById('previewFoto').style.display = "none";
+            document.getElementById('previewFoto').src = "";
+            document.getElementById('buscaPatrimonio').style.borderColor = "#ddd";
+            document.getElementById('resultadoPatrimonio').innerHTML = "";
+            definirDataHoje();
+            atualizarDashboard();
+        }
+
+        function editarEquipamento(patrimonio) {
+            const index = lista.findIndex(i => i.patrimonio === patrimonio);
+            if (index === -1) return;
+            const item = lista[index];
+
+            document.getElementById('editIndex').value = index;
+            document.getElementById('patrimonio').value = item.patrimonio;
+            document.getElementById('nomeEquipamento').value = item.nome;
+            document.getElementById('unidade').value = item.unidade;
+            document.getElementById('localDetalhado').value = item.localDetalhado || '';
+            document.getElementById('dataCadastro').value = item.data || new Date().toISOString().split("T")[0];
+            document.getElementById('status').value = item.status;
+            document.getElementById('observacao').value = item.obs || '';
             
-            atualizarSistema();
-        });
+            if (item.foto && item.foto.startsWith('data:image')) {
+                const img = document.getElementById('previewFoto');
+                img.src = item.foto;
+                img.style.display = 'block';
+            }
 
-        document.getElementById('btnLimpar').addEventListener('click', () => {
-            localStorage.removeItem('sigemRascunho');
-            document.getElementById('formEquipamento').reset();
-            document.getElementById('numeroOS').value = gerarNumeroOS();
-            document.getElementById('previewContainer').innerHTML = '<span>Nenhuma imagem selecionada</span>';
-            document.getElementById('resumo-patrimonio').textContent = '--';
-            document.getElementById('resumo-equipamento').textContent = '--';
-            document.getElementById('resumo-valor').textContent = '--';
-            document.getElementById('resumo-anvisa').textContent = '⚠ Não informado';
-            document.getElementById('resumo-prisma').textContent = '⏳ Não cadastrado';
-            atualizarSistema();
-        });
+            document.getElementById('btnSalvar').innerText = "Atualizar Equipamento";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-        // Inicialização
-        atualizarSistema();
+        function excluirEquipamento(patrimonio) {
+            const codigoDigitado = prompt("Para confirmar a exclusão, digite o patrimônio do equipamento:");
+            if (codigoDigitado !== patrimonio) {
+                if (codigoDigitado !== null) alert("Código incorreto. Exclusão cancelada por segurança.");
+                return;
+            }
+            
+            lista = lista.filter(i => i.patrimonio !== patrimonio);
+            localStorage.setItem('sigem_equipamentos', JSON.stringify(lista));
+            atualizarDashboard();
+        }
+
+        function filtrarTabela() {
+            const termo = document.getElementById('busca').value.toLowerCase();
+            const filtrados = lista.filter(i => 
+                i.patrimonio.toLowerCase().includes(termo) || 
+                i.nome.toLowerCase().includes(termo) || 
+                i.unidade.toLowerCase().includes(termo) ||
+                (i.localDetalhado && i.localDetalhado.toLowerCase().includes(termo)) ||
+                i.status.toLowerCase().includes(termo)
+            );
+            renderizarTabela(filtrados);
+        }
+
+        function renderizarTabela(dados = lista) {
+            const tbody = document.getElementById("tabela-corpo");
+            tbody.innerHTML = dados.map(item => `
+                <tr>
+                    <td>${item.foto && item.foto.startsWith('data:image') ? `<img src="${item.foto}" class="tabela-foto" onclick="ampliarFoto('${item.foto}')">` : '<i class="fa-solid fa-image" style="color:#ccc; font-size:1.5rem;"></i>'}</td>
+                    <td><b>${item.patrimonio}</b></td>
+                    <td>${item.nome}</td>
+                    <td>${item.unidade} ${item.localDetalhado ? `<br><small style="color:gray;">${item.localDetalhado}</small>` : ''}</td>
+                    <td>${item.status}</td>
+                    <td>
+                        <div style="display:flex; gap:5px;">
+                            <button onclick="editarEquipamento('${item.patrimonio}')" class="btn-acao" style="background:#2563eb; padding: 6px 10px;" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="excluirEquipamento('${item.patrimonio}')" class="btn-acao" style="background:#ef4444; padding: 6px 10px;" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function ampliarFoto(src) {
+            document.getElementById('imgAmpliada').src = src;
+            document.getElementById('modalFoto').style.display = 'flex';
+        }
+
+        function fecharModalFoto() {
+            document.getElementById('modalFoto').style.display = 'none';
+        }
+
+        function atualizarDashboard() {
+            document.getElementById('kpi-total').innerText = lista.length;
+            document.getElementById('kpi-operacionais').innerText = lista.filter(i => i.status === "Operacional").length;
+            document.getElementById('kpi-conformidade').innerText = calcularConformidade() + "%";
+            document.getElementById('kpi-unidades').innerText = new Set(lista.map(i => i.unidade)).size;
+            renderizarTabela();
+        }
+
+        function calcularConformidade() {
+            if (lista.length === 0) return 100;
+            return Math.round((lista.filter(i => i.nome && i.patrimonio && i.unidade).length / lista.length) * 100);
+        }
+
+        function previewImagem() {
+            const file = document.getElementById('fotoInput').files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.getElementById('previewFoto');
+                img.src = e.target.result;
+                img.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function alternarTema() {
+            const html = document.documentElement;
+            const novo = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', novo);
+            localStorage.setItem('tema', novo);
+        }
+
+        function baixarBackup() {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(lista)], {type: 'application/json'}));
+            a.download = "sigem_backup.json";
+            a.click();
+        }
+
+        function importarBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const dadosImportados = JSON.parse(e.target.result);
+                    if (Array.isArray(dadosImportados)) {
+                        lista = dadosImportados;
+                        localStorage.setItem('sigem_equipamentos', JSON.stringify(lista));
+                        atualizarDashboard();
+                        alert("Backup importado com sucesso!");
+                    } else {
+                        alert("Arquivo JSON inválido.");
+                    }
+                } catch (err) {
+                    alert("Erro ao ler o arquivo JSON.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const temaSalvo = localStorage.getItem('tema');
+            if (temaSalvo) document.documentElement.setAttribute('data-theme', temaSalvo);
+            definirDataHoje();
+            atualizarDashboard();
+        });
     </script>
 </body>
 </html>
