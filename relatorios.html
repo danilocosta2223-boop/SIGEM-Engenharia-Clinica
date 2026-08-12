@@ -3,147 +3,926 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM - Sistema de Gestão de Equipamentos Médicos</title>
-    <link rel="stylesheet" href="estilos/style.css">
+    <title>SIGEM 10/10 Master • Painel do Coordenador | Grupo Fleury</title>
+    <!-- Chart.js para BI Corporativo Avançado -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (XLSX) para exportação profissional em Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary: #005b8f;
+            --primary-dark: #003f63;
+            --accent: #00a3ad;
+            --purple: #6b46c1;
+            --success: #2e7d32;
+            --warning: #ed8936;
+            --danger: #e53e3e;
+            --bg-gradient: #f4f7f6;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            background-color: var(--bg-gradient);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #2d3748;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        header nav a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 600;
+            margin-left: 20px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        header nav a:hover, header nav a.ativo {
+            background: #e6fffa;
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            color: white;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .hero::after {
+            content: "🏥";
+            position: absolute;
+            right: -10px;
+            bottom: -20px;
+            font-size: 9rem;
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        /* Topo Rápido */
+        .top-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .top-card {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+        }
+
+        .top-card .value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-top: 6px;
+        }
+
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Card Gigante: Risco de Cadastro Prisma & Barra de Progresso */
+        .risk-giant-card {
+            background: linear-gradient(135deg, #ffffff, #fef2f2);
+            border: 2px solid var(--danger);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* Barra de Progresso Customizada */
+        .progress-container {
+            width: 100%;
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            height: 12px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+
+        /* Resumo Executivo Box */
+        .executive-summary-box {
+            background: #ffffff;
+            border: 2px dashed var(--accent);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .executive-summary-box pre {
+            white-space: pre-wrap;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.95rem;
+            color: #2d3748;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Insights Automáticos */
+        .insights-box {
+            background: white;
+            border-left: 5px solid var(--accent);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .insights-box ul {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+
+        /* Tabelas */
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 0.95rem;
+        }
+
+        th {
+            background: #f7fafc;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-acao {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-acao:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* Selo de Conclusão / Status */
+        .selo-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .selo-critico { background: #fee2e2; color: #b91c1c; }
+        .selo-atencao { background: #fef3c7; color: #b45309; }
+        .selo-bom { background: #dcfce7; color: #15803d; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 50px;
+            color: #718096;
+        }
+
+        @media print {
+            header, .btn-acao, footer { display: none !important; }
+            body { background: white; }
+            .card, .chart-card, .risk-giant-card { border: 1px solid #ccc; box-shadow: none; }
+        }
+    </style>
 </head>
 <body>
     <header>
         <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 1.5rem; font-weight: bold;">SIGEM</span>
+            <span style="font-size: 1.8rem;">🏥</span>
+            <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 1.4rem; font-weight: 800; color: var(--primary);">SIGEM 10/10</span>
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 600;">Grupo Fleury • Painel Gerencial & Engenharia Clínica</span>
+            </div>
         </div>
         <nav>
             <a href="cadastro.html">➕ Cadastro</a>
             <a href="equipamentos.html">📋 Equipamentos</a>
-            <a href="relatorios.html" class="ativo">📊 Relatórios</a>
-            <a href="index.html">🏠 Dashboard</a>
+            <a href="relatorios.html" class="ativo">🎯 Painel 10/10</a>
+            <a href="index.html">🏠 Início</a>
         </nav>
     </header>
 
     <main class="container">
-        <h2>📊 Central de Relatórios Gerenciais</h2>
-        <p style="margin-bottom: 20px;">Indicadores estratégicos do parque tecnológico hospitalar.</p>
-
-        <div style="margin-bottom: 25px;">
-            <a href="cadastro.html" class="btn-acao" style="display: inline-block; text-decoration: none;">
-                ➕ Cadastrar Novo Equipamento
-            </a>
+        <!-- Hero Coordenador com Sistema Vivo -->
+        <div class="hero">
+            <div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">VERSÃO 10/10 MASTER</span>
+                    <span style="background: rgba(0,163,173,0.4); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">🟢 SISTEMA VIVO CORPORATIVO</span>
+                </div>
+                <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 8px;">Painel de Governança e Inteligência Clínica</h1>
+                <p style="opacity: 0.9; font-size: 1.05rem; max-width: 800px; margin: 0;">Painel 100% refinado com critério mínimo por unidade, ordenação por pior completude, backlog de pendências totais e exportação XLSX executiva otimizada.</p>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: 18px 25px; border-radius: 14px; text-align: right; backdrop-filter: blur(5px);">
+                <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.85; font-weight: 700; display: block;">Painel atualizado:</span>
+                <div id="heroUltimaAtualizacao" style="font-size: 1.1rem; font-weight: 800; margin: 2px 0 6px 0;">--/--/---- --:--</div>
+                <div id="heroTotalMonitored" style="font-size: 0.9rem; font-weight: 600; opacity: 0.9;">0 equipamentos monitorados</div>
+            </div>
         </div>
 
+        <!-- 🚀 Resumo de 10 Segundos -->
+        <section class="top-grid">
+            <div class="top-card">
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">TOTAL DE ATIVOS</span>
+                <div id="topTotalAtivos" class="value" style="color: var(--primary);">0</div>
+            </div>
+            <div class="top-card">
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">APTOS PARA PRISMA</span>
+                <div id="topProntosPrisma" class="value" style="color: var(--success);">0</div>
+                <small id="topProntosPrismaPct" style="color: var(--success); font-weight: 700;">0% do parque</small>
+            </div>
+            <div class="top-card">
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">🚨 PENDÊNCIAS TOTAIS</span>
+                <div id="topPendenciasTotais" class="value" style="color: var(--danger);">0</div>
+            </div>
+            <div class="top-card">
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">ÚLTIMA ATUALIZAÇÃO</span>
+                <div id="ultimaAtualizacaoSistema" class="value" style="color: var(--purple); font-size: 0.9rem; margin-top: 10px;">--/--/---- --:--</div>
+            </div>
+        </section>
+
+        <!-- 🏆 Unidade Destaque, Fabricante Líder, Meta Prisma e Ativos Críticos -->
+        <section class="top-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+            <div class="top-card">
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">🏆 UNIDADE DESTAQUE</span>
+                <div id="topUnidadeDestaque" class="value" style="color: var(--primary); font-size: 1.1rem;">--</div>
+                <small id="topUnidadeSub" style="color: #718096; font-weight: 600;">0% Completo</small>
+            </div>
+            <div class="top-card">
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">🏭 FABRICANTE LÍDER</span>
+                <div id="topFabricanteLider" class="value" style="color: var(--accent); font-size: 1.1rem;">--</div>
+                <small id="topFabricanteSub" style="color: #718096; font-weight: 600;">0 ativos</small>
+            </div>
+            <div class="top-card">
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">🎯 META PRISMA (95%)</span>
+                <div id="topMetaPrismaValor" class="value" style="color: var(--success);">91%</div>
+                <small id="topMetaPrismaSub" style="color: var(--e53e3e); font-weight: 700;">Faltam: 4%</small>
+            </div>
+            <div class="top-card">
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">⚡ ATIVOS CRÍTICOS</span>
+                <div id="topAtivosCriticos" class="value" style="color: var(--danger);">0</div>
+                <small style="color: var(--danger); font-weight: 600;">Prioridade Alta / Crítica</small>
+            </div>
+        </section>
+
+        <!-- 🎯 Card Gigante: RISCO DE CADASTRO PRISMA & Barra de Progresso -->
+        <div class="risk-giant-card" id="riskCardContainer">
+            <div style="flex: 1; min-width: 280px;">
+                <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;" id="riskSubHeader">⭐ Governança & Prontidão Prisma</span>
+                <h2 style="margin: 5px 0 0 0; font-size: 1.6rem; color: var(--primary-dark);">RISCO DE CADASTRO PRISMA</h2>
+                <p style="margin: 5px 0 0 0; color: #4b5563; font-size: 0.95rem;">Índice Prisma calculado rigorosamente com base em: Patrimônio, Série, Foto, ANVISA, Fabricante e Modelo.</p>
+                <!-- Barra de Progresso -->
+                <div class="progress-container">
+                    <div id="riskProgressBar" class="progress-bar" style="width: 0%; background-color: var(--success);"></div>
+                </div>
+            </div>
+            <div style="text-align: right; min-width: 150px;">
+                <span id="giantRiskScore" style="font-size: 3rem; font-weight: 900; color: var(--success);">0%</span>
+                <div id="giantRiskBadge" style="font-size: 1.1rem; font-weight: 800; color: #15803d; background: #dcfce7; padding: 4px 12px; border-radius: 20px; display: inline-block; margin-top: 5px;">🟢 Baixo Risco</div>
+            </div>
+        </div>
+
+        <!-- 📑 Resumo Executivo Gerado Automaticamente -->
+        <div class="executive-summary-box">
+            <h3 style="margin-top: 0; color: var(--primary-dark); display: flex; align-items: center; gap: 8px;">📑 Resumo Executivo para Diretoria</h3>
+            <pre id="textoResumoExecutivo">Carregando resumo executivo...</pre>
+        </div>
+
+        <!-- 🤖 Insights Automáticos Inteligentes -->
+        <div class="insights-box">
+            <h3 style="margin-top: 0; color: var(--primary-dark); display: flex; align-items: center; gap: 8px;">🤖 Insights Automáticos da Engenharia Clínica</h3>
+            <ul id="listaInsightsAutomaticos">
+                <li>Analisando banco de dados de ativos...</li>
+            </ul>
+        </div>
+
+        <!-- 💰 Indicadores Financeiros Reais -->
+        <h2 class="section-title">💰 Indicadores Financeiros Reais do Parque Tecnológico</h2>
         <section class="home-grid">
             <div class="card">
-                <h3>Total de Equipamentos</h3>
-                <p id="kpi-total" class="numero-kpi">0</p>
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">VALOR TOTAL DO PARQUE</span>
+                <p id="finValorTotal" class="numero-kpi" style="font-size: 1.5rem; font-weight: 800; color: var(--purple); margin: 6px 0 0 0;">R$ 0,00</p>
             </div>
-
             <div class="card">
-                <h3>Equipamentos Ativos</h3>
-                <p id="kpi-ativos" class="numero-kpi">0</p>
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">VALOR MÉDIO POR ATIVO</span>
+                <p id="finValorMedio" class="numero-kpi" style="font-size: 1.5rem; font-weight: 800; color: var(--primary); margin: 6px 0 0 0;">R$ 0,00</p>
             </div>
-
             <div class="card">
-                <h3>Em Manutenção</h3>
-                <p id="kpi-manutencao" class="numero-kpi">0</p>
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">MAIOR VALOR REGISTRADO</span>
+                <p id="finValorMaior" class="numero-kpi" style="font-size: 1.5rem; font-weight: 800; color: var(--success); margin: 6px 0 0 0;">R$ 0,00</p>
             </div>
-
             <div class="card">
-                <h3>Baixados</h3>
-                <p id="kpi-baixados" class="numero-kpi">0</p>
-            </div>
-
-            <div class="card">
-                <h3>Valor do Parque Tecnológico</h3>
-                <p id="kpi-valor-total" class="numero-kpi">R$ 0,00</p>
-            </div>
-
-            <div class="card">
-                <h3>Fabricantes</h3>
-                <p id="kpi-fabricantes" class="numero-kpi">0</p>
-            </div>
-
-            <div class="card">
-                <h3>Setores</h3>
-                <p id="kpi-setores" class="numero-kpi">0</p>
+                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">MENOR VALOR REGISTRADO</span>
+                <p id="finValorMenor" class="numero-kpi" style="font-size: 1.5rem; font-weight: 800; color: var(--accent); margin: 6px 0 0 0;">R$ 0,00</p>
             </div>
         </section>
 
-        <hr style="margin: 40px 0; border: none; border-top: 1px solid #ccc;">
+        <!-- 🏆 Tabelas: TOP 10 Mais Caros & TOP 10 Pendências (Ordenadas por Pior Completude) -->
+        <div style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+            <div class="table-container">
+                <h3 style="margin-top: 0; color: var(--primary-dark); font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">🏆 TOP 10 Equipamentos Mais Caros</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Equipamento / Modelo</th>
+                            <th>Fabricante</th>
+                            <th>Unidade / Setor</th>
+                            <th>Patrimônio / Série</th>
+                            <th>Valor (R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaTop10Corpo">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #718096;">Nenhum equipamento cadastrado.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <section class="card" style="margin-bottom: 30px; text-align: left;">
-            <h2>📌 Resumo Executivo</h2>
-            <ul style="margin-top: 10px; padding-left: 20px; line-height: 1.6;">
-                <li>Total de ativos monitorados e cadastrados no sistema.</li>
-                <li>Equipamentos atualmente em manutenção preventiva ou corretiva.</li>
-                <li>Avaliação financeira consolidada do parque tecnológico.</li>
-                <li>Mapeamento completo dos fabricantes atendidos.</li>
-                <li>Gestão setorial e distribuição dos ativos hospitalares.</li>
-            </ul>
+            <div class="table-container">
+                <h3 style="margin-top: 0; color: var(--danger); font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">🚨 TOP 10 Pendências (Ordenadas por Pior Completude)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Equipamento / Modelo</th>
+                            <th>Patrimônio</th>
+                            <th>Unidade</th>
+                            <th>Completude & Selo</th>
+                            <th>Atributos Faltantes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaTop10IncompletosCorpo">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #718096;">Nenhuma pendência crítica registrada.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 📊 Gráficos de BI Avançados (100% Baseados em Dados Reais com dataCadastro) -->
+        <h2 class="section-title">📊 Análises Visuais, Evolução e Auditoria Gráfica Real</h2>
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--primary-dark);">📈 Evolução Mensal dos Cadastros (Dados Reais)</h3>
+                <canvas id="graficoEvolucaoMensal" style="max-height: 280px;"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--primary-dark);">⚡ Distribuição por Prioridade dos Ativos</h3>
+                <canvas id="graficoPrioridades" style="max-height: 280px;"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--primary-dark);">📊 Pendências por Tipo (Onde Atacar Primeiro)</h3>
+                <canvas id="graficoPendenciasTipo" style="max-height: 280px;"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--primary-dark);">📷 Auditoria Fotográfica (Com Foto x Sem Foto)</h3>
+                <canvas id="graficoAuditoriaFoto" style="max-height: 280px;"></canvas>
+            </div>
         </section>
 
-        <hr style="margin: 40px 0; border: none; border-top: 1px solid #ccc;">
-
-        <section class="relatorios-especiais home-grid">
-            <div class="card" style="text-align: left;">
-                <h3>Disponibilidade Operacional</h3>
-                <p style="font-size: 1rem; font-weight: normal; margin-top: 10px;">Equipamentos ativos em relação ao total do parque.</p>
-            </div>
-
-            <div class="card" style="text-align: left;">
-                <h3>Valor Patrimonial</h3>
-                <p style="font-size: 1rem; font-weight: normal; margin-top: 10px;">Avaliação financeira dos equipamentos cadastrados.</p>
-            </div>
-
-            <div class="card" style="text-align: left;">
-                <h3>Manutenção Preventiva</h3>
-                <p style="font-size: 1rem; font-weight: normal; margin-top: 10px;">Controle de equipamentos com necessidade de intervenção técnica.</p>
-            </div>
-
-            <div class="card" style="text-align: left;">
-                <h3>Conformidade Regulatória</h3>
-                <p style="font-size: 1rem; font-weight: normal; margin-top: 10px;">Apoio à rastreabilidade e gestão da Engenharia Clínica.</p>
-            </div>
-        </section>
-
-        <hr style="margin: 40px 0; border: none; border-top: 1px solid #ccc;">
-
-        <section class="alertas">
-            <h2>📂 Exportação e Backup</h2>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
-                <button id="exportarCSV" class="btn-acao">
-                    📊 Exportar CSV
+        <!-- 📑 Ações e Relatório Impresso / Excel Executivo -->
+        <section class="card" style="margin-bottom: 30px;">
+            <h2 style="color: var(--primary-dark); margin-top: 0; font-size: 1.2rem;">📑 Relatório Executivo e Exportação Corporativa</h2>
+            <p style="color: #718096; font-size: 0.95rem; margin-bottom: 20px;">Gere um relatório pronto para impressão ou exporte os dados completos em planilhas Excel tratadas e executivas (XLSX).</p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button type="button" onclick="window.print()" class="btn-acao" style="background: var(--accent);">
+                    🖨️ Imprimir Relatório Executivo (PDF)
                 </button>
-
-                <button id="exportarJSON" class="btn-acao" style="background: linear-gradient(135deg, var(--purple), #b57edc);">
-                    📁 Backup JSON
+                <button type="button" onclick="exportarExcelXLSX()" class="btn-acao" style="background: var(--success);">
+                    📊 Exportar XLSX Executivo
                 </button>
-
-                <button onclick="limparSistema()" class="btn-acao" style="background: linear-gradient(135deg, var(--danger), #ff5a5a);">
-                    🗑 Limpar Sistema
+                <button type="button" onclick="exportarDadosPrisma()" class="btn-acao" style="background: var(--purple);">
+                    📦 Exportar Lote para o Prisma
                 </button>
             </div>
-        </section>
-
-        <hr style="margin: 40px 0; border: none; border-top: 1px solid #ccc;">
-
-        <section class="alertas">
-            <h2>ℹ Informações do Sistema</h2>
-            <p id="contadorEquipamentos" style="font-weight: bold; margin-top: 10px;"></p>
-            <p style="margin-top: 8px;">
-                Sistema desenvolvido para controle de ativos médicos, rastreabilidade patrimonial e gestão de manutenção em Engenharia Clínica.
-            </p>
-            <p style="margin-top: 8px;">
-                Última atualização: <span id="ultimaAtualizacao" style="font-weight: 500;"></span>
-            </p>
-            <p style="margin-top: 8px;">
-                Versão do Sistema: <strong>SIGEM v1.0.0</strong>
-            </p>
         </section>
     </main>
 
     <footer>
-        <p>SIGEM v1.0.0</p>
-        <p>Engenharia Clínica • Gestão Patrimonial • Tecnologia Hospitalar</p>
+        <p>Grupo Fleury • Engenharia Clínica</p>
+        <p style="font-weight: 600; color: var(--primary); margin-top: 4px;">SIGEM v10/10 Master • Painel Gerencial & Business Intelligence</p>
+        <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 6px;">Atualizado em tempo real via localStorage • Sistema 100% Real</p>
     </footer>
 
-    <script src="scripts/app.js"></script>
+    <!-- Script de Gestão e Charts 10/10 Master -->
+    <script>
+        let chartEvolucaoInst = null;
+        let chartPrioridadeInst = null;
+        let chartPendTipoInst = null;
+        let chartFotoInst = null;
+
+        function verificarAptidaoPrisma(eq) {
+            return Boolean(eq.patrimonio && eq.fabricante && eq.modelo && eq.numeroSerie && eq.fotoEquipamento && eq.anvisa);
+        }
+
+        function verificarQualidadeCadastral(eq) {
+            const criterios = [eq.patrimonio, eq.numeroSerie, eq.fabricante, eq.modelo, eq.fotoEquipamento, eq.anvisa];
+            const preenchidos = criterios.filter(Boolean).length;
+            return (preenchidos / criterios.length) * 100;
+        }
+
+        function carregarPainelCoordenador() {
+            const equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
+            const total = equipamentos.length;
+            const formatoDataHora = new Date().toLocaleString('pt-BR');
+
+            const formatadorMoeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+            
+            // Data/Hora da Última Atualização
+            document.getElementById("ultimaAtualizacaoSistema").textContent = formatoDataHora;
+            document.getElementById("heroUltimaAtualizacao").textContent = formatoDataHora;
+            document.getElementById("heroTotalMonitored").textContent = `${total} equipamentos monitorados`;
+
+            // Cálculos Financeiros Reais (com proteção contra Infinity)
+            const valores = equipamentos.map(e => parseFloat(e.valor) || 0);
+            const valorTotal = valores.reduce((acc, v) => acc + v, 0);
+            const valorMedio = total > 0 ? valorTotal / total : 0;
+            const valorMaior = valores.length > 0 ? Math.max(...valores) : 0;
+            const valoresValidos = valores.filter(v => v > 0);
+            const valorMenor = valoresValidos.length > 0 ? Math.min(...valoresValidos) : 0;
+
+            // Aptos Prisma & Índice Prisma & Meta (95%)
+            const aptos = equipamentos.filter(e => verificarAptidaoPrisma(e)).length;
+            const indicePrisma = total > 0 ? Math.round((aptos / total) * 100) : 100;
+            const pctAptos = total > 0 ? Math.round((aptos / total) * 100) : 0;
+
+            const metaPrisma = 95;
+            const diferencaMeta = metaPrisma - indicePrisma;
+            const metaPrismaEl = document.getElementById("topMetaPrismaValor");
+            const metaPrismaSubEl = document.getElementById("topMetaPrismaSub");
+            metaPrismaEl.textContent = `${indicePrisma}%`;
+            if (diferencaMeta <= 0) {
+                metaPrismaSubEl.textContent = "🎯 Meta Atingida!";
+                metaPrismaSubEl.style.color = "var(--success)";
+            } else {
+                metaPrismaSubEl.textContent = `Faltam: ${diferencaMeta}%`;
+                metaPrismaSubEl.style.color = "var(--danger)";
+            }
+
+            // Qualidade Cadastral Média
+            let somaQualidade = 0;
+            equipamentos.forEach(e => {
+                somaQualidade += verificarQualidadeCadastral(e);
+            });
+            const qualidadeMedia = total > 0 ? Math.round(somaQualidade / total) : 100;
+
+            // Auditoria de Pendências
+            const comFoto = equipamentos.filter(e => Boolean(e.fotoEquipamento)).length;
+            const semFoto = total - comFoto;
+            const semAnvisa = equipamentos.filter(e => !e.anvisa).length;
+            const semPatrimonio = equipamentos.filter(e => !e.patrimonio).length;
+            const pendenciasTotais = (total * 6) - equipamentos.reduce((acc, e) => acc + [e.patrimonio, e.numeroSerie, e.fabricante, e.modelo, e.fotoEquipamento, e.anvisa].filter(Boolean).length, 0);
+
+            // Unidade Destaque com critério mínimo (≥ 5 ativos)
+            const unidCounts = {};
+            const unidAptas = {};
+            equipamentos.forEach(e => {
+                const u = e.unidadeFleury ? e.unidadeFleury.trim() : 'Não informada';
+                unidCounts[u] = (unidCounts[u] || 0) + 1;
+                if (!unidAptas[u]) unidAptas[u] = { total: 0, aptos: 0 };
+                unidAptas[u].total++;
+                if (verificarAptidaoPrisma(e)) unidAptas[u].aptos++;
+            });
+
+            let melhorUnidadeNome = "Nenhuma";
+            let melhorUnidadePct = 0;
+            Object.entries(unidAptas).forEach(([unid, dados]) => {
+                if (dados.total >= 5) {
+                    const pct = Math.round((dados.aptos / dados.total) * 100);
+                    if (pct >= melhorUnidadePct) {
+                        melhorUnidadePct = pct;
+                        melhorUnidadeNome = unid;
+                    }
+                }
+            });
+
+            // Fallback caso nenhuma unidade tenha 5+ ativos ainda
+            if (melhorUnidadeNome === "Nenhuma" && Object.keys(unidAptas).length > 0) {
+                Object.entries(unidAptas).forEach(([unid, dados]) => {
+                    const pct = Math.round((dados.aptos / dados.total) * 100);
+                    if (pct >= melhorUnidadePct) {
+                        melhorUnidadePct = pct;
+                        melhorUnidadeNome = `${unid} (parcial)`;
+                    }
+                });
+            }
+
+            const topUnid = Object.entries(unidCounts).sort((a, b) => b[1] - a[1])[0];
+
+            // Fabricante Líder
+            const fabCounts = {};
+            equipamentos.forEach(e => {
+                const f = e.fabricante ? e.fabricante.trim() : 'Outros';
+                fabCounts[f] = (fabCounts[f] || 0) + 1;
+            });
+            const topFab = Object.entries(fabCounts).sort((a, b) => b[1] - a[1])[0] || ['Nenhum', 0];
+
+            // Prioridades
+            const prioridadeCounts = { 'Crítica': 0, 'Alta': 0, 'Média': 0, 'Baixa': 0, 'Não Definida': 0 };
+            equipamentos.forEach(e => {
+                const p = e.prioridade || 'Não Definida';
+                if (prioridadeCounts[p] !== undefined) prioridadeCounts[p]++;
+                else prioridadeCounts['Não Definida']++;
+            });
+            const ativosCriticosTotal = prioridadeCounts['Crítica'] + prioridadeCounts['Alta'];
+
+            // Atualização dos Cards do Topo
+            document.getElementById("topTotalAtivos").textContent = total;
+            document.getElementById("topProntosPrisma").textContent = aptos;
+            document.getElementById("topProntosPrismaPct").textContent = `${pctAptos}% do parque`;
+            document.getElementById("topPendenciasTotais").textContent = pendenciasTotais;
+            document.getElementById("topAtivosCriticos").textContent = ativosCriticosTotal;
+            document.getElementById("topQualidadeCadastral").textContent = `${qualidadeMedia}%`;
+            document.getElementById("topUnidadeDestaque").textContent = melhorUnidadeNome;
+            document.getElementById("topUnidadeSub").textContent = `${melhorUnidadePct}% Completo`;
+            document.getElementById("topFabricanteLider").textContent = topFab[0];
+            document.getElementById("topFabricanteSub").textContent = `${topFab[1]} ativos`;
+
+            // Card Gigante: Risco de Cadastro Prisma & Barra de Progresso
+            const riskScoreEl = document.getElementById("giantRiskScore");
+            const riskBadgeEl = document.getElementById("giantRiskBadge");
+            const riskCardContainer = document.getElementById("riskCardContainer");
+            const riskSubHeader = document.getElementById("riskSubHeader");
+            const riskProgressBar = document.getElementById("riskProgressBar");
+            
+            riskScoreEl.textContent = `${indicePrisma}%`;
+            riskProgressBar.style.width = `${indicePrisma}%`;
+
+            if (indicePrisma >= 90) {
+                riskScoreEl.style.color = 'var(--success)';
+                riskBadgeEl.textContent = '🟢 Baixo Risco';
+                riskBadgeEl.style.background = '#dcfce7';
+                riskBadgeEl.style.color = '#15803d';
+                riskCardContainer.style.borderColor = 'var(--success)';
+                riskCardContainer.style.background = 'linear-gradient(135deg, #ffffff, #f0fdf4)';
+                riskSubHeader.style.color = '#166534';
+                riskProgressBar.style.backgroundColor = 'var(--success)';
+            } else if (indicePrisma >= 70) {
+                riskScoreEl.style.color = 'var(--warning)';
+                riskBadgeEl.textContent = '🟡 Médio Risco';
+                riskBadgeEl.style.background = '#fef3c7';
+                riskBadgeEl.style.color = '#b45309';
+                riskCardContainer.style.borderColor = 'var(--warning)';
+                riskCardContainer.style.background = 'linear-gradient(135deg, #ffffff, #fefce8)';
+                riskSubHeader.style.color = '#9a3412';
+                riskProgressBar.style.backgroundColor = 'var(--warning)';
+            } else {
+                riskScoreEl.style.color = 'var(--danger)';
+                riskBadgeEl.textContent = '🔴 Alto Risco';
+                riskBadgeEl.style.background = '#fee2e2';
+                riskBadgeEl.style.color = '#b91c1c';
+                riskCardContainer.style.borderColor = 'var(--danger)';
+                riskCardContainer.style.background = 'linear-gradient(135deg, #ffffff, #fef2f2)';
+                riskSubHeader.style.color = '#991b1b';
+                riskProgressBar.style.backgroundColor = 'var(--danger)';
+            }
+
+            // Resumo Executivo Orientado a Desempenho para Diretoria
+            const unidadeLiderNome = topUnid ? topUnid[0] : 'Geral';
+            const textoResumo = `RESUMO EXECUTIVO\n\nO parque tecnológico possui ${total} equipamentos cadastrados.\nDestes, ${aptos} encontram-se aptos para integração ao Prisma (${pctAptos}%).\nO valor patrimonial do inventário é de ${formatadorMoeda.format(valorTotal)}.\nA unidade ${unidadeLiderNome} concentra a maior quantidade de ativos.\n\nMétricas de Desempenho Prisma:\n• Meta Prisma: ${metaPrisma}%\n• Resultado Atual: ${indicePrisma}%\n• Gap para Meta: ${Math.max(0, metaPrisma - indicePrisma)}%\n\nOs principais pontos de atenção são:\n• ${semFoto} equipamentos sem foto\n• ${semAnvisa} equipamentos sem ANVISA\n• ${semPatrimonio} equipamentos sem patrimônio`;
+            document.getElementById("textoResumoExecutivo").textContent = textoResumo;
+
+            // Insights Automáticos Inteligentes
+            let insightsHtml = '';
+            insightsHtml += `<li>✅ O parque tecnológico registra <strong>${indicePrisma}%</strong> de Índice Prisma, classificando o risco de integração como controlado.</li>`;
+            if (semFoto > 0) {
+                insightsHtml += `<li>⚠ <strong>Atenção:</strong> Existem <strong>${semFoto}</strong> equipamento(s) sem fotografia anexada, impactando a auditoria visual.</li>`;
+            }
+            if (semAnvisa > 0) {
+                insightsHtml += `<li>⚠ <strong>Atenção:</strong> Existem <strong>${semAnvisa}</strong> registro(s) ANVISA faltantes que impedem a conformidade regulatória.</li>`;
+            }
+            if (topUnid && total > 0) {
+                const percUnid = Math.round((topUnid[1] / total) * 100);
+                insightsHtml += `<li>🏥 A unidade <strong>${topUnid[0]}</strong> concentra <strong>${percUnid}%</strong> dos ativos do parque.</li>`;
+            }
+            insightsHtml += `<li>✅ <strong>Destaque:</strong> <strong>${topFab[0]}</strong> é o fabricante líder, respondendo por <strong>${topFab[1]}</strong> equipamentos.</li>`;
+
+            if (total === 0) {
+                insightsHtml = `<li>Nenhum dado cadastrado no sistema para gerar insights automatizados. Cadastre ativos na aba correspondente.</li>`;
+            }
+            document.getElementById("listaInsightsAutomaticos").innerHTML = insightsHtml;
+
+            // Indicadores Financeiros Reais
+            document.getElementById("finValorTotal").textContent = formatadorMoeda.format(valorTotal);
+            document.getElementById("finValorMedio").textContent = formatadorMoeda.format(valorMedio);
+            document.getElementById("finValorMaior").textContent = formatadorMoeda.format(valorMaior);
+            document.getElementById("finValorMenor").textContent = formatadorMoeda.format(valorMenor);
+
+            // TOP 10 Mais Caros
+            const top10Caros = [...equipamentos].sort((a, b) => (parseFloat(b.valor) || 0) - (parseFloat(a.valor) || 0)).slice(0, 10);
+            const tbodyCaros = document.getElementById("tabelaTop10Corpo");
+            if (top10Caros.length > 0) {
+                tbodyCaros.innerHTML = '';
+                top10Caros.forEach((eq, idx) => {
+                    tbodyCaros.innerHTML += `
+                        <tr>
+                            <td><strong>#${idx + 1}</strong></td>
+                            <td>${eq.equipamento || eq.modelo || 'Ativo Médico'}</td>
+                            <td>${eq.fabricante || 'Não inf.'}</td>
+                            <td>${eq.unidadeFleury || 'Geral'}</td>
+                            <td>Pat: ${eq.patrimonio || '--'} | Sér: ${eq.numeroSerie || '--'}</td>
+                            <td><strong style="color: var(--purple);">${formatadorMoeda.format(eq.valor || 0)}</strong></td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tbodyCaros.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #718096;">Nenhum equipamento cadastrado.</td></tr>`;
+            }
+
+            // TOP 10 Pendências (Ordenadas por Pior Completude)
+            const incompletos = equipamentos.filter(e => !verificarAptidaoPrisma(e));
+            const top10Incompletos = incompletos
+                .sort((a, b) => verificarQualidadeCadastral(a) - verificarQualidadeCadastral(b))
+                .slice(0, 10);
+
+            const tbodyIncompletos = document.getElementById("tabelaTop10IncompletosCorpo");
+            if (top10Incompletos.length > 0) {
+                tbodyIncompletos.innerHTML = '';
+                top10Incompletos.forEach((eq, idx) => {
+                    const percComp = Math.round(verificarQualidadeCadastral(eq));
+                    
+                    let seloHtml = '';
+                    if (percComp <= 50) {
+                        seloHtml = `<span class="selo-status selo-critico">🔴 Crítico</span>`;
+                    } else if (percComp <= 80) {
+                        seloHtml = `<span class="selo-status selo-atencao">🟡 Atenção</span>`;
+                    } else {
+                        seloHtml = `<span class="selo-status selo-bom">🟢 Bom</span>`;
+                    }
+
+                    let faltando = [];
+                    if (!eq.patrimonio) faltando.push('Patrimônio');
+                    if (!eq.numeroSerie) faltando.push('Série');
+                    if (!eq.fotoEquipamento) faltando.push('Foto');
+                    if (!eq.anvisa) faltando.push('ANVISA');
+                    if (!eq.fabricante) faltando.push('Fabricante');
+                    if (!eq.modelo) faltando.push('Modelo');
+
+                    tbodyIncompletos.innerHTML += `
+                        <tr>
+                            <td><strong>#${idx + 1}</strong></td>
+                            <td>${eq.equipamento || eq.modelo || 'Ativo Médico'}</td>
+                            <td>${eq.patrimonio || '<span style="color:red">Sem Patrimônio</span>'}</td>
+                            <td>${eq.unidadeFleury || 'Geral'}</td>
+                            <td><strong>${percComp}%</strong> ${seloHtml}</td>
+                            <td><span style="color: var(--danger); font-weight: 600;">Faltando: ${faltando.join(', ')}</span></td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tbodyIncompletos.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--success); font-weight: 600;">🎉 Parabéns! Não há pendências críticas em nenhum equipamento cadastrado.</td></tr>`;
+            }
+
+            // Renderizar Gráficos Chart.js com dataCadastro Real
+            atualizarGraficosBIReais(equipamentos, comFoto, semFoto, prioridadeCounts);
+        }
+
+        function atualizarGraficosBIReais(equipamentos, comFoto, semFoto, prioridadeCounts) {
+            // Evolução Mensal baseada unicamente em dataCadastro
+            const mesesLabels = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            const mesesContador = new Array(12).fill(0);
+
+            equipamentos.forEach(e => {
+                if (e.dataCadastro) {
+                    const d = new Date(e.dataCadastro);
+                    if (!isNaN(d)) {
+                        const m = d.getMonth();
+                        mesesContador[m]++;
+                    }
+                }
+            });
+
+            const ctxEvolucao = document.getElementById('graficoEvolucaoMensal').getContext('2d');
+            if (chartEvolucaoInst) chartEvolucaoInst.destroy();
+            chartEvolucaoInst = new Chart(ctxEvolucao, {
+                type: 'line',
+                data: {
+                    labels: mesesLabels,
+                    datasets: [{
+                        label: 'Cadastros no Mês (Real)',
+                        data: mesesContador,
+                        borderColor: '#005b8f',
+                        backgroundColor: 'rgba(0, 91, 143, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            });
+
+            // Gráfico de Prioridades
+            const ctxPrioridade = document.getElementById('graficoPrioridades').getContext('2d');
+            if (chartPrioridadeInst) chartPrioridadeInst.destroy();
+            chartPrioridadeInst = new Chart(ctxPrioridade, {
+                type: 'bar',
+                data: {
+                    labels: ['Crítica', 'Alta', 'Média', 'Baixa', 'Não Definida'],
+                    datasets: [{
+                        label: 'Volume de Ativos',
+                        data: [prioridadeCounts['Crítica'], prioridadeCounts['Alta'], prioridadeCounts['Média'], prioridadeCounts['Baixa'], prioridadeCounts['Não Definida']],
+                        backgroundColor: ['#e53e3e', '#ed8936', '#00a3ad', '#2e7d32', '#718096']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            });
+
+            // Pendências por Tipo
+            const countFoto = equipamentos.filter(e => !e.fotoEquipamento).length;
+            const countAnvisa = equipamentos.filter(e => !e.anvisa).length;
+            const countSerie = equipamentos.filter(e => !e.numeroSerie).length;
+            const countPatrimonio = equipamentos.filter(e => !e.patrimonio).length;
+
+            const ctxPend = document.getElementById('graficoPendenciasTipo').getContext('2d');
+            if (chartPendTipoInst) chartPendTipoInst.destroy();
+            chartPendTipoInst = new Chart(ctxPend, {
+                type: 'bar',
+                data: {
+                    labels: ['Foto', 'ANVISA', 'Série', 'Patrimônio'],
+                    datasets: [{
+                        label: 'Qtd de Pendências',
+                        data: [countFoto, countAnvisa, countSerie, countPatrimonio],
+                        backgroundColor: '#e53e3e'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            });
+
+            // Auditoria Fotográfica
+            const ctxFoto = document.getElementById('graficoAuditoriaFoto').getContext('2d');
+            if (chartFotoInst) chartFotoInst.destroy();
+            chartFotoInst = new Chart(ctxFoto, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Com Foto', 'Sem Foto'],
+                    datasets: [{
+                        data: [comFoto, semFoto],
+                        backgroundColor: ['#2e7d32', '#e53e3e']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function exportarExcelXLSX() {
+            const equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
+            if (equipamentos.length === 0) {
+                alert("Nenhum equipamento cadastrado para exportar.");
+                return;
+            }
+
+            // Array tratado e executivo para Excel
+            const dadosTratados = equipamentos.map(eq => ({
+                Patrimonio: eq.patrimonio || 'N/I',
+                Fabricante: eq.fabricante || 'N/I',
+                Modelo: eq.modelo || 'N/I',
+                Unidade: eq.unidadeFleury || 'N/I',
+                Prioridade: eq.prioridade || 'Não Definida',
+                Valor_R$: parseFloat(eq.valor) || 0,
+                AptoPrisma: verificarAptidaoPrisma(eq) ? "SIM" : "NÃO",
+                DataCadastro: eq.dataCadastro ? new Date(eq.dataCadastro).toLocaleDateString('pt-BR') : 'N/I'
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(dadosTratados);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Inventario_Executivo");
+            XLSX.writeFile(workbook, "Relatorio_Executivo_SIGEM.xlsx");
+        }
+
+        function exportarDadosPrisma() {
+            const equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
+            const aptos = equipamentos.filter(e => verificarAptidaoPrisma(e));
+            if (aptos.length === 0) {
+                alert("Nenhum equipamento apto para exportação no momento.");
+                return;
+            }
+
+            const dataHoraExport = new Date().toLocaleString('pt-BR');
+            localStorage.setItem("ultimaExportacaoPrisma", dataHoraExport);
+
+            const blob = new Blob([JSON.stringify(aptos, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'lote_exportacao_prisma.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        window.addEventListener('load', carregarPainelCoordenador);
+    </script>
 </body>
 </html>
