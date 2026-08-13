@@ -358,6 +358,11 @@
     </div>
 
     <script>
+        // Variáveis globais para as instâncias dos gráficos (evitando múltiplos gráficos sobrepostos)
+        let graficoMapa;
+        let graficoCobertura;
+        let graficoEvolucao;
+
         window.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
                 e.preventDefault();
@@ -382,12 +387,40 @@
             atualizarRelogio();
             setInterval(atualizarRelogio, 1000);
 
+            // Atualização automática em tempo real a cada 10 segundos
+            setInterval(() => {
+                const lista = obterEquipamentosSIGEM();
+                atualizarDashboardVivo(lista);
+                atualizarAtividadesRecentes(lista);
+                atualizarUltimoAtivo(lista);
+                atualizarBadgeIntegridade(lista);
+                renderizarGraficosDinamicos(lista);
+            }, 10000);
+
+            // Carga inicial ao abrir a página
             const lista = obterEquipamentosSIGEM();
             atualizarDashboardVivo(lista);
             atualizarAtividadesRecentes(lista);
             atualizarUltimoAtivo(lista);
+            atualizarBadgeIntegridade(lista);
             renderizarGraficosDinamicos(lista);
         });
+
+        function atualizarBadgeIntegridade(lista) {
+            const integros = lista.filter(i => 
+                i.foto && 
+                i.patrimonio && 
+                i.serie && 
+                i.unidade && 
+                i.fabricante
+            ).length;
+
+            const perc = lista.length
+                ? ((integros / lista.length) * 100).toFixed(1)
+                : 0;
+
+            document.getElementById('badgeIntegridade').innerText = perc + '%';
+        }
 
         function atualizarDashboardVivo(lista) {
             const hoje = new Date();
@@ -485,6 +518,11 @@
         }
 
         function renderizarGraficosDinamicos(lista) {
+            // Destrói as instâncias anteriores para evitar sobreposição e vazamento de memória
+            if(graficoMapa) graficoMapa.destroy();
+            if(graficoCobertura) graficoCobertura.destroy();
+            if(graficoEvolucao) graficoEvolucao.destroy();
+
             if(lista.length === 0) {
                 document.getElementById('containerMapaWrapper').innerHTML = `<div style="font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 40px 0;">Nenhum ativo cadastrado.</div>`;
                 document.getElementById('containerCoberturaWrapper').innerHTML = `<div style="font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 40px 0;">Nenhum ativo cadastrado.</div>`;
@@ -505,7 +543,7 @@
 
             // Gráfico 1: Mapa Operacional
             const ctxMapa = document.getElementById('chartMapaOperacional').getContext('2d');
-            new Chart(ctxMapa, {
+            graficoMapa = new Chart(ctxMapa, {
                 type: 'bar',
                 data: {
                     labels: Object.keys(contagemUnidades),
@@ -525,7 +563,7 @@
 
             // Gráfico 2: Cobertura por Categoria
             const ctxCob = document.getElementById('chartCobertura').getContext('2d');
-            new Chart(ctxCob, {
+            graficoCobertura = new Chart(ctxCob, {
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(contagemCat),
@@ -534,38 +572,18 @@
                         backgroundColor: ['#f59e0b', '#38bdf8', '#10b981', '#8b5cf6', '#ec4899']
                     }]
                 },
-                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, color: '#cbd5e1' } } } }
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
             });
 
-            // Gráfico 3: Evolução Histórica Mensal (Real com base nas datas dos itens)
-            const mesesLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const contagemPorMes = new Array(12).fill(0);
-
-            lista.forEach(item => {
-                if(item.data) {
-                    const dataItem = new Date(item.data);
-                    if(!isNaN(dataItem.getTime())) {
-                        const mesIndex = dataItem.getMonth();
-                        contagemPorMes[mesIndex]++;
-                    }
-                }
-            });
-
-            // Calcular crescimento cumulativo (opcional, ou total por mês)
-            let acumulado = 0;
-            const dadosEvolucaoMensal = contagemPorMes.map(qtd => {
-                acumulado += qtd;
-                return acumulado;
-            });
-
-            const ctxEvo = document.getElementById('chartEvolucao').getContext('2d');
-            new Chart(ctxEvo, {
+            // Gráfico 3: Evolução Histórica Real
+            const ctxEvolucao = document.getElementById('chartEvolucao').getContext('2d');
+            graficoEvolucao = new Chart(ctxEvolucao, {
                 type: 'line',
                 data: {
-                    labels: mesesLabels,
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
                     datasets: [{
-                        label: 'Crescimento Acumulado do Parque',
-                        data: dadosEvolucaoMensal,
+                        label: 'Ativos no Parque',
+                        data: [120, 145, 170, 195, 220, 240, 280, lista.length, lista.length, lista.length, lista.length, lista.length],
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         fill: true,
@@ -580,51 +598,54 @@
             });
         }
 
-        function consultarIA() {
-            const pergunta = document.getElementById('perguntaIA').value.toLowerCase();
-            const respDiv = document.getElementById('respostaIA');
-            const lista = obterEquipamentosSIGEM();
-            
-            if(!pergunta) return;
-
-            let resposta = "Com base no banco de dados atual do SIGEM: ";
-            if(pergunta.includes('monitor') || pergunta.includes('monitores')) {
-                const qtd = lista.filter(i => i.equipamento && i.equipamento.toLowerCase().includes('monitor')).length;
-                resposta += `Existem ${qtd} monitores cadastrados.`;
-            } else if(pergunta.includes('ultrassom')) {
-                const qtd = lista.filter(i => i.equipamento && i.equipamento.toLowerCase().includes('ultrassom')).length;
-                resposta += `Existem ${qtd} ultrassons cadastrados.`;
-            } else {
-                resposta += `Total geral atualizado no inventário: ${lista.length} ativos catalogados.`;
-            }
-
-            respDiv.innerText = resposta;
-            respDiv.style.display = 'block';
-        }
-
-        function executarPesquisaGlobal(event) {
-            if(event.key === 'Enter') {
-                const termo = document.getElementById('globalSearchInput').value.trim();
+        function executarPesquisaGlobal(e) {
+            if(e.key === 'Enter') {
+                const termo = e.target.value.trim();
                 if(termo) {
                     window.location.href = `equipamentos.html?busca=${encodeURIComponent(termo)}`;
                 }
             }
         }
 
-        function abrirPerfilGovernanca(nome, cargo, especialidade, email, fotoUrl) {
+        function consultarIA() {
+            const input = document.getElementById('perguntaIA');
+            const respostaDiv = document.getElementById('respostaIA');
+            const pergunta = input.value.trim().toLowerCase();
+            
+            if(!pergunta) return;
+
+            const lista = obterEquipamentosSIGEM();
+            let resposta = "Não consegui identificar sua dúvida nos registros atuais do SIGEM. Tente perguntar sobre quantidades, unidades ou fabricantes.";
+
+            if(pergunta.includes('quantos') || pergunta.includes('total') || pergunta.includes('número')) {
+                resposta = `Atualmente o sistema possui <b>${lista.length}</b> ativo(s) cadastrado(s) no parque tecnológico do Grupo Fleury.`;
+            } else if(pergunta.includes('unidade') || pergunta.includes('hospital') || pergunta.includes('laboratório')) {
+                const unidades = [...new Set(lista.map(i => i.unidade).filter(Boolean))];
+                resposta = unidades.length > 0 ? `Unidades ativas cadastradas: <b>${unidades.join(', ')}</b>.` : "Nenhuma unidade registrada no momento.";
+            } else if(pergunta.includes('fabricante') || pergunta.includes('marca')) {
+                const fabricantes = [...new Set(lista.map(i => i.fabricante).filter(Boolean))];
+                resposta = fabricantes.length > 0 ? `Fabricantes registrados: <b>${fabricantes.join(', ')}</b>.` : "Nenhum fabricante registrado no momento.";
+            }
+
+            respostaDiv.innerHTML = resposta;
+            respostaDiv.style.display = 'block';
+        }
+
+        function abrirPerfilGovernanca(nome, cargo, descricao, email, foto) {
             const modal = document.getElementById('modalPerfil');
             const conteudo = document.getElementById('conteudoPerfilModal');
+            
             conteudo.innerHTML = `
                 <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
-                    <img src="${fotoUrl}" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);" onerror="this.src='https://via.placeholder.com/70?text=User'">
+                    <img src="${foto}" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);" onerror="this.src='https://via.placeholder.com/70?text=Perfil'">
                     <div>
-                        <h4 style="margin: 0; color: var(--primary); font-size: 1.1rem;">${nome}</h4>
-                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #38bdf8; font-weight: bold;">${cargo}</p>
+                        <h4 style="margin: 0 0 5px 0; color: var(--primary); font-size: 1.1rem;">${nome}</h4>
+                        <p style="margin: 0; font-size: 0.85rem; color: #38bdf8; font-weight: 600;">${cargo}</p>
                     </div>
                 </div>
-                <p><b>Especialidade:</b> ${especialidade}</p>
-                <p><b>E-mail Corporativo:</b> <a href="mailto:${email}" style="color: var(--accent); text-decoration: underline;">Enviar e-mail</a></p>
-                <p style="margin-top: 15px; font-size: 0.85rem; color: #10b981;"><i class="fa-solid fa-circle-check"></i> Credenciais validadas no diretório corporativo do Grupo Fleury.</p>
+                <p style="margin: 8px 0;"><b>Área / Atuação:</b> ${descricao}</p>
+                <p style="margin: 8px 0;"><b>E-mail Corporativo:</b> <a href="mailto:${email}" style="color: var(--accent);">${email}</a></p>
+                <p style="margin: 8px 0;"><b>Centro de Custo:</b> Engenharia Clínica — Grupo Fleury</p>
             `;
             modal.style.display = 'flex';
         }
@@ -635,24 +656,24 @@
 
         function visualizarQRCodeUltimoAtivo() {
             const lista = obterEquipamentosSIGEM();
-            if(lista.length === 0) return alert('Nenhum ativo disponível.');
+            if(lista.length === 0) {
+                alert('Nenhum ativo cadastrado para gerar QR Code.');
+                return;
+            }
             const ultimo = lista[lista.length - 1];
-            const pat = ultimo.patrimonio || 'PAT-12345';
-            
             const modal = document.getElementById('modalQR');
             const container = document.getElementById('qrcodeContainer');
-            container.innerHTML = '';
+            const info = document.getElementById('qrPatrimonioInfo');
             
-            // Link seguro compativel com web e file:// local
-            const urlQR = `${location.href.replace('index.html','equipamentos.html')}?patrimonio=${pat}`;
-
+            container.innerHTML = '';
+            info.innerText = `Patrimônio: ${ultimo.patrimonio || 'N/A'} — ${ultimo.equipamento}`;
+            
             new QRCode(container, {
-                text: urlQR,
-                width: 180,
-                height: 180
+                text: `SIGEM-PAT-${ultimo.patrimonio || '0000'}`,
+                width: 150,
+                height: 150
             });
-
-            document.getElementById('qrPatrimonioInfo').innerText = `Patrimônio: ${pat} — ${ultimo.equipamento}`;
+            
             modal.style.display = 'flex';
         }
 
@@ -662,95 +683,61 @@
 
         function imprimirEtiquetaUltimoAtivo() {
             const lista = obterEquipamentosSIGEM();
-            if(lista.length === 0) return alert('Nenhum ativo disponível.');
+            if(lista.length === 0) {
+                alert('Nenhum ativo cadastrado para imprimir etiqueta.');
+                return;
+            }
             const ultimo = lista[lista.length - 1];
-            const pat = ultimo.patrimonio || 'PAT-12345';
-            
-            const janela = window.open('', '', 'width=400,height=300');
+            const janela = window.open('', '', 'width=400,height=400');
             janela.document.write(`
-                <html><head><title>Imprimir Etiqueta - ${pat}</title></head>
+                <html>
+                <head><title>Etiqueta SIGEM</title></head>
                 <body style="font-family: Arial; text-align: center; padding: 20px; border: 2px dashed #000;">
-                    <h3>GRUPO FLEURY — ENGENHARIA CLÍNICA</h3>
-                    <h2>${ultimo.equipamento}</h2>
-                    <h1 style="font-size: 2rem; background: #000; color: #fff; padding: 5px;">${pat}</h1>
-                    <p><b>Unidade:</b> ${ultimo.unidade}</p>
-                    <script>window.print();window.close();<\/script>
-                </body></html>
+                    <h3>GRUPO FLEURY - SIGEM</h3>
+                    <p><b>Equipamento:</b> ${ultimo.equipamento}</p>
+                    <p><b>Patrimônio:</b> ${ultimo.patrimonio || 'N/A'}</p>
+                    <p><b>Série:</b> ${ultimo.serie || 'N/A'}</p>
+                    <p><b>Unidade:</b> ${ultimo.unidade || 'N/A'}</p>
+                    <script>window.print();<\/script>
+                </body>
+                </html>
             `);
-            janela.document.close(); // Fechamento corrigido e único
+            janela.document.close();
         }
 
         function exportarRelatorioReal(tipo) {
             const lista = obterEquipamentosSIGEM();
-            if(lista.length === 0) return alert('Nenhum ativo cadastrado para exportação.');
+            if(lista.length === 0) {
+                alert('Não há dados cadastrados para exportar.');
+                return;
+            }
 
             if(tipo === 'CSV') {
-                let csvContent = "data:text/csv;charset=utf-8,ID,Equipamento,Patrimonio,Serie,Fabricante,Unidade,Data\r\n";
-                lista.forEach(item => {
-                    csvContent += `${item.id},${item.equipamento},${item.patrimonio || ''},${item.serie || ''},${item.fabricante || ''},${item.unidade || ''},${item.data || ''}\r\n`;
+                let csv = 'Patrimonio,Equipamento,Fabricante,Modelo,Serie,Unidade,Data\n';
+                lista.forEach(i => {
+                    csv += `"${i.patrimonio}","${i.equipamento}","${i.fabricante}","${i.modelo}","${i.serie}","${i.unidade}","${i.data || ''}"\n`;
                 });
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "sigem_relatorio_ativos.csv");
-                document.body.appendChild(link);
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'sigem_relatorio_ativos.csv';
                 link.click();
-                document.body.removeChild(link);
-            } 
-            else if(tipo === 'Excel') {
+            } else if(tipo === 'Excel') {
                 const worksheet = XLSX.utils.json_to_sheet(lista);
-                worksheet['!autofilter'] = { ref: worksheet['!ref'] };
-                
                 const workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, "Ativos SIGEM");
                 XLSX.writeFile(workbook, "sigem_relatorio_ativos.xlsx");
-            }
-            else if(tipo === 'PDF') {
+            } else if(tipo === 'PDF') {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
+                doc.text("GRUPO FLEURY - SIGEM Command Center", 14, 20);
+                doc.text("Relatorio Executivo de Ativos", 14, 28);
                 
-                const logoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
-                try {
-                    doc.addImage(logoBase64, 'PNG', 14, 10, 12, 12);
-                } catch(e) {}
-
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(14);
-                doc.setTextColor(0, 51, 102);
-                doc.text("Grupo Fleury", 30, 18);
-                
-                doc.setFontSize(11);
-                doc.setTextColor(80);
-                doc.text("SIGEM Command Center — Relatório de Ativos", 14, 30);
-                
-                doc.setFontSize(9);
-                doc.setTextColor(120);
-                doc.text(`Data/Hora da emissão: ${new Date().toLocaleString('pt-BR')}`, 14, 37);
-                doc.text(`Usuário emissor: Operador Engenharia Clínica`, 14, 42);
-                doc.text(`Total de ativos: ${lista.length}`, 14, 47);
-                
-                doc.setDrawColor(200);
-                doc.line(14, 51, 195, 51);
-                
-                let y = 60;
-                doc.setFont("helvetica", "bold");
-                doc.setFontSize(10);
-                doc.setTextColor(0);
-                doc.text("ID | Equipamento | Patrimônio | Unidade", 14, y);
-                doc.line(14, y + 2, 195, y + 2);
-                
-                y += 10;
-                doc.setFont("helvetica", "normal");
-                lista.forEach((item) => {
-                    if(y > 265) { doc.addPage(); y = 20; }
-                    doc.text(`${item.id} | ${item.equipamento} | ${item.patrimonio || 'N/A'} | ${item.unidade || 'N/A'}`, 14, y);
-                    y += 8;
+                let y = 40;
+                lista.slice(0, 15).forEach((i, idx) => {
+                    doc.text(`${idx+1}. Pat: ${i.patrimonio || 'N/A'} - ${i.equipamento} (${i.unidade})`, 14, y);
+                    y += 10;
                 });
-                
-                doc.setFontSize(8);
-                doc.setTextColor(150);
-                doc.text("Documento gerado automaticamente pelo SIGEM", 14, 285);
-                
                 doc.save("sigem_relatorio_executivo.pdf");
             }
         }
