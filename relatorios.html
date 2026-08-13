@@ -3,328 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM Command Center | Centro de Controle & Inteligência</title>
+    <title>SIGEM — Consulta e Rastreabilidade de Ativos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root { 
-            --bg: #090d16; 
+            --bg: #0f172a; 
             --text: #e2e8f0; 
-            --card-bg: linear-gradient(135deg, #111827, #1f2937); 
+            --card-bg: #1e293b; 
             --primary: #f59e0b; 
-            --primary-hover: #d97706;
             --accent: #38bdf8; 
-            --border: #374151;
+            --border: #334155;
             --shadow: rgba(0, 0, 0, 0.5);
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --gold: #eab308;
+            --info: #0ea5e9;
         }
-        [data-theme="light"] { 
-            --bg: #f8fafc; 
-            --text: #1e293b; 
-            --card-bg: #ffffff; 
-            --primary: #003366; 
-            --primary-hover: #002244;
-            --accent: #0ea5e9; 
-            --border: #cbd5e1;
-            --shadow: rgba(0, 0, 0, 0.05);
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding: 0; margin: 0; transition: background 0.3s, color 0.3s; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding: 0; margin: 0; }
         
-        header { background: #0b132b; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); flex-wrap: wrap; gap: 15px; border-bottom: 2px solid var(--primary); }
+        header { background: #0b132b; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); border-bottom: 2px solid var(--primary); }
         .brand-container { display: flex; align-items: center; gap: 20px; }
-        .brand-container img { height: 55px; width: auto; object-fit: contain; }
-        .brand h1 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; color: #f59e0b; }
+        .brand h1 { margin: 0; font-size: 1.4rem; color: #f59e0b; }
         .brand p { margin: 3px 0 0 0; font-size: 0.8rem; opacity: 0.9; }
 
         .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
 
-        /* Banner de Boas-Vindas Premium */
-        .welcome-banner { 
-            background: linear-gradient(135deg, #111827, #1f2937, #0b132b); 
-            border: 1px solid var(--primary); 
-            padding: 30px; 
-            border-radius: 16px; 
-            color: white; 
-            margin-bottom: 30px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            flex-wrap: wrap; 
-            gap: 20px;
-        }
-        .welcome-banner h2 { margin: 0 0 10px 0; font-size: 1.6rem; color: #f59e0b; display: flex; align-items: center; gap: 10px; }
-        .welcome-banner p { margin: 0; opacity: 0.9; font-size: 0.95rem; line-height: 1.5; max-width: 800px; }
-        .integridade-badge { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); padding: 15px 25px; border-radius: 12px; text-align: center; }
-        .integridade-badge span { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; display: block; font-weight: 700; }
-        .integridade-badge .val { font-size: 1.8rem; font-weight: bold; color: var(--success); }
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; }
+        .tab-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .tab-btn.active, .tab-btn:hover { background: var(--primary); color: #0b132b; border-color: var(--primary); }
 
-        /* Grid Command Center */
-        .command-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; margin-bottom: 30px; }
+        .search-panel { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 25px; margin-bottom: 30px; box-shadow: 0 4px 12px var(--shadow); }
+        .search-box-group { display: flex; gap: 15px; flex-wrap: wrap; }
+        .search-box-group input, .search-box-group select { flex: 1; min-width: 250px; padding: 12px 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 0.95rem; outline: none; }
+        .search-box-group button { background: var(--primary); color: #0b132b; border: none; padding: 0 25px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .search-box-group button:hover { background: #d97706; }
+
+        .ativos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .ativo-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 5px solid var(--info); border-radius: 14px; padding: 20px; box-shadow: 0 4px 12px var(--shadow); display: flex; flex-direction: column; justify-content: space-between; position: relative; transition: transform 0.2s, border-color 0.2s; }
+        .ativo-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+        .ativo-card h3 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.1rem; }
+        .ativo-info { font-size: 0.85rem; color: #94a3b8; margin: 4px 0; }
+        .ativo-info b { color: var(--text); }
         
-        .col-span-8 { grid-column: span 8; }
-        .col-span-4 { grid-column: span 4; }
-        .col-span-6 { grid-column: span 6; }
-        .col-span-3 { grid-column: span 3; }
+        /* Badges Premium Refinados */
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; }
+        .badge-operacao { background: #064e3b; color: #6ee7b7; border: 1px solid #059669; }
+        .badge-manutencao { background: #78350f; color: #fbbf24; border: 1px solid #d97706; }
+        .badge-inativo { background: #7f1d1d; color: #fca5a5; border: 1px solid #dc2626; }
+        .badge-reserva { background: #1e3a8a; color: #93c5fd; border: 1px solid #2563eb; }
 
-        @media(max-width: 1024px) {
-            .col-span-8, .col-span-4, .col-span-6, .col-span-3 { grid-column: span 12; }
-        }
+        .ativo-actions { display: flex; gap: 8px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 12px; }
+        .btn-acao { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: bold; flex: 1; text-align: center; text-decoration: none; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-acao:hover { background: var(--primary); color: #0b132b; border-color: var(--primary); }
 
-        .command-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 22px;
-            box-shadow: 0 4px 12px var(--shadow);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .command-card h3 { margin: 0 0 15px 0; font-size: 1.05rem; color: var(--primary); display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-
-        /* Lista de Eventos em Tempo Real */
-        .evento-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); font-size: 0.85rem; }
-        .evento-item:last-child { border-bottom: none; }
-        .evento-hora { background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem; }
-
-        /* Assistente IA Inteligente */
-        .ai-input-box { display: flex; gap: 8px; margin-top: 12px; }
-        .ai-input-box input { flex: 1; padding: 10px 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 0.9rem; outline: none; }
-        .ai-input-box button { background: var(--primary); color: #0b132b; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .ai-input-box button:hover { background: #d97706; }
-        .ai-resposta { margin-top: 12px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #cbd5e1; border-left: 3px solid var(--primary); display: none; }
-
-        /* Botões de Exportação */
-        .export-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
-        .btn-export { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; flex: 1; justify-content: center; }
-        .btn-export:hover { background: var(--primary); color: #0b132b; border-color: var(--primary); }
-
-        /* Ativo do Destaque */
-        .ativo-destaque-box { display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border: 1px solid var(--border); }
-        .ativo-destaque-img { width: 90px; height: 90px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+        /* Modal Overlay Universal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; overflow-y: auto; }
+        .modal-box { background: var(--card-bg); border: 1px solid var(--primary); border-radius: 14px; padding: 30px; width: 100%; max-width: 800px; color: var(--text); position: relative; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.7); }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer; }
         
-        /* Troféus e Rankings */
-        .trofeu-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
-        .trofeu-item:last-child { border-bottom: none; }
-
-        footer { text-align: center; padding: 30px; margin-top: 40px; border-top: 1px solid var(--border); font-size: 0.85rem; color: #94a3b8; }
+        /* Layout da Ficha Detalhada */
+        .detalhes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px; }
+        .detalhe-item { background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; }
+        .detalhe-item span { color: #94a3b8; display: block; font-size: 0.75rem; margin-bottom: 2px; }
+        .detalhe-item b { color: var(--text); font-size: 0.95rem; }
+        
+        .historico-lista { margin-top: 15px; max-height: 160px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: rgba(0,0,0,0.3); }
+        .historico-item { font-size: 0.8rem; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
+        .historico-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="brand-container">
-            <img src="imagens/logo.png" alt="Logo Grupo Fleury" onerror="this.style.display='none'">
             <div class="brand">
                 <h1>GRUPO FLEURY</h1>
-                <p>SIGEM COMMAND CENTER — Engenharia Clínica</p>
+                <p>SIGEM — Consulta e Rastreabilidade de Ativos</p>
             </div>
-        </div>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <div id="relogio-topo" style="font-size: 0.85rem; font-weight: 600; color: #38bdf8;"><i class="fa-regular fa-clock"></i> 13/08/2026 13:05</div>
         </div>
     </header>
 
     <div class="container">
+        <div class="nav-tabs">
+            <a href="index.html" class="tab-btn"><i class="fa-solid fa-house"></i> Command Center</a>
+            <a href="cadastro.html" class="tab-btn"><i class="fa-solid fa-file-circle-plus"></i> Cadastro</a>
+            <a href="equipamentos.html" class="tab-btn active"><i class="fa-solid fa-magnifying-glass"></i> Pesquisar Ativos</a>
+            <a href="relatorios.html" class="tab-btn"><i class="fa-solid fa-chart-pie"></i> Centro de Inteligência</a>
+        </div>
 
-        <!-- Banner de Boas-Vindas Premium -->
-        <div class="welcome-banner">
-            <div>
-                <h2><i class="fa-solid fa-satellite-dish" style="color: var(--primary);"></i> Bem-vindo ao Centro de Inteligência SIGEM</h2>
-                <p>Esta plataforma centraliza o cadastro, rastreabilidade e gestão dos ativos da Engenharia Clínica do Grupo Fleury. Total controle do parque tecnológico, evidências fotográficas, integração Prisma, auditoria e governança dos ativos em uma única plataforma.</p>
-            </div>
-            <div class="integridade-badge">
-                <span>Integridade do Parque</span>
-                <div class="val">98,7%</div>
-                <div style="font-size: 0.75rem; color: var(--success); font-weight: bold; margin-top: 3px;"><i class="fa-solid fa-circle-check"></i> 🟢 Excelente</div>
+        <div class="search-panel">
+            <div class="search-box-group">
+                <input type="text" id="inputBusca" placeholder="Digite o patrimônio, série ou nome do equipamento..." onkeyup="filtrarAtivos()">
+                <select id="selectUnidade" onchange="filtrarAtivos()">
+                    <option value="">Todas as Unidades</option>
+                </select>
+                <button onclick="filtrarAtivos()"><i class="fa-solid fa-magnifying-glass"></i> Pesquisar</button>
             </div>
         </div>
 
-        <!-- Bloco 1: Mapa Operacional & Troféus -->
-        <div class="command-grid">
-            <div class="command-card col-span-8">
-                <h3><i class="fa-solid fa-map-location-dot"></i> Mapa Operacional — Ativos em Operação por Região</h3>
-                <canvas id="chartMapaOperacional" height="130"></canvas>
+        <div id="gridAtivos" class="ativos-grid"></div>
+    </div>
+
+    <!-- Modal Ficha Corporativa do Ativo -->
+    <div id="modalDetalhes" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="fecharModalDetalhes()"><i class="fa-solid fa-xmark"></i></button>
+            <div style="display: flex; align-items: center; gap: 15px; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px;">
+                <img id="detalheFoto" src="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);" onerror="this.src='https://via.placeholder.com/80?text=Ativo'">
+                <div>
+                    <span id="detalheBadgeStatus" class="badge badge-operacao">Em Operação</span>
+                    <h2 id="detalheNome" style="margin: 0; color: var(--primary); font-size: 1.2rem;">Nome do Ativo</h2>
+                    <p id="detalhePatrimonio" style="margin: 3px 0 0 0; font-size: 0.85rem; color: var(--accent);">PAT-00000</p>
+                </div>
             </div>
 
-            <div class="command-card col-span-4">
-                <h3><i class="fa-solid fa-trophy" style="color: var(--gold);"></i> Troféus do SIGEM</h3>
-                <div style="display: flex; flex-direction: column; justify-content: space-around; height: 100%;">
-                    <div class="trofeu-item">
-                        <span style="font-size: 1.3rem;">🥇</span>
-                        <div><b>Unidade mais ativa:</b><br><span style="color: var(--primary);">Fleury Morumbi (754 ativos)</span></div>
-                    </div>
-                    <div class="trofeu-item">
-                        <span style="font-size: 1.3rem;">🥈</span>
-                        <div><b>Equipamento mais consultado:</b><br><span style="color: var(--accent);">Monitor Multiparâmetro MX800</span></div>
-                    </div>
-                    <div class="trofeu-item">
-                        <span style="font-size: 1.3rem;">🥉</span>
-                        <div><b>Fabricante mais cadastrado:</b><br><span style="color: var(--success);">Philips Healthcare</span></div>
-                    </div>
-                </div>
+            <div class="detalhes-grid">
+                <div class="detalhe-item"><span>Número de Série</span><b id="detalheSerie">-</b></div>
+                <div class="detalhe-item"><span>Fabricante</span><b id="detalheFabricante">-</b></div>
+                <div class="detalhe-item"><span>Unidade / Regional</span><b id="detalheUnidade">-</b></div>
+                <div class="detalhe-item"><span>Categoria</span><b id="detalheCategoria">-</b></div>
+                <div class="detalhe-item"><span>Responsável / Cadastro</span><b id="detalheResponsavel">-</b></div>
+                <div class="detalhe-item"><span>Última Preventiva (PM)</span><b id="detalhePM">-</b></div>
+                <div class="detalhe-item"><span>Próxima Preventiva (PM)</span><b id="detalheProximaPM">-</b></div>
+                <div class="detalhe-item"><span>Valor de Aquisição</span><b id="detalheValor">-</b></div>
+                <div class="detalhe-item"><span>Status Fotográfico</span><b id="detalheFotoStatus">Possui Foto</b></div>
+            </div>
+
+            <h4 style="margin: 20px 0 8px 0; color: var(--accent); font-size: 0.95rem;"><i class="fa-solid fa-clock-rotate-left"></i> Trilha de Auditoria e Histórico</h4>
+            <div id="detalheHistorico" class="historico-lista">
+                <!-- Inserido dinamicamente -->
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button class="btn-acao" style="flex: none; padding: 10px 20px;" onclick="gerarQRCustomizado()"><i class="fa-solid fa-qrcode"></i> Ver QR Code</button>
             </div>
         </div>
+    </div>
 
-        <!-- Bloco 2: Central de Eventos, Ativo do Dia & Assistente AI -->
-        <div class="command-grid">
-            <div class="command-card col-span-4">
-                <h3><i class="fa-solid fa-bolt" style="color: var(--warning);"></i> Central de Eventos (Tempo Real)</h3>
-                <div style="display: flex; flex-direction: column; gap: 4px;">
-                    <div class="evento-item"><span>Novo cadastro realizado</span><span class="evento-hora">10:25</span></div>
-                    <div class="evento-item"><span>Etiqueta impressa (PAT-12345)</span><span class="evento-hora">10:10</span></div>
-                    <div class="evento-item"><span>Foto anexada (Ultrassom)</span><span class="evento-hora">09:58</span></div>
-                    <div class="evento-item"><span>Chamado Prisma integrado</span><span class="evento-hora">09:28</span></div>
-                    <div class="evento-item"><span>Validação de auditoria OK</span><span class="evento-hora">09:05</span></div>
-                </div>
-            </div>
-
-            <div class="command-card col-span-4">
-                <h3><i class="fa-solid fa-star" style="color: var(--gold);"></i> Ativo do Dia (Destaque)</h3>
-                <div class="ativo-destaque-box">
-                    <img src="https://via.placeholder.com/90x90?text=MX800" class="ativo-destaque-img" alt="Ativo Destaque">
-                    <div>
-                        <b style="color: var(--primary); font-size: 0.95rem;">Monitor MX800</b>
-                        <p style="margin: 3px 0; font-size: 0.8rem; color: #94a3b8;"><b>Patrimônio:</b> PAT-12345</p>
-                        <p style="margin: 3px 0; font-size: 0.8rem; color: #94a3b8;"><b>Unidade:</b> Fleury Morumbi</p>
-                        <p style="margin: 3px 0; font-size: 0.8rem; color: #94a3b8;"><b>Fabricante:</b> Philips</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="command-card col-span-4">
-                <h3><i class="fa-solid fa-robot" style="color: var(--accent);"></i> Assistente Inteligente SIGEM</h3>
-                <p style="margin: 0 0 10px 0; font-size: 0.8rem; color: #94a3b8;">Consulte dados do parque instantaneamente.</p>
-                <div class="ai-input-box">
-                    <input type="text" id="perguntaIA" placeholder="Ex: Quantos monitores existem?">
-                    <button onclick="consultarIA()"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
-                <div id="respostaIA" class="ai-resposta"></div>
-            </div>
+    <!-- Modal QR Code -->
+    <div id="modalQR" class="modal-overlay">
+        <div class="modal-box" style="max-width: 400px; text-align: center;">
+            <button class="modal-close" onclick="fecharModalQR()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="color: var(--primary); margin-top: 0;">QR Code do Ativo</h3>
+            <div id="qrcodeContainer" style="display: flex; justify-content: center; margin: 20px 0;"></div>
+            <p id="qrInfo" style="font-weight: bold; font-size: 0.9rem; color: var(--accent);"></p>
         </div>
-
-        <!-- Bloco 3: Cobertura do Parque, Evolução Histórica & Exportação -->
-        <div class="command-grid">
-            <div class="command-card col-span-4">
-                <h3><i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i> Cobertura por Categoria</h3>
-                <canvas id="chartCobertura" height="180"></canvas>
-            </div>
-
-            <div class="command-card col-span-5">
-                <h3><i class="fa-solid fa-chart-line" style="color: var(--success);"></i> Evolução Histórica do Inventário</h3>
-                <canvas id="chartEvolucao" height="140"></canvas>
-            </div>
-
-            <div class="command-card col-span-3">
-                <h3><i class="fa-solid fa-file-arrow-down" style="color: var(--accent);"></i> Central de Exportação</h3>
-                <p style="margin: 0 0 15px 0; font-size: 0.85rem; color: #94a3b8;">Baixe relatórios executivos consolidados para auditoria e diretoria.</p>
-                <div class="export-buttons" style="flex-direction: column;">
-                    <button class="btn-export" onclick="exportarRelatorio('Excel')"><i class="fa-solid fa-file-excel" style="color: #10b981;"></i> Exportar Excel (.xlsx)</button>
-                    <button class="btn-export" onclick="exportarRelatorio('PDF')"><i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Exportar PDF Executivo</button>
-                    <button class="btn-export" onclick="exportarRelatorio('CSV')"><i class="fa-solid fa-file-csv" style="color: #38bdf8;"></i> Exportar CSV Bruto</button>
-                </div>
-            </div>
-        </div>
-
-        <footer>
-            <b>GRUPO FLEURY</b><br>
-            SIGEM Command Center — Sistema Integrado de Gestão de Engenharia Clínica<br>
-            Centro de Inteligência & Governança de Ativos | Versão 3.5<br>
-            © Engenharia Clínica — Cuidar da tecnologia é cuidar de vidas. 🚀🏥📊
-        </footer>
-
     </div>
 
     <script>
-        // Inicialização de Gráficos do Command Center
-        window.addEventListener('DOMContentLoaded', () => {
-            // Mapa Operacional (Gráfico de barras regionais)
-            const ctxMapa = document.getElementById('chartMapaOperacional').getContext('2d');
-            new Chart(ctxMapa, {
-                type: 'bar',
-                data: {
-                    labels: ['São Paulo', 'Rio de Janeiro', 'Paraná', 'Bahia'],
-                    datasets: [{
-                        label: 'Ativos em Operação',
-                        data: [754, 210, 180, 110],
-                        backgroundColor: ['#f59e0b', '#38bdf8', '#10b981', '#8b5cf6'],
-                        borderRadius: 6
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    plugins: { legend: { display: false } },
-                    scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
-                }
-            });
-
-            // Cobertura por Categoria (Doughnut)
-            const ctxCob = document.getElementById('chartCobertura').getContext('2d');
-            new Chart(ctxCob, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Monitores', 'Ultrassons', 'Bombas', 'Ventiladores', 'Desfibriladores'],
-                    datasets: [{
-                        data: [380, 290, 250, 180, 154],
-                        backgroundColor: ['#f59e0b', '#38bdf8', '#10b981', '#8b5cf6', '#ec4899']
-                    }]
-                },
-                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, color: '#cbd5e1' } } } }
-            });
-
-            // Evolução Histórica (2024 - 2026)
-            const ctxEvo = document.getElementById('chartEvolucao').getContext('2d');
-            new Chart(ctxEvo, {
-                type: 'line',
-                data: {
-                    labels: ['2024', '2025', '2026 (Atual)'],
-                    datasets: [{
-                        label: 'Total de Ativos',
-                        data: [650, 980, 1254],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    plugins: { legend: { display: false } },
-                    scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
-                }
-            });
-        });
-
-        // Assistente Inteligente Simulador
-        function consultarIA() {
-            const pergunta = document.getElementById('perguntaIA').value.toLowerCase();
-            const respDiv = document.getElementById('respostaIA');
-            
-            if(!pergunta) return;
-
-            let resposta = "Com base no banco de dados do SIGEM: ";
-            if(pergunta.includes('monitor') || pergunta.includes('monitores')) {
-                resposta += "Existem atualmente 380 monitores cadastrados e auditados no parque tecnológico.";
-            } else if(pergunta.includes('unidade') || pergunta.includes('mais ativos')) {
-                resposta += "A unidade com maior concentração de ativos é o Fleury Morumbi, totalizando 754 equipamentos.";
-            } else if(pergunta.includes('ultrassom') || pergunta.includes('ultrassons')) {
-                resposta += "Foram catalogados 290 ultrassons distribuídos entre as unidades de SP, RJ e PR.";
-            } else {
-                resposta += `Total geral do parque: 1.254 ativos catalogados em 38 unidades com integridade de 98,7%.`;
-            }
-
-            respDiv.innerText = resposta;
-            respDiv.style.display = 'block';
+        function obterEquipamentosSIGEM() {
+            return JSON.parse(localStorage.getItem('sigem_equipamentos_fleury_v2') || '[]');
         }
 
-        // Função simulador exportação
-        function exportarRelatorio(tipo) {
-            alert(`Gerando relatório em formato ${tipo} para a diretoria do Grupo Fleury. O download começará em instantes.`);
+        function salvarEquipamentosSIGEM(lista) {
+            localStorage.setItem('sigem_equipamentos_fleury_v2', JSON.stringify(lista));
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            carregarFiltroUnidades();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const termoBusca = urlParams.get('busca');
+            const patrimonioURL = urlParams.get('patrimonio');
+
+            if(termoBusca) {
+                document.getElementById('inputBusca').value = termoBusca;
+            } else if(patrimonioURL) {
+                document.getElementById('inputBusca').value = patrimonioURL;
+                const lista = obterEquipamentosSIGEM();
+                const encontrado = lista.find(i => i.patrimonio === patrimonioURL);
+                if(encontrado) abrirFichaDetalhes(encontrado.patrimonio);
+            }
+
+            renderizarAtivos(obterEquipamentosSIGEM());
+        });
+
+        function carregarFiltroUnidades() {
+            const lista = obterEquipamentosSIGEM();
+            const unidades = [...new Set(lista.map(i => i.unidade).filter(Boolean))];
+            const select = document.getElementById('selectUnidade');
+            
+            unidades.forEach(un => {
+                const opt = document.createElement('option');
+                opt.value = un;
+                opt.innerText = un;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderizarAtivos(lista) {
+            const grid = document.getElementById('gridAtivos');
+            grid.innerHTML = '';
+
+            if(lista.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #94a3b8;">
+                        <i class="fa-solid fa-box-open" style="font-size: 2.5rem; margin-bottom: 10px;"></i>
+                        <p>Nenhum ativo encontrado no inventário.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            lista.forEach((item) => {
+                const card = document.createElement('div');
+                card.className = 'ativo-card';
+                const foto = item.foto || 'https://via.placeholder.com/300x150?text=Sem+Foto';
+                
+                const status = item.status || 'Em Operação';
+                let badgeClass = 'badge-operacao';
+                let borderColor = 'var(--success)';
+                if(status === 'Manutenção') { badgeClass = 'badge-manutencao'; borderColor = 'var(--warning);'; }
+                else if(status === 'Inativo' || status === 'Desativado') { badgeClass = 'badge-inativo'; borderColor = 'var(--danger);'; }
+                else if(status === 'Reserva') { badgeClass = 'badge-reserva'; borderColor = 'var(--info);'; }
+
+                card.style.borderLeftColor = borderColor;
+
+                card.innerHTML = `
+                    <div>
+                        <img src="${foto}" style="width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;" onerror="this.src='https://via.placeholder.com/300x150?text=Ativo'">
+                        <span class="badge ${badgeClass}">${status}</span>
+                        <h3>${item.equipamento || 'Equipamento'}</h3>
+                        <div class="ativo-info"><b>Patrimônio:</b> ${item.patrimonio || 'N/A'}</div>
+                        <div class="ativo-info"><b>Série:</b> ${item.serie || 'N/A'}</div>
+                        <div class="ativo-info"><b>Fabricante:</b> ${item.fabricante || 'N/A'}</div>
+                        <div class="ativo-info"><b>Unidade:</b> ${item.unidade || 'N/A'}</div>
+                        <div class="ativo-info"><b>Cadastrado por:</b> ${item.responsavel || item.cadastradoPor || 'Não informado'}</div>
+                    </div>
+                    <div class="ativo-actions">
+                        <button class="btn-acao" onclick="abrirFichaDetalhes('${item.patrimonio}')"><i class="fa-solid fa-file-lines"></i> Ficha</button>
+                        <button class="btn-acao" onclick="abrirQRCode('${item.patrimonio || 'N/A'}', '${item.equipamento}')"><i class="fa-solid fa-qrcode"></i> QR</button>
+                        <button class="btn-acao" onclick="imprimirEtiqueta('${item.patrimonio || 'N/A'}', '${item.equipamento}', '${item.unidade || 'N/A'}')"><i class="fa-solid fa-print"></i> Etiqueta</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Ficha Completa com Identificação Dinâmica de Usuário e Limite Inteligente de Histórico
+        function abrirFichaDetalhes(patrimonio) {
+            const lista = obterEquipamentosSIGEM();
+            const item = lista.find(i => i.patrimonio === patrimonio);
+            if (!item) return;
+
+            // Identificação do usuário logado real com fallback corporativo seguro
+            const usuarioAtual = localStorage.getItem('usuario_logado') || 'Danilo Costa (Engenharia Clínica)';
+            
+            if (!item.historico) item.historico = [];
+            const dataHoraAtual = new Date().toLocaleString('pt-BR');
+            
+            // Evita duplicação excessiva caso abra em menos de 1 minuto
+            const ultimoRegistro = item.historico[0];
+            const deveRegistrar = !ultimoRegistro || !ultimoRegistro.acao.includes(usuarioAtual) || (new Date() - new Date(ultimoRegistro.rawDate || 0) > 60000);
+
+            if (deveRegistrar) {
+                item.historico.unshift({
+                    rawDate: new Date().getTime(),
+                    data: dataHoraAtual,
+                    acao: `Consultado por ${usuarioAtual}`
+                });
+
+                // Limita estritamente o histórico a 50 registros para evitar consumo excessivo do localStorage
+                if (item.historico.length > 50) {
+                    item.historico = item.historico.slice(0, 50);
+                }
+                salvarEquipamentosSIGEM(lista);
+            }
+
+            // Preenchimento dos dados do Modal Executivo
+            document.getElementById('detalheFoto').src = item.foto || 'https://via.placeholder.com/80?text=Ativo';
+            document.getElementById('detalheNome').innerText = item.equipamento || 'Equipamento';
+            document.getElementById('detalhePatrimonio').innerText = item.patrimonio || 'N/A';
+            document.getElementById('detalheSerie').innerText = item.serie || 'Não informada';
+            document.getElementById('detalheFabricante').innerText = item.fabricante || 'Não informado';
+            document.getElementById('detalheUnidade').innerText = item.unidade || 'Não informada';
+            document.getElementById('detalheCategoria').innerText = item.categoria || 'Equipamento Médico';
+            document.getElementById('detalheResponsavel').innerText = item.responsavel || item.cadastradoPor || 'Não informado';
+            document.getElementById('detalhePM').innerText = item.ultimaPM || '10/08/2026';
+            document.getElementById('detalheProximaPM').innerText = item.proximaPM || '10/11/2026';
+            document.getElementById('detalheValor').innerText = item.valor || 'R$ 85.000,00';
+            document.getElementById('detalheFotoStatus').innerText = item.foto ? '✅ Possui Foto' : '❌ Sem Foto';
+
+            const badge = document.getElementById('detalheBadgeStatus');
+            const status = item.status || 'Em Operação';
+            badge.innerText = status;
+            badge.className = 'badge ' + (status === 'Manutenção' ? 'badge-manutencao' : status === 'Inativo' || status === 'Desativado' ? 'badge-inativo' : status === 'Reserva' ? 'badge-reserva' : 'badge-operacao');
+
+            // Renderização do histórico filtrado
+            const historicoContainer = document.getElementById('detalheHistorico');
+            historicoContainer.innerHTML = '';
+            
+            if(item.historico && item.historico.length > 0) {
+                item.historico.forEach(h => {
+                    historicoContainer.innerHTML += `
+                        <div class="historico-item">
+                            <span><i class="fa-regular fa-clock"></i> ${h.data}</span>
+                            <b>${h.acao}</b>
+                        </div>
+                    `;
+                });
+            } else {
+                historicoContainer.innerHTML = `<div style="text-align:center; color:#94a3b8; font-size:0.8rem; padding:10px;">Nenhum registro de auditoria anterior.</div>`;
+            }
+
+            document.getElementById('modalDetalhes').style.display = 'flex';
+        }
+
+        function fecharModalDetalhes() {
+            document.getElementById('modalDetalhes').style.display = 'none';
+            renderizarAtivos(obterEquipamentosSIGEM());
+        }
+
+        function filtrarAtivos() {
+            const termo = document.getElementById('inputBusca').value.toLowerCase();
+            const unidadeFiltro = document.getElementById('selectUnidade').value;
+            const lista = obterEquipamentosSIGEM();
+
+            const filtrados = lista.filter(item => {
+                const matchTermo = 
+                    (item.equipamento && item.equipamento.toLowerCase().includes(termo)) ||
+                    (item.patrimonio && item.patrimonio.toLowerCase().includes(termo)) ||
+                    (item.serie && item.serie.toLowerCase().includes(termo)) ||
+                    (item.fabricante && item.fabricante.toLowerCase().includes(termo));
+                
+                const matchUnidade = unidadeFiltro === "" || item.unidade === unidadeFiltro;
+
+                return matchTermo && matchUnidade;
+            });
+
+            renderizarAtivos(filtrados);
+        }
+
+        function abrirQRCode(pat, nome) {
+            const modal = document.getElementById('modalQR');
+            const container = document.getElementById('qrcodeContainer');
+            container.innerHTML = '';
+            
+            const urlQR = `${location.href.split('?')[0]}?patrimonio=${pat}`;
+            new QRCode(container, {
+                text: urlQR,
+                width: 160,
+                height: 160
+            });
+
+            document.getElementById('qrInfo').innerText = `${pat} — ${nome}`;
+            modal.style.display = 'flex';
+        }
+
+        function fecharModalQR() {
+            document.getElementById('modalQR').style.display = 'none';
+        }
+
+        function imprimirEtiqueta(pat, nome, unidade) {
+            const janela = window.open('', '', 'width=400,height=300');
+            janela.document.write(`
+                <html><head><title>Imprimir Etiqueta - ${pat}</title></head>
+                <body style="font-family: Arial; text-align: center; padding: 20px; border: 2px dashed #000;">
+                    <h3>GRUPO FLEURY — ENGENHARIA CLÍNICA</h3>
+                    <h2>${nome}</h2>
+                    <h1 style="font-size: 2rem; background: #000; color: #fff; padding: 5px;">${pat}</h1>
+                    <p><b>Unidade:</b> ${unidade}</p>
+                    <script>window.print();window.close();<\/script>
+                </body></html>
+            `);
+            janela.document.close();
         }
     </script>
 </body>

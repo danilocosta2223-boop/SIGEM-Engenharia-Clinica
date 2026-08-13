@@ -1,14 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR" data-theme="executive">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM | Grupo Fleury - Gestão de Ativos</title>
+    <title>SIGEM Command Center | Portal Corporativo de Gestão de Ativos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js para Gráficos Reais -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root { 
+            --bg: #090d16; 
+            --text: #e2e8f0; 
+            --card-bg: linear-gradient(135deg, #111827, #1f2937); 
+            --primary: #f59e0b; 
+            --primary-hover: #d97706;
+            --accent: #38bdf8; 
+            --border: #374151;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gold: #eab308;
+        }
+        [data-theme="light"] { 
             --bg: #f8fafc; 
             --text: #1e293b; 
             --card-bg: #ffffff; 
@@ -18,157 +34,110 @@
             --border: #cbd5e1;
             --shadow: rgba(0, 0, 0, 0.05);
         }
-        [data-theme="dark"] { 
-            --bg: #0f172a; 
-            --text: #f8fafc; 
-            --card-bg: #1e293b; 
-            --primary: #38bdf8; 
-            --primary-hover: #0ea5e9;
-            --accent: #38bdf8;
-            --border: #475569;
-            --shadow: rgba(0, 0, 0, 0.3);
-        }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding: 0; margin: 0; transition: background 0.3s, color 0.3s; }
         
-        header { background: var(--primary); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px var(--shadow); flex-wrap: wrap; gap: 15px; }
+        header { background: #0b132b; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); flex-wrap: wrap; gap: 15px; border-bottom: 2px solid var(--primary); }
         .brand-container { display: flex; align-items: center; gap: 20px; }
-        .brand-container img { height: 60px; width: auto; object-fit: contain; }
-        .brand h1 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
-        .brand p { margin: 3px 0 0 0; font-size: 0.85rem; opacity: 0.95; }
-        
-        /* Busca Global no Topo */
-        .busca-global-topo { display: flex; align-items: center; background: rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.3); width: 300px; }
-        .busca-global-topo input { background: transparent; border: none; color: white; outline: none; width: 100%; font-size: 0.85rem; }
-        .busca-global-topo input::placeholder { color: rgba(255,255,255,0.7); }
-        .busca-global-topo i { color: white; opacity: 0.8; font-size: 0.9rem; margin-right: 8px; }
+        .brand-container img { height: 55px; width: auto; object-fit: contain; }
+        .brand h1 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; color: #f59e0b; }
+        .brand p { margin: 3px 0 0 0; font-size: 0.8rem; opacity: 0.9; }
 
-        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        .header-search { display: flex; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; gap: 8px; width: 320px; position: relative; }
+        .header-search input { background: transparent; border: none; color: white; outline: none; font-size: 0.85rem; width: 100%; }
+        .shortcut-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; color: #94a3b8; font-weight: bold; }
+
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
 
         /* Abas de Navegação */
         .nav-tabs { display: flex; gap: 8px; margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; }
         .tab-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .tab-btn.active, .tab-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+        .tab-btn.active, .tab-btn:hover { background: var(--primary); color: #0b132b; border-color: var(--primary); }
 
-        /* Hero Banner Institucional */
-        .hero-banner { 
-            background: linear-gradient(rgba(0,51,102,.8), rgba(0,51,102,.8)), url("imagens/engenharia-clinica.jpg"); 
-            background-size: cover; 
-            background-position: center; 
+        /* Banner de Boas-Vindas Premium */
+        .welcome-banner { 
+            background: linear-gradient(135deg, #111827, #1f2937, #0b132b); 
+            border: 1px solid var(--primary); 
+            padding: 30px; 
+            border-radius: 16px; 
             color: white; 
-            padding: 50px 30px; 
-            border-radius: 12px; 
-            text-align: center; 
             margin-bottom: 30px; 
-            box-shadow: 0 10px 25px var(--shadow); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 20px;
         }
-        .hero-banner h2 { margin: 0 0 5px 0; font-size: 2.3rem; letter-spacing: 1px; }
-        .hero-banner .subtitulo-banner { margin: 0 0 15px 0; font-size: 1.15rem; opacity: 0.95; font-weight: 500; }
-        .hero-banner .frase-impacto { font-size: 1.1rem; opacity: 1; max-width: 700px; margin: 0 auto 20px auto; font-style: italic; font-weight: 600; color: #38bdf8; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        .hero-features { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 20px; font-size: 0.9rem; }
-        .hero-features span { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-weight: 500; backdrop-filter: blur(5px); }
+        .welcome-banner h2 { margin: 0 0 10px 0; font-size: 1.6rem; color: #f59e0b; display: flex; align-items: center; gap: 10px; }
+        .welcome-banner p { margin: 0; opacity: 0.9; font-size: 0.95rem; line-height: 1.5; max-width: 800px; }
+        .integridade-badge { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); padding: 15px 25px; border-radius: 12px; text-align: center; }
+        .integridade-badge span { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; display: block; font-weight: 700; }
+        .integridade-badge .val { font-size: 1.8rem; font-weight: bold; color: var(--success); }
 
-        /* Destaque do Propósito / Missão */
-        .missao-box { background: var(--card-bg); border: 1px solid var(--border); border-left: 6px solid var(--accent); padding: 20px 25px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 4px var(--shadow); }
-        .missao-box h4 { margin: 0 0 8px 0; color: var(--primary); font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
-        .missao-box p { margin: 0; font-size: 0.95rem; line-height: 1.5; color: var(--text); }
+        /* Grid Command Center */
+        .command-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; margin-bottom: 30px; }
+        
+        .col-span-8 { grid-column: span 8; }
+        .col-span-4 { grid-column: span 4; }
+        .col-span-6 { grid-column: span 6; }
+        .col-span-3 { grid-column: span 3; }
+        .col-span-5 { grid-column: span 5; }
 
-        /* Mensagem da Gerência (Com Destaque Especial e Borda Dourada) */
-        .gerencia-box { background: var(--card-bg); border: 1px solid var(--border); border-left: 8px solid gold; border-radius: 12px; padding: 30px; display: flex; gap: 25px; align-items: center; margin-bottom: 30px; box-shadow: 0 4px 10px var(--shadow); flex-wrap: wrap; }
-        .gerencia-box img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 5px solid gold; box-shadow: 0 4px 10px var(--shadow); }
-        .gerencia-texto { flex: 1; min-width: 280px; }
-        .gerencia-texto h3 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.3rem; display: flex; align-items: center; gap: 8px; }
-        .gerencia-texto p { margin: 0 0 12px 0; font-size: 0.95rem; line-height: 1.6; color: var(--text); }
-        .gerencia-texto .assinatura { font-weight: bold; color: var(--primary); font-size: 1rem; }
-        .gerencia-texto .cargo-assinatura { font-size: 0.85rem; color: #d97706; font-weight: 700; }
+        @media(max-width: 1024px) {
+            .col-span-8, .col-span-4, .col-span-6, .col-span-3, .col-span-5 { grid-column: span 12; }
+        }
 
-        /* Bloco Quem Somos */
-        .quemsomos-box { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 4px var(--shadow); }
-        .quemsomos-box h3 { margin-top: 0; color: var(--primary); font-size: 1.15rem; display: flex; align-items: center; gap: 8px; }
-        .quemsomos-box p { margin: 10px 0 0 0; font-size: 0.95rem; line-height: 1.6; color: var(--text); }
+        .command-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 4px 12px var(--shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .command-card h3 { margin: 0 0 15px 0; font-size: 1.05rem; color: var(--primary); display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 
-        /* Grade de Cards da Home com Animação Aprimorada */
-        .home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .home-card { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 10px; text-align: center; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 2px 4px var(--shadow); text-decoration: none; color: inherit; display: block; }
-        .home-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px var(--shadow); border-color: var(--accent); }
-        .home-card i { font-size: 2.5rem; color: var(--accent); margin-bottom: 15px; }
-        .home-card h3 { margin: 0 0 8px 0; color: var(--primary); font-size: 1.2rem; }
-        .home-card p { margin: 0; font-size: 0.85rem; color: #64748b; }
+        .card-link { text-decoration: none; color: inherit; transition: transform 0.2s, border-color 0.2s; cursor: pointer; }
+        .card-link:hover { transform: translateY(-3px); border-color: var(--primary); }
 
-        /* Dashboard de Indicadores Estratégicos com Animação no Hover */
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px var(--shadow); text-align: center; border: 1px solid var(--border); transition: transform 0.25s ease; }
-        .card:hover { transform: scale(1.03); }
-        .card span { font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: bold; letter-spacing: 0.5px; }
-        .card div { font-size: 1.8rem; font-weight: bold; color: var(--primary); margin-top: 5px; }
+        /* Dashboard Vivo Métricas */
+        .metrics-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-bottom: 30px; }
+        @media(max-width: 1200px) { .metrics-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media(max-width: 768px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
+        .metric-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px 10px; text-align: center; box-shadow: 0 4px 10px var(--shadow); }
+        .metric-card .val { font-size: 1.4rem; font-weight: bold; color: var(--primary); margin: 5px 0 0 0; }
+        .metric-card .lbl { font-size: 0.7rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; }
 
-        /* Layout de Duas Colunas */
-        .grid-dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-        @media(max-width: 768px) { .grid-dupla { grid-template-columns: 1fr; } }
+        .evento-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); font-size: 0.85rem; }
+        .evento-item:last-child { border-bottom: none; }
+        .evento-hora { background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem; }
 
-        .mural-box, .ajuda-box, .ranking-box, .graficos-box, .mapa-box, .metas-box { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 10px; box-shadow: 0 2px 4px var(--shadow); }
-        .mural-box h3, .ajuda-box h3, .ranking-box h3, .graficos-box h3, .mapa-box h3, .metas-box h3 { margin-top: 0; color: var(--primary); font-size: 1.15rem; display: flex; align-items: center; gap: 8px; }
-        .mural-list { list-style: none; padding: 0; margin: 15px 0 0 0; }
-        .mural-list li { padding: 9px 0; border-bottom: 1px dashed var(--border); font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
-        .mural-list li:last-child { border-bottom: none; }
+        .ai-input-box { display: flex; gap: 8px; margin-top: 12px; }
+        .ai-input-box input { flex: 1; padding: 10px 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 0.9rem; outline: none; }
+        .ai-input-box button { background: var(--primary); color: #0b132b; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .ai-input-box button:hover { background: #d97706; }
+        .ai-resposta { margin-top: 12px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #cbd5e1; border-left: 3px solid var(--primary); display: none; }
 
-        .ajuda-tabela, .ranking-tabela { width: 100%; font-size: 0.9rem; margin-top: 10px; border-collapse: collapse; }
-        .ajuda-tabela td, .ranking-tabela td { padding: 9px 0; border-bottom: 1px dashed var(--border); }
-        .ajuda-tabela tr:last-child td, .ranking-tabela tr:last-child td { border-bottom: none; }
-        .ajuda-tabela td:nth-child(2), .ranking-tabela td:nth-child(2) { text-align: right; font-weight: 600; color: var(--accent); }
+        .export-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+        .btn-export { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; flex: 1; justify-content: center; text-decoration: none; }
+        .btn-export:hover { background: var(--primary); color: #0b132b; border-color: var(--primary); }
 
-        /* Gráficos Reais Chart.js */
-        .graficos-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-        @media(max-width: 768px) { .graficos-container { grid-template-columns: 1fr; } }
-        .grafico-card { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 10px; box-shadow: 0 2px 4px var(--shadow); }
-        .grafico-card h3 { margin-top: 0; color: var(--primary); font-size: 1.15rem; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
+        .equipe-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; text-align: center; }
+        .membro-card { background: rgba(0,0,0,0.2); border: 1px solid var(--border); padding: 12px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; }
+        .membro-card img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid var(--primary); }
+        .membro-card h4 { margin: 0; font-size: 0.9rem; color: var(--text); }
+        .membro-card .cargo { font-size: 0.75rem; color: var(--primary); font-weight: 600; margin-top: 2px; }
+        .membro-card button { background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent); color: var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; margin-top: 8px; transition: 0.2s; }
+        .membro-card button:hover { background: var(--accent); color: #0b132b; }
 
-        /* Mapa de Cobertura Operacional */
-        .mapa-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 15px; }
-        .mapa-item { background: rgba(0,51,102,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 8px; text-align: center; font-weight: 600; color: var(--primary); font-size: 0.95rem; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .mapa-item i { font-size: 1.3rem; color: var(--accent); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+        .modal-box { background: #111827; border: 1px solid var(--primary); border-radius: 14px; padding: 25px; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative; color: var(--text); }
+        .modal-close { position: absolute; top: 15px; right: 20px; background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; }
+        .modal-close:hover { color: white; }
 
-        /* Metas do Processo */
-        .metas-list { list-style: none; padding: 0; margin: 15px 0 0 0; }
-        .metas-list li { padding: 10px 0; border-bottom: 1px dashed var(--border); font-size: 0.95rem; display: flex; align-items: center; gap: 10px; font-weight: 500; }
-        .metas-list li:last-child { border-bottom: none; }
-
-        /* Mensagem da Coordenação */
-        .coordenacao-section { background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 4px 6px var(--shadow); display: flex; gap: 30px; align-items: center; flex-wrap: wrap; }
-        .coordenacao-foto { flex: 0 0 160px; text-align: center; }
-        .coordenacao-foto img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent); box-shadow: 0 4px 10px var(--shadow); }
-        .coordenacao-texto { flex: 1; min-width: 280px; }
-        .coordenacao-texto h3 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.3rem; display: flex; align-items: center; gap: 8px; }
-        .coordenacao-texto p { margin: 0 0 12px 0; font-size: 0.95rem; line-height: 1.6; color: var(--text); }
-        .coordenacao-texto .assinatura { font-weight: bold; color: var(--primary); font-size: 1rem; }
-        .coordenacao-texto .cargo-assinatura { font-size: 0.85rem; color: var(--accent); font-weight: 600; }
-
-        /* Equipe Responsável / Hierarquia */
-        .team-section { background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 4px 6px var(--shadow); text-align: center; }
-        .team-grid { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; margin-top: 25px; }
-        .responsavel-card { background: var(--bg); border: 1px solid var(--border); padding: 20px; border-radius: 10px; width: 280px; text-align: center; box-shadow: 0 2px 4px var(--shadow); transition: transform 0.2s; display: flex; flex-direction: column; align-items: center; }
-        .responsavel-card:hover { transform: translateY(-3px); }
-        .responsavel-card img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent); margin-bottom: 12px; }
-        .responsavel-card h3 { margin: 0 0 4px 0; color: var(--primary); font-size: 1.1rem; }
-        .responsavel-card .cargo { margin: 0 0 8px 0; font-size: 0.85rem; font-weight: 600; color: var(--accent); }
-        .responsavel-card .especialidade { font-size: 0.8rem; color: #64748b; background: rgba(0,51,102,0.05); padding: 6px 10px; border-radius: 6px; width: 100%; box-sizing: border-box; margin-bottom: 10px; text-align: left; line-height: 1.3; }
-        .responsavel-card .contato-info { margin-top: auto; font-size: 0.8rem; border-top: 1px solid var(--border); padding-top: 8px; width: 100%; color: var(--text); text-align: left; }
-
-        /* Galeria Institucional ("Nossa Operação") */
-        .galeria-section { background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 4px var(--shadow); }
-        .galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
-        .galeria-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px var(--shadow); transition: transform 0.2s; }
-        .galeria-card:hover { transform: translateY(-3px); }
-        .galeria-card img { width: 100%; height: 140px; object-fit: cover; }
-        .galeria-card .legenda { padding: 12px; font-size: 0.85rem; font-weight: 600; color: var(--primary); text-align: center; }
-
-        /* Tabela de Últimos Registros */
-        .ultimos-registros-box { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 4px var(--shadow); }
-        .tabela-dados { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-        .tabela-dados th, .tabela-dados td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
-        .tabela-dados th { background: rgba(0,51,102,0.05); color: var(--primary); font-weight: 600; }
-        .tabela-dados tr:hover { background: rgba(0,0,0,0.02); }
-
-        footer { text-align: center; padding: 30px; margin-top: 40px; border-top: 1px solid var(--border); font-size: 0.85rem; color: #64748b; }
+        footer { text-align: center; padding: 30px; margin-top: 40px; border-top: 1px solid var(--border); font-size: 0.85rem; color: #94a3b8; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -178,430 +147,612 @@
             <img src="imagens/logo.png" alt="Logo Grupo Fleury" onerror="this.style.display='none'">
             <div class="brand">
                 <h1>GRUPO FLEURY</h1>
-                <p>SIGEM — Sistema Integrado de Gestão de Engenharia Clínica</p>
+                <p>SIGEM Command Center — Portal Corporativo de Gestão de Ativos</p>
             </div>
         </div>
-        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <!-- Busca Global -->
-            <div class="busca-global-topo">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="inputBuscaGlobal" placeholder="Buscar ativo, patrimônio ou chamado..." onkeyup="filtrarGlobal(this.value)">
+        <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+            <div class="header-search">
+                <i class="fa-solid fa-magnifying-glass" style="color: #94a3b8;"></i>
+                <input type="text" id="globalSearchInput" placeholder="Pesquisar patrimônio, série..." onkeydown="executarPesquisaGlobal(event)">
+                <span class="shortcut-badge">Ctrl+K</span>
             </div>
-            <div id="relogio-topo" style="font-size: 0.85rem; font-weight: 500; opacity: 0.95;">Carregando...</div>
-            <button onclick="alternarTema()" class="tab-btn" style="padding: 8px 12px;" title="Alternar Tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
+            <div id="relogio-topo" style="font-size: 0.85rem; font-weight: 600; color: #38bdf8;"><i class="fa-regular fa-clock"></i> Carregando...</div>
         </div>
     </header>
 
-    <div class="container" id="conteudoPrincipal">
+    <div class="container">
 
-        <!-- Navegação por Abas -->
+        <!-- Abas de Navegação -->
         <div class="nav-tabs">
-            <a href="index.html" class="tab-btn active"><i class="fa-solid fa-house"></i> Página Inicial</a>
+            <a href="index.html" class="tab-btn active"><i class="fa-solid fa-house"></i> Command Center</a>
             <a href="cadastro.html" class="tab-btn"><i class="fa-solid fa-file-circle-plus"></i> Cadastro</a>
-            <a href="consulta.html" class="tab-btn"><i class="fa-solid fa-magnifying-glass"></i> Consultar Chamado</a>
-            <a href="equipamentos.html" class="tab-btn"><i class="fa-solid fa-boxes-stacked"></i> Consultar Ativos</a>
+            <a href="equipamentos.html" class="tab-btn"><i class="fa-solid fa-magnifying-glass"></i> Pesquisar Ativos</a>
+            <a href="relatorios.html" class="tab-btn"><i class="fa-solid fa-chart-pie"></i> Centro de Inteligência</a>
             <a href="admin.html" class="tab-btn"><i class="fa-solid fa-lock"></i> Administração</a>
         </div>
 
-        <!-- Hero Banner Institucional -->
-        <div class="hero-banner">
-            <h2>SIGEM</h2>
-            <div class="subtitulo-banner">Sistema Integrado de Gestão de Engenharia Clínica • Portal Oficial de Cadastro de Ativos</div>
-            <div class="frase-impacto">
-                "Cuidar da tecnologia é cuidar de vidas."
+        <!-- Banner de Boas-Vindas Premium -->
+        <div class="welcome-banner">
+            <div>
+                <h2><i class="fa-solid fa-satellite-dish" style="color: var(--primary);"></i> Bem-vindo ao SIGEM</h2>
+                <p>Portal corporativo para cadastro, rastreabilidade, auditoria e gestão dos ativos da Engenharia Clínica. Total controle do parque tecnológico e evidências fotográficas em uma única plataforma.</p>
             </div>
-            <div class="hero-features">
-                <span>✔ Rastreabilidade</span>
-                <span>✔ Controle Patrimonial</span>
-                <span>✔ Evidência Fotográfica</span>
-                <span>✔ Integração ao Processo Prisma</span>
+            <div class="integridade-badge">
+                <span>Integridade do Parque</span>
+                <div class="val" id="badgeIntegridade">100%</div>
+                <div style="font-size: 0.75rem; color: var(--success); font-weight: bold; margin-top: 3px;"><i class="fa-solid fa-circle-check"></i> 🟢 Real</div>
             </div>
         </div>
 
-        <!-- Destaque do Propósito / Missão -->
-        <div class="missao-box">
-            <h4><i class="fa-solid fa-bullseye" style="color: var(--accent);"></i> Missão</h4>
-            <p>Garantir segurança, rastreabilidade e excelência na gestão dos ativos da Engenharia Clínica.</p>
-        </div>
-
-        <!-- Mensagem da Gerência (Com Destaque Especial da Francisly) -->
-        <div class="gerencia-box">
-            <img src="imagens/francisly.jpg" alt="Francisly Cardoso - Gerente" onerror="this.src='https://via.placeholder.com/150?text=Francisly'">
-            <div class="gerencia-texto">
-                <h3><i class="fa-solid fa-crown" style="color: gold;"></i> Mensagem da Gerência</h3>
-                <p>
-                    Bem-vindo ao SIGEM. Este portal foi desenvolvido para fortalecer a padronização, a rastreabilidade e a qualidade das informações relacionadas aos ativos da Engenharia Clínica. Nosso compromisso é garantir processos eficientes, dados confiáveis e excelência operacional para todas as unidades do Grupo Fleury.
-                </p>
-                <div class="assinatura">Francisly Cardoso</div>
-                <div class="cargo-assinatura">👑 Gerente de Engenharia Clínica</div>
+        <!-- Dashboard Vivo (7 Indicadores Reais) -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="lbl">Hoje</div>
+                <div class="val" id="metricaHoje">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="lbl">Semana</div>
+                <div class="val" id="metricaSemana">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="lbl">Mês</div>
+                <div class="val" id="metricaMes">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="lbl">Total Geral</div>
+                <div class="val" id="metricaTotal">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="lbl">Fabricantes</div>
+                <div class="val" id="metricaFabricantes">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="lbl">Unidades</div>
+                <div class="val" id="metricaUnidades">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="lbl">Categorias</div>
+                <div class="val" id="metricaCategorias">0</div>
             </div>
         </div>
 
-        <!-- Bloco Quem Somos -->
-        <div class="quemsomos-box">
-            <h3><i class="fa-solid fa-hospital-user"></i> Quem Somos</h3>
-            <p>
-                A Engenharia Clínica do Grupo Fleury atua no gerenciamento do parque tecnológico, garantindo segurança, rastreabilidade, disponibilidade e confiabilidade dos equipamentos utilizados nas operações assistenciais.
-            </p>
-        </div>
-
-        <!-- Ações Rápidas (Cards de Navegação Direta) -->
-        <div class="home-grid">
-            <a href="cadastro.html" class="home-card">
-                <i class="fa-solid fa-file-medical"></i>
-                <h3>Novo Cadastro</h3>
-                <p>Cadastrar novo ativo e gerar número de chamado para o Prisma.</p>
+        <!-- Acesso Rápido Funcional -->
+        <div class="command-grid">
+            <a href="cadastro.html" class="command-card col-span-3 card-link">
+                <h3><i class="fa-solid fa-file-circle-plus" style="color: var(--success);"></i> Novo Cadastro</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Cadastrar novos equipamentos e manter o inventário atualizado.</p>
             </a>
-            <a href="consulta.html" class="home-card">
-                <i class="fa-solid fa-magnifying-glass-chart"></i>
-                <h3>Consultar Chamado</h3>
-                <p>Acompanhe o andamento e status de um protocolo gerado.</p>
+            <a href="equipamentos.html" class="command-card col-span-3 card-link">
+                <h3><i class="fa-solid fa-magnifying-glass" style="color: var(--accent);"></i> Pesquisar Ativos</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Localizar equipamentos por patrimônio, série, unidade ou fabricante.</p>
             </a>
-            <a href="equipamentos.html" class="home-card">
-                <i class="fa-solid fa-boxes-stacked"></i>
-                <h3>Consultar Ativos</h3>
-                <p>Visualize a base completa de equipamentos cadastrados.</p>
+            <a href="relatorios.html" class="command-card col-span-3 card-link">
+                <h3><i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i> Centro de Inteligência</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Indicadores executivos, relatórios de auditoria e gráficos.</p>
+            </a>
+            <a href="equipamentos.html" class="command-card col-span-3 card-link">
+                <h3><i class="fa-solid fa-landmark" style="color: var(--gold);"></i> Museu Tecnológico</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Vitrine visual e galeria interativa de ativos com fotos.</p>
             </a>
         </div>
 
-        <!-- Dashboard de Indicadores Estratégicos -->
-        <h2 style="font-size: 1.25rem; color: var(--primary); margin-bottom: 15px;"><i class="fa-solid fa-chart-pie"></i> Indicadores Estratégicos do Parque</h2>
-        <div class="dashboard">
-            <div class="card"><span>Total de Cadastros</span><div id="kpi-total">0</div></div>
-            <div class="card"><span>Cadastros Hoje</span><div id="kpi-hoje">0</div></div>
-            <div class="card"><span>Unidades Atendidas</span><div id="kpi-unidades">0</div></div>
-            <div class="card"><span>Chamados Gerados</span><div id="kpi-chamados">0</div></div>
-            <div class="card"><span>Último Chamado</span><div id="kpi-ultimo" style="font-size: 1.1rem; margin-top: 10px;">Nenhum</div></div>
-        </div>
-
-        <!-- Gráficos Reais com Chart.js -->
-        <div class="graficos-container">
-            <div class="grafico-card">
-                <h3><i class="fa-solid fa-chart-column" style="color: var(--accent);"></i> Cadastros por Unidade</h3>
-                <canvas id="graficoUnidades"></canvas>
-            </div>
-            <div class="grafico-card">
-                <h3><i class="fa-solid fa-chart-line" style="color: var(--accent);"></i> Cadastros por Mês</h3>
-                <canvas id="graficoMes"></canvas>
-            </div>
-        </div>
-
-        <!-- Mural de Destaques e Metas do Processo (Duas Colunas) -->
-        <div class="grid-dupla">
-            <!-- Mural de Destaques -->
-            <div class="mural-box">
-                <h3><i class="fa-solid fa-bullhorn"></i> 📢 Destaques</h3>
-                <ul class="mural-list">
-                    <li><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> <b>Sistema atualizado</b> e otimizado para alta performance.</li>
-                    <li><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> <b>Novo fluxo de cadastro</b> integrado de ponta a ponta.</li>
-                    <li><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> <b>Evidência fotográfica obrigatória</b> para segurança dos ativos.</li>
-                    <li><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> <b>Integração Prisma ativa</b> e sincronizada.</li>
-                </ul>
-            </div>
-
-            <!-- Metas do Processo -->
-            <div class="metas-box">
-                <h3><i class="fa-solid fa-bullseye" style="color: #10b981;"></i> Meta de Qualidade</h3>
-                <ul class="metas-list">
-                    <li><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> 100% dos ativos com foto</li>
-                    <li><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> 100% dos patrimônios cadastrados</li>
-                    <li><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> Rastreabilidade completa</li>
-                    <li><i class="fa-solid fa-circle-check" style="color: #10b981;"></i> Integração Prisma</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Ranking Automático das Unidades e Níveis de Atendimento -->
-        <div class="grid-dupla">
-            <!-- Ranking das Unidades (Calculado Automaticamente) -->
-            <div class="ranking-box">
-                <h3><i class="fa-solid fa-trophy" style="color: #eab308;"></i> 🏆 Unidades com mais cadastros</h3>
-                <table class="ranking-tabela" id="tabelaRankingUnidades">
-                    <tr><td>Calculando ranking...</td><td>-</td></tr>
-                </table>
-            </div>
-
-            <!-- Níveis de Atendimento (Precisa de Ajuda) -->
-            <div class="ajuda-box">
-                <h3><i class="fa-solid fa-circle-question"></i> Precisa de Ajuda? (Níveis)</h3>
-                <table class="ajuda-tabela">
-                    <tr><td>Nível 1 (Suporte Operacional)</td><td>Lídia</td></tr>
-                    <tr><td>Nível 2 (Análise de Processo)</td><td>Kamila</td></tr>
-                    <tr><td>Nível 3 (Coordenação Técnica)</td><td>Camila</td></tr>
-                    <tr><td>Escalação (Gerência)</td><td>Francisly</td></tr>
-                </table>
-            </div>
-        </div>
-
-        <!-- Mapa de Cobertura Operacional -->
-        <div class="mapa-box" style="margin-bottom: 30px;">
-            <h3><i class="fa-solid fa-map-location-dot" style="color: var(--accent);"></i> Cobertura Operacional</h3>
-            <div class="mapa-grid">
-                <div class="mapa-item"><i class="fa-solid fa-location-dot"></i> São Paulo</div>
-                <div class="mapa-item"><i class="fa-solid fa-location-dot"></i> Rio de Janeiro</div>
-                <div class="mapa-item"><i class="fa-solid fa-location-dot"></i> Bahia</div>
-                <div class="mapa-item"><i class="fa-solid fa-location-dot"></i> Paraná</div>
-            </div>
-        </div>
-
-        <!-- Mensagem da Coordenação (Logo acima da equipe) -->
-        <div class="coordenacao-section">
-            <div class="coordenacao-foto">
-                <img src="imagens/Camila.jpg" alt="Camila - Coordenadora" onerror="this.src='https://via.placeholder.com/150?text=Camila'">
-            </div>
-            <div class="coordenacao-texto">
-                <h3><i class="fa-solid fa-quote-left" style="color: var(--accent);"></i> Mensagem da Coordenação</h3>
-                <p>
-                    Bem-vindo ao SIGEM. Este portal foi desenvolvido para garantir a padronização, rastreabilidade e qualidade dos cadastros de ativos da Engenharia Clínica. Nosso compromisso é assegurar informações confiáveis e uma gestão eficiente do parque tecnológico do Grupo Fleury.
-                </p>
-                <div class="assinatura">Camila</div>
-                <div class="cargo-assinatura">Coordenadora de Engenharia Clínica</div>
-            </div>
-        </div>
-
-        <!-- Equipe Responsável / Hierarquia -->
-        <div class="team-section">
-            <h2 style="color: var(--primary); margin-top: 0;"><i class="fa-solid fa-sitemap"></i> Gestão e Governança da Engenharia Clínica</h2>
-            <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 10px;">Estrutura organizacional de liderança, suporte e acompanhamento de cadastros:</p>
-            
-            <div style="font-weight: 600; color: var(--accent); margin-bottom: 15px; font-size: 0.95rem;">
-                👩 Francisly Cardoso (Gerente) ⬇ 👩 Camila (Coordenadora) ⬇ 👩 Kamila (Analista) / 👩 Lídia (Líder)
-            </div>
-
-            <div class="team-grid">
-                <!-- Card Camila -->
-                <div class="responsavel-card">
-                    <img src="imagens/Camila.jpg" alt="Camila" onerror="this.src='https://via.placeholder.com/100?text=Camila'">
-                    <h3>Camila</h3>
-                    <div class="cargo">Coordenadora</div>
-                    <div class="especialidade">
-                        <b>Especialidade:</b><br>Gestão e Governança dos Processos
-                    </div>
-                    <div class="contato-info">
-                        📧 camila@grupofleury.com.br<br>
-                        📞 Ramal 4321
-                    </div>
+        <!-- Bloco 1: Mapa Operacional & Governança -->
+        <div class="command-grid">
+            <div class="command-card col-span-8">
+                <h3><i class="fa-solid fa-map-location-dot"></i> Mapa Operacional — Ativos em Operação por Unidade</h3>
+                <div id="containerMapaWrapper">
+                    <canvas id="chartMapaOperacional" height="130"></canvas>
                 </div>
+            </div>
 
-                <!-- Card Kamila -->
-                <div class="responsavel-card">
-                    <img src="imagens/kamila.jpg" alt="Kamila" onerror="this.src='https://via.placeholder.com/100?text=Kamila'">
-                    <h3>Kamila</h3>
-                    <div class="cargo">Analista</div>
-                    <div class="especialidade">
-                        <b>Especialidade:</b><br>Cadastro e Rastreabilidade
+            <div class="command-card col-span-4">
+                <h3><i class="fa-solid fa-users-gear" style="color: var(--primary);"></i> Governança — Engenharia Clínica</h3>
+                <div class="equipe-grid">
+                    <div class="membro-card">
+                        <img src="imagens/francisly.png" alt="Francisly Cardoso" onerror="this.src='imagens/francisly.jpg'; this.onerror=function(){this.src='https://via.placeholder.com/50?text=FC'}">
+                        <h4>Francisly Cardoso</h4>
+                        <div class="cargo">Gerente</div>
+                        <button onclick="abrirPerfilGovernanca('Francisly Cardoso', 'Gerente', 'Gestão Estratégica de Engenharia Clínica', 'francisly@grupofleury.com.br', 'imagens/francisly.png')">Ver Perfil</button>
                     </div>
-                    <div class="contato-info">
-                        📧 kamila@grupofleury.com.br<br>
-                        📞 Ramal 4322
+                    <div class="membro-card">
+                        <img src="imagens/camila.png" alt="Camila" onerror="this.src='imagens/Camila.jpg'; this.onerror=function(){this.src='https://via.placeholder.com/50?text=C'}">
+                        <h4>Camila</h4>
+                        <div class="cargo">Coordenadora</div>
+                        <button onclick="abrirPerfilGovernanca('Camila', 'Coordenadora', 'Coordenação de Operações e Processos', 'camila@grupofleury.com.br', 'imagens/camila.png')">Ver Perfil</button>
                     </div>
-                </div>
-
-                <!-- Card Lídia -->
-                <div class="responsavel-card">
-                    <img src="imagens/lidia.png" alt="Lídia" onerror="this.src='https://via.placeholder.com/100?text=Lidia'">
-                    <h3>Lídia</h3>
-                    <div class="cargo">Líder</div>
-                    <div class="especialidade">
-                        <b>Especialidade:</b><br>Validação e Controle Operacional
+                    <div class="membro-card">
+                        <img src="imagens/kamila.png" alt="Kamila" onerror="this.src='imagens/kamila.jpg'; this.onerror=function(){this.src='https://via.placeholder.com/50?text=K'}">
+                        <h4>Kamila</h4>
+                        <div class="cargo">Analista</div>
+                        <button onclick="abrirPerfilGovernanca('Kamila', 'Analista', 'Auditoria e Controle de Cadastros', 'kamila@grupofleury.com.br', 'imagens/kamila.png')">Ver Perfil</button>
                     </div>
-                    <div class="contato-info">
-                        📧 lidia@grupofleury.com.br<br>
-                        📞 Ramal 4323
+                    <div class="membro-card">
+                        <img src="imagens/lidia.png" alt="Lídia" onerror="this.src='https://via.placeholder.com/50?text=L'">
+                        <h4>Lídia</h4>
+                        <div class="cargo">Analista</div>
+                        <button onclick="abrirPerfilGovernanca('Lídia', 'Analista', 'Cadastro e Gestão de Ativos', 'lidia@grupofleury.com.br', 'imagens/lidia.png')">Ver Perfil</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tabela de Últimos Registros Reais -->
-        <div class="ultimos-registros-box">
-            <h3 style="margin-top: 0; color: var(--primary); font-size: 1.15rem;"><i class="fa-solid fa-list-check"></i> Últimos Registros</h3>
-            <table class="tabela-dados">
-                <thead>
-                    <tr>
-                        <th>Protocolo / Chamado</th>
-                        <th>Equipamento / Ativo</th>
-                        <th>Unidade</th>
-                        <th>Data de Registro</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-ultimos-corpo">
-                    <tr>
-                        <td><b>FLY-000123</b></td>
-                        <td>Monitor MX800</td>
-                        <td>Fleury Morumbi</td>
-                        <td>13/08/2026</td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Bloco 2: Atividades, Último Ativo & Assistente AI -->
+        <div class="command-grid">
+            <div class="command-card col-span-4">
+                <h3><i class="fa-solid fa-bolt" style="color: var(--warning);"></i> Atividades Recentes (Dinâmicas)</h3>
+                <div id="listaAtividadesRecentes" style="display: flex; flex-direction: column; gap: 4px; min-height: 140px;"></div>
+            </div>
+
+            <div class="command-card col-span-4">
+                <h3><i class="fa-solid fa-star" style="color: var(--gold);"></i> Último Ativo Cadastrado</h3>
+                <div id="containerUltimoAtivo" style="display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border: 1px solid var(--border);"></div>
+                <div style="display: flex; gap: 10px; margin-top: 12px;">
+                    <button class="btn-export" onclick="visualizarQRCodeUltimoAtivo()" style="font-size: 0.75rem; padding: 6px;"><i class="fa-solid fa-qrcode"></i> Visualizar QR</button>
+                    <button class="btn-export" onclick="imprimirEtiquetaUltimoAtivo()" style="font-size: 0.75rem; padding: 6px;"><i class="fa-solid fa-print"></i> Imprimir Etiqueta</button>
+                </div>
+            </div>
+
+            <div class="command-card col-span-4">
+                <h3><i class="fa-solid fa-robot" style="color: var(--accent);"></i> Assistente Inteligente SIGEM</h3>
+                <p style="margin: 0 0 10px 0; font-size: 0.8rem; color: #94a3b8;">Consulte dados reais do parque instantaneamente.</p>
+                <div class="ai-input-box">
+                    <input type="text" id="perguntaIA" placeholder="Ex: Quantos monitores existem?">
+                    <button onclick="consultarIA()"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+                <div id="respostaIA" class="ai-resposta"></div>
+            </div>
         </div>
 
-        <!-- Galeria Institucional ("Nossa Operação") -->
-        <div class="galeria-section">
-            <h3 style="margin-top: 0; color: var(--primary); font-size: 1.15rem;"><i class="fa-solid fa-images"></i> Nossa Operação</h3>
-            <div class="galeria-grid">
-                <div class="galeria-card">
-                    <img src="imagens/engenharia-clinica.jpg" alt="Engenharia Clínica" onerror="this.src='https://via.placeholder.com/220?text=Engenharia+Clinica'">
-                    <div class="legenda">Engenharia Clínica</div>
+        <!-- Bloco 3: Cobertura, Evolução Mensal Real & Exportação -->
+        <div class="command-grid">
+            <div class="command-card col-span-4">
+                <h3><i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i> Cobertura por Categoria</h3>
+                <div id="containerCoberturaWrapper">
+                    <canvas id="chartCobertura" height="180"></canvas>
                 </div>
-                <div class="galeria-card">
-                    <img src="imagens/equipamentos-medicos.jpg" alt="Equipamentos Médicos" onerror="this.src='https://via.placeholder.com/220?text=Equipamentos+Medicos'">
-                    <div class="legenda">Equipamentos Médicos</div>
+            </div>
+
+            <div class="command-card col-span-5">
+                <h3><i class="fa-solid fa-chart-line" style="color: var(--success);"></i> Evolução Histórica Mensal (Real)</h3>
+                <div id="containerEvolucaoWrapper">
+                    <canvas id="chartEvolucao" height="140"></canvas>
                 </div>
-                <div class="galeria-card">
-                    <img src="imagens/patrimonio.jpg" alt="Patrimônio" onerror="this.src='https://via.placeholder.com/220?text=Patrimonio'">
-                    <div class="legenda">Controle Patrimonial</div>
-                </div>
-                <div class="galeria-card">
-                    <img src="imagens/dashboard.jpg" alt="Dashboard" onerror="this.src='https://via.placeholder.com/220?text=Dashboard'">
-                    <div class="legenda">Gestão de Indicadores</div>
+            </div>
+
+            <div class="command-card col-span-3">
+                <h3><i class="fa-solid fa-file-arrow-down" style="color: var(--accent);"></i> Central de Exportação Real</h3>
+                <p style="margin: 0 0 15px 0; font-size: 0.85rem; color: #94a3b8;">Baixe relatórios baseados no banco de dados atual.</p>
+                <div class="export-buttons" style="flex-direction: column;">
+                    <button class="btn-export" onclick="exportarRelatorioReal('CSV')"><i class="fa-solid fa-file-csv" style="color: #38bdf8;"></i> Exportar CSV Bruto</button>
+                    <button class="btn-export" onclick="exportarRelatorioReal('Excel')"><i class="fa-solid fa-file-excel" style="color: #10b981;"></i> Exportar Excel (.xlsx)</button>
+                    <button class="btn-export" onclick="exportarRelatorioReal('PDF')"><i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Exportar PDF Executivo</button>
                 </div>
             </div>
         </div>
+
+        <footer>
+            <b>GRUPO FLEURY</b><br>
+            SIGEM Command Center — Portal Corporativo de Gestão de Ativos<br>
+            Cuidar da tecnologia é cuidar de vidas. 🚀🏥💙
+        </footer>
 
     </div>
 
-    <footer>
-        <b>Grupo Fleury</b> — SIGEM v3.0 (Sistema Integrado de Gestão de Engenharia Clínica)<br>
-        Portal Oficial de Cadastro de Ativos | Última atualização: 13/08/2026
-    </footer>
+    <!-- Modal Perfil Governança -->
+    <div id="modalPerfil" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="fecharModalPerfil()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="color: var(--primary); margin-top: 0; border-bottom: 1px solid var(--border); padding-bottom: 10px;"><i class="fa-solid fa-user-tie"></i> Perfil Corporativo</h3>
+            <div id="conteudoPerfilModal" style="margin-top: 15px; font-size: 0.95rem; line-height: 1.6;"></div>
+        </div>
+    </div>
+
+    <!-- Modal QR Code -->
+    <div id="modalQR" class="modal-overlay">
+        <div class="modal-box" style="text-align: center; max-width: 350px;">
+            <button class="modal-close" onclick="fecharModalQR()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="color: var(--primary); margin-top: 0;">QR Code do Ativo</h3>
+            <div id="qrcodeContainer" style="display: flex; justify-content: center; margin: 20px 0;"></div>
+            <p id="qrPatrimonioInfo" style="font-weight: bold; font-size: 0.9rem; color: #38bdf8;"></p>
+        </div>
+    </div>
 
     <script>
-        function alternarTema() {
-            const html = document.documentElement;
-            const temaAtual = html.getAttribute('data-theme');
-            html.setAttribute('data-theme', temaAtual === 'light' ? 'dark' : 'light');
-        }
-
-        // Relógio e Data em tempo real no topo
-        function atualizarRelogio() {
-            const agora = new Date();
-            const dataFormatada = agora.toLocaleDateString('pt-BR');
-            const horaFormatada = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('relogio-topo').innerHTML = `<i class="fa-regular fa-clock"></i> Atualizado: ${dataFormatada} ${horaFormatada}`;
-        }
-        setInterval(atualizarRelogio, 1000);
-        atualizarRelogio();
-
-        let chartUnidadesInstance = null;
-        let chartMesInstance = null;
-
-        // Carregar dados, KPIs, Ranking e Gráficos do localStorage
-        window.addEventListener('DOMContentLoaded', () => {
-            const lista = JSON.parse(localStorage.getItem('sigem_equipamentos_fleury_v2') || '[]');
-            
-            // KPIs
-            document.getElementById('kpi-total').innerText = lista.length;
-            document.getElementById('kpi-chamados').innerText = lista.length;
-            
-            const hojeStr = new Date().toLocaleDateString('pt-BR');
-            const cadastrosHoje = lista.filter(i => i.dataCadastro === hojeStr).length;
-            document.getElementById('kpi-hoje').innerText = cadastrosHoje;
-
-            const unidadesUnicas = [...new Set(lista.map(i => i.unidade || 'Fleury Morumbi'))].length;
-            document.getElementById('kpi-unidades').innerText = unidadesUnicas > 0 ? unidadesUnicas : 1;
-
-            if (lista.length > 0) {
-                document.getElementById('kpi-ultimo').innerText = lista[lista.length - 1].chamado || 'FLY-000123';
-                
-                // Preencher tabela de últimos registros com dados reais
-                const tbody = document.getElementById('tabela-ultimos-corpo');
-                tbody.innerHTML = '';
-                const ultimos = lista.slice(-5).reverse();
-                ultimos.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td><b>${item.chamado || 'FLY-000000'}</b></td><td>${item.equipamento || item.nome || 'Ativo'}</td><td>${item.unidade || 'Unidade Fleury'}</td><td>${item.dataCadastro || '13/08/2026'}</td>`;
-                    tbody.appendChild(tr);
-                });
+        window.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                const searchInput = document.getElementById('globalSearchInput');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
             }
-
-            // Cálculo Automático do Ranking das Unidades
-            const contagemUnidades = {};
-            lista.forEach(item => {
-                const un = item.unidade || 'Fleury Morumbi';
-                contagemUnidades[un] = (contagemUnidades[un] || 0) + 1;
-            });
-            
-            // Adicionar dados padrão se vazio para exibição inicial elegante
-            if (Object.keys(contagemUnidades).length === 0) {
-                contagemUnidades['Fleury Morumbi'] = 25;
-                contagemUnidades['Fleury Paraíso'] = 42;
-                contagemUnidades['Labs A+'] = 18;
-            }
-
-            const rankingOrdenado = Object.entries(contagemUnidades).sort((a, b) => b[1] - a[1]);
-            const tabelaRanking = document.getElementById('tabelaRankingUnidades');
-            tabelaRanking.innerHTML = '';
-            rankingOrdenado.slice(0, 5).forEach(([unidade, total], index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${index + 1}º ${unidade}</td><td>${total} ativ.</td>`;
-                tabelaRanking.appendChild(tr);
-            });
-
-            // Renderizar Gráficos Reais Chart.js
-            renderizarGraficos(contagemUnidades, lista);
         });
 
-        function renderizarGraficos(dadosUnidades, listaAtivos) {
-            const ctxUnidades = document.getElementById('graficoUnidades').getContext('2d');
-            const labelsUnidades = Object.keys(dadosUnidades);
-            const valoresUnidades = Object.values(dadosUnidades);
+        function atualizarRelogio(){
+            const agora = new Date();
+            document.getElementById('relogio-topo').innerHTML = `<i class="fa-regular fa-clock"></i> ${agora.toLocaleDateString('pt-BR')} ${agora.toLocaleTimeString('pt-BR')}`;
+        }
 
-            if (chartUnidadesInstance) chartUnidadesInstance.destroy();
-            chartUnidadesInstance = new Chart(ctxUnidades, {
+        function obterEquipamentosSIGEM() {
+            return JSON.parse(localStorage.getItem('sigem_equipamentos_fleury_v2') || '[]');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            atualizarRelogio();
+            setInterval(atualizarRelogio, 1000);
+
+            const lista = obterEquipamentosSIGEM();
+            atualizarDashboardVivo(lista);
+            atualizarAtividadesRecentes(lista);
+            atualizarUltimoAtivo(lista);
+            renderizarGraficosDinamicos(lista);
+        });
+
+        function atualizarDashboardVivo(lista) {
+            const hoje = new Date();
+            const hojeStr = hoje.toISOString().split('T')[0];
+            
+            const inicioSemana = new Date(hoje);
+            inicioSemana.setDate(hoje.getDate() - hoje.getDay());
+            inicioSemana.setHours(0, 0, 0, 0);
+
+            const cadastradosSemana = lista.filter(item => {
+                if(!item.data) return false;
+                const dataItem = new Date(item.data);
+                return dataItem >= inicioSemana;
+            }).length;
+
+            const mesAtual = hoje.getMonth();
+            const anoAtual = hoje.getFullYear();
+
+            const cadastradosMes = lista.filter(item => {
+                if(!item.data) return false;
+                const data = new Date(item.data);
+                return (
+                    data.getMonth() === mesAtual &&
+                    data.getFullYear() === anoAtual
+                );
+            }).length;
+
+            const cadastradosHoje = lista.filter(item => item.data && item.data.startsWith(hojeStr)).length;
+            const total = lista.length;
+
+            const qtdFabricantes = new Set(lista.map(i => i.fabricante).filter(Boolean)).size;
+            const qtdUnidades = new Set(lista.map(i => i.unidade).filter(Boolean)).size;
+            
+            const qtdCategorias = new Set(lista.map(i => {
+                if(i.categoria) return i.categoria.trim();
+                return i.equipamento ? i.equipamento.split(' ')[0] : 'Geral';
+            }).filter(Boolean)).size;
+
+            document.getElementById('metricaHoje').innerText = cadastradosHoje;
+            document.getElementById('metricaSemana').innerText = cadastradosSemana;
+            document.getElementById('metricaMes').innerText = cadastradosMes;
+            document.getElementById('metricaTotal').innerText = total;
+            document.getElementById('metricaFabricantes').innerText = qtdFabricantes;
+            document.getElementById('metricaUnidades').innerText = qtdUnidades;
+            document.getElementById('metricaCategorias').innerText = qtdCategorias;
+        }
+
+        function atualizarAtividadesRecentes(lista) {
+            const container = document.getElementById('listaAtividadesRecentes');
+            container.innerHTML = '';
+            
+            const consultarUltimos = [...lista].reverse().slice(0, 4);
+            if(consultarUltimos.length === 0) {
+                container.innerHTML = `
+                    <div style="font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 20px 0;">
+                        Nenhum ativo cadastrado.<br>
+                        Clique em <a href="cadastro.html" style="color: var(--primary);">"Novo Cadastro"</a> para iniciar o inventário.
+                    </div>
+                `;
+                return;
+            }
+
+            consultarUltimos.forEach(item => {
+                const horaFormatada = item.data ? new Date(item.data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '10:25';
+                const div = document.createElement('div');
+                div.className = 'evento-item';
+                div.innerHTML = `<span>Novo cadastro: <b>${item.equipamento}</b> (${item.unidade})</span><span class="evento-hora">${horaFormatada}</span>`;
+                container.appendChild(div);
+            });
+        }
+
+        function atualizarUltimoAtivo(lista) {
+            const container = document.getElementById('containerUltimoAtivo');
+            if(lista.length === 0) {
+                container.innerHTML = `
+                    <div style="font-size: 0.85rem; color: #94a3b8; width: 100%; text-align: center; padding: 10px 0;">
+                        Nenhum ativo cadastrado.<br>
+                        Clique em <a href="cadastro.html" style="color: var(--primary);">"Novo Cadastro"</a> para iniciar o inventário.
+                    </div>
+                `;
+                return;
+            }
+            const ultimo = lista[lista.length - 1];
+            const pat = ultimo.patrimonio || 'N/A';
+            const fotoSrc = ultimo.foto || 'https://via.placeholder.com/80?text=Ativo';
+            
+            container.innerHTML = `
+                <img src="${fotoSrc}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;" alt="Ativo" onerror="this.src='https://via.placeholder.com/80?text=Ativo'">
+                <div>
+                    <b style="color: var(--primary); font-size: 0.95rem;">${ultimo.equipamento}</b>
+                    <p style="margin: 3px 0; font-size: 0.8rem; color: #94a3b8;"><b>Patrimônio:</b> ${pat}</p>
+                    <p style="margin: 3px 0; font-size: 0.8rem; color: #94a3b8;"><b>Unidade:</b> ${ultimo.unidade || 'N/A'}</p>
+                </div>
+            `;
+        }
+
+        function renderizarGraficosDinamicos(lista) {
+            if(lista.length === 0) {
+                document.getElementById('containerMapaWrapper').innerHTML = `<div style="font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 40px 0;">Nenhum ativo cadastrado.</div>`;
+                document.getElementById('containerCoberturaWrapper').innerHTML = `<div style="font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 40px 0;">Nenhum ativo cadastrado.</div>`;
+                document.getElementById('containerEvolucaoWrapper').innerHTML = `<div style="font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 40px 0;">Nenhum ativo cadastrado.</div>`;
+                return;
+            }
+
+            const contagemUnidades = {};
+            const contagemCat = {};
+            
+            lista.forEach(item => {
+                const un = item.unidade || 'Não especificada';
+                contagemUnidades[un] = (contagemUnidades[un] || 0) + 1;
+
+                const cat = item.categoria ? item.categoria.trim() : (item.equipamento ? item.equipamento.split(' ')[0] : 'Geral');
+                contagemCat[cat] = (contagemCat[cat] || 0) + 1;
+            });
+
+            // Gráfico 1: Mapa Operacional
+            const ctxMapa = document.getElementById('chartMapaOperacional').getContext('2d');
+            new Chart(ctxMapa, {
                 type: 'bar',
                 data: {
-                    labels: labelsUnidades,
+                    labels: Object.keys(contagemUnidades),
                     datasets: [{
-                        label: 'Ativos Cadastrados',
-                        data: valoresUnidades,
-                        backgroundColor: '#0ea5e9',
+                        label: 'Ativos em Operação',
+                        data: Object.values(contagemUnidades),
+                        backgroundColor: ['#f59e0b', '#38bdf8', '#10b981', '#8b5cf6', '#ec4899'],
                         borderRadius: 6
                     }]
                 },
-                options: {
-                    responsive: true,
+                options: { 
+                    responsive: true, 
                     plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                    scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
                 }
             });
 
-            // Agrupar por mês simulado/real
-            const mesesContagem = { 'Jan': 5, 'Fev': 12, 'Mar': 18, 'Abr': 22, 'Mai': 30, 'Jun': 35, 'Jul': 40, 'Ago': listaAtivos.length > 0 ? listaAtivos.length : 45 };
-            const ctxMes = document.getElementById('graficoMes').getContext('2d');
+            // Gráfico 2: Cobertura por Categoria
+            const ctxCob = document.getElementById('chartCobertura').getContext('2d');
+            new Chart(ctxCob, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(contagemCat),
+                    datasets: [{
+                        data: Object.values(contagemCat),
+                        backgroundColor: ['#f59e0b', '#38bdf8', '#10b981', '#8b5cf6', '#ec4899']
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, color: '#cbd5e1' } } } }
+            });
 
-            if (chartMesInstance) chartMesInstance.destroy();
-            chartMesInstance = new Chart(ctxMes, {
+            // Gráfico 3: Evolução Histórica Mensal (Real com base nas datas dos itens)
+            const mesesLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            const contagemPorMes = new Array(12).fill(0);
+
+            lista.forEach(item => {
+                if(item.data) {
+                    const dataItem = new Date(item.data);
+                    if(!isNaN(dataItem.getTime())) {
+                        const mesIndex = dataItem.getMonth();
+                        contagemPorMes[mesIndex]++;
+                    }
+                }
+            });
+
+            // Calcular crescimento cumulativo (opcional, ou total por mês)
+            let acumulado = 0;
+            const dadosEvolucaoMensal = contagemPorMes.map(qtd => {
+                acumulado += qtd;
+                return acumulado;
+            });
+
+            const ctxEvo = document.getElementById('chartEvolucao').getContext('2d');
+            new Chart(ctxEvo, {
                 type: 'line',
                 data: {
-                    labels: Object.keys(mesesContagem),
+                    labels: mesesLabels,
                     datasets: [{
-                        label: 'Evolução Anual',
-                        data: Object.values(mesesContagem),
-                        borderColor: '#003366',
-                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        label: 'Crescimento Acumulado do Parque',
+                        data: dadosEvolucaoMensal,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         fill: true,
                         tension: 0.3
                     }]
                 },
-                options: {
-                    responsive: true,
+                options: { 
+                    responsive: true, 
                     plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+                    scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
                 }
             });
         }
 
-        // Função de Busca Global Visual no Topo
-        function filtrarGlobal(termo) {
-            const filtro = termo.toLowerCase();
-            if (!filtro) return;
-            // Destaque visual simples ou alerta de busca
-            const linhas = document.querySelectorAll('#tabela-ultimos-corpo tr');
-            linhas.forEach(tr => {
-                const texto = tr.innerText.toLowerCase();
-                tr.style.display = texto.includes(filtro) ? '' : 'none';
+        function consultarIA() {
+            const pergunta = document.getElementById('perguntaIA').value.toLowerCase();
+            const respDiv = document.getElementById('respostaIA');
+            const lista = obterEquipamentosSIGEM();
+            
+            if(!pergunta) return;
+
+            let resposta = "Com base no banco de dados atual do SIGEM: ";
+            if(pergunta.includes('monitor') || pergunta.includes('monitores')) {
+                const qtd = lista.filter(i => i.equipamento && i.equipamento.toLowerCase().includes('monitor')).length;
+                resposta += `Existem ${qtd} monitores cadastrados.`;
+            } else if(pergunta.includes('ultrassom')) {
+                const qtd = lista.filter(i => i.equipamento && i.equipamento.toLowerCase().includes('ultrassom')).length;
+                resposta += `Existem ${qtd} ultrassons cadastrados.`;
+            } else {
+                resposta += `Total geral atualizado no inventário: ${lista.length} ativos catalogados.`;
+            }
+
+            respDiv.innerText = resposta;
+            respDiv.style.display = 'block';
+        }
+
+        function executarPesquisaGlobal(event) {
+            if(event.key === 'Enter') {
+                const termo = document.getElementById('globalSearchInput').value.trim();
+                if(termo) {
+                    window.location.href = `equipamentos.html?busca=${encodeURIComponent(termo)}`;
+                }
+            }
+        }
+
+        function abrirPerfilGovernanca(nome, cargo, especialidade, email, fotoUrl) {
+            const modal = document.getElementById('modalPerfil');
+            const conteudo = document.getElementById('conteudoPerfilModal');
+            conteudo.innerHTML = `
+                <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+                    <img src="${fotoUrl}" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);" onerror="this.src='https://via.placeholder.com/70?text=User'">
+                    <div>
+                        <h4 style="margin: 0; color: var(--primary); font-size: 1.1rem;">${nome}</h4>
+                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #38bdf8; font-weight: bold;">${cargo}</p>
+                    </div>
+                </div>
+                <p><b>Especialidade:</b> ${especialidade}</p>
+                <p><b>E-mail Corporativo:</b> <a href="mailto:${email}" style="color: var(--accent); text-decoration: underline;">Enviar e-mail</a></p>
+                <p style="margin-top: 15px; font-size: 0.85rem; color: #10b981;"><i class="fa-solid fa-circle-check"></i> Credenciais validadas no diretório corporativo do Grupo Fleury.</p>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function fecharModalPerfil() {
+            document.getElementById('modalPerfil').style.display = 'none';
+        }
+
+        function visualizarQRCodeUltimoAtivo() {
+            const lista = obterEquipamentosSIGEM();
+            if(lista.length === 0) return alert('Nenhum ativo disponível.');
+            const ultimo = lista[lista.length - 1];
+            const pat = ultimo.patrimonio || 'PAT-12345';
+            
+            const modal = document.getElementById('modalQR');
+            const container = document.getElementById('qrcodeContainer');
+            container.innerHTML = '';
+            
+            // Link seguro compativel com web e file:// local
+            const urlQR = `${location.href.replace('index.html','equipamentos.html')}?patrimonio=${pat}`;
+
+            new QRCode(container, {
+                text: urlQR,
+                width: 180,
+                height: 180
             });
+
+            document.getElementById('qrPatrimonioInfo').innerText = `Patrimônio: ${pat} — ${ultimo.equipamento}`;
+            modal.style.display = 'flex';
+        }
+
+        function fecharModalQR() {
+            document.getElementById('modalQR').style.display = 'none';
+        }
+
+        function imprimirEtiquetaUltimoAtivo() {
+            const lista = obterEquipamentosSIGEM();
+            if(lista.length === 0) return alert('Nenhum ativo disponível.');
+            const ultimo = lista[lista.length - 1];
+            const pat = ultimo.patrimonio || 'PAT-12345';
+            
+            const janela = window.open('', '', 'width=400,height=300');
+            janela.document.write(`
+                <html><head><title>Imprimir Etiqueta - ${pat}</title></head>
+                <body style="font-family: Arial; text-align: center; padding: 20px; border: 2px dashed #000;">
+                    <h3>GRUPO FLEURY — ENGENHARIA CLÍNICA</h3>
+                    <h2>${ultimo.equipamento}</h2>
+                    <h1 style="font-size: 2rem; background: #000; color: #fff; padding: 5px;">${pat}</h1>
+                    <p><b>Unidade:</b> ${ultimo.unidade}</p>
+                    <script>window.print();window.close();<\/script>
+                </body></html>
+            `);
+            janela.document.close(); // Fechamento corrigido e único
+        }
+
+        function exportarRelatorioReal(tipo) {
+            const lista = obterEquipamentosSIGEM();
+            if(lista.length === 0) return alert('Nenhum ativo cadastrado para exportação.');
+
+            if(tipo === 'CSV') {
+                let csvContent = "data:text/csv;charset=utf-8,ID,Equipamento,Patrimonio,Serie,Fabricante,Unidade,Data\r\n";
+                lista.forEach(item => {
+                    csvContent += `${item.id},${item.equipamento},${item.patrimonio || ''},${item.serie || ''},${item.fabricante || ''},${item.unidade || ''},${item.data || ''}\r\n`;
+                });
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "sigem_relatorio_ativos.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } 
+            else if(tipo === 'Excel') {
+                const worksheet = XLSX.utils.json_to_sheet(lista);
+                worksheet['!autofilter'] = { ref: worksheet['!ref'] };
+                
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Ativos SIGEM");
+                XLSX.writeFile(workbook, "sigem_relatorio_ativos.xlsx");
+            }
+            else if(tipo === 'PDF') {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                const logoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+                try {
+                    doc.addImage(logoBase64, 'PNG', 14, 10, 12, 12);
+                } catch(e) {}
+
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(14);
+                doc.setTextColor(0, 51, 102);
+                doc.text("Grupo Fleury", 30, 18);
+                
+                doc.setFontSize(11);
+                doc.setTextColor(80);
+                doc.text("SIGEM Command Center — Relatório de Ativos", 14, 30);
+                
+                doc.setFontSize(9);
+                doc.setTextColor(120);
+                doc.text(`Data/Hora da emissão: ${new Date().toLocaleString('pt-BR')}`, 14, 37);
+                doc.text(`Usuário emissor: Operador Engenharia Clínica`, 14, 42);
+                doc.text(`Total de ativos: ${lista.length}`, 14, 47);
+                
+                doc.setDrawColor(200);
+                doc.line(14, 51, 195, 51);
+                
+                let y = 60;
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(10);
+                doc.setTextColor(0);
+                doc.text("ID | Equipamento | Patrimônio | Unidade", 14, y);
+                doc.line(14, y + 2, 195, y + 2);
+                
+                y += 10;
+                doc.setFont("helvetica", "normal");
+                lista.forEach((item) => {
+                    if(y > 265) { doc.addPage(); y = 20; }
+                    doc.text(`${item.id} | ${item.equipamento} | ${item.patrimonio || 'N/A'} | ${item.unidade || 'N/A'}`, 14, y);
+                    y += 8;
+                });
+                
+                doc.setFontSize(8);
+                doc.setTextColor(150);
+                doc.text("Documento gerado automaticamente pelo SIGEM", 14, 285);
+                
+                doc.save("sigem_relatorio_executivo.pdf");
+            }
         }
     </script>
 </body>
