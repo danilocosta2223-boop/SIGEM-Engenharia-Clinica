@@ -1,687 +1,309 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM 2.5 - Grupo Fleury | Lista de Equipamentos</title>
-    <link rel="stylesheet" href="estilos/style.css">
+    <title>SIGEM | Grupo Fleury - Portal Oficial de Gestão de Ativos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primary: #005b8f;
-            --primary-dark: #003f63;
-            --accent: #00a3ad;
-            --purple: #6b46c1;
-            --success: #2e7d32;
-            --warning: #ed8936;
-            --danger: #e53e3e;
-            --bg-gradient: #f7fafc;
-            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        :root { 
+            --bg: #f8fafc; 
+            --text: #1e293b; 
+            --card-bg: #ffffff; 
+            --primary: #003366; 
+            --primary-hover: #002244;
+            --accent: #0ea5e9; 
+            --border: #cbd5e1;
+            --shadow: rgba(0, 0, 0, 0.05);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gold: #eab308;
         }
-
-        body {
-            background-color: var(--bg-gradient);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            color: #2d3748;
-            margin: 0;
-            padding: 0;
+        [data-theme="dark"] { 
+            --bg: #0f172a; 
+            --text: #f8fafc; 
+            --card-bg: #1e293b; 
+            --primary: #38bdf8; 
+            --primary-hover: #0ea5e9;
+            --accent: #38bdf8;
+            --border: #475569;
+            --shadow: rgba(0, 0, 0, 0.3);
         }
-
-        header {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow-sm);
+        [data-theme="executive"] {
+            --bg: #090d16;
+            --text: #e2e8f0;
+            --card-bg: linear-gradient(135deg, #111827, #1f2937);
+            --primary: #f59e0b;
+            --primary-hover: #d97706;
+            --accent: #f59e0b;
+            --border: #374151;
+            --shadow: rgba(0, 0, 0, 0.5);
         }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding: 0; margin: 0; transition: background 0.3s, color 0.3s; }
+        
+        header { background: var(--primary); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px var(--shadow); flex-wrap: wrap; gap: 15px; }
+        .brand-container { display: flex; align-items: center; gap: 20px; }
+        .brand-container img { height: 60px; width: auto; object-fit: contain; }
+        .brand h1 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
+        .brand p { margin: 3px 0 0 0; font-size: 0.85rem; opacity: 0.95; }
 
-        header nav a {
-            text-decoration: none;
-            color: #4a5568;
-            font-weight: 600;
-            margin-left: 20px;
-            padding: 8px 14px;
-            border-radius: 8px;
-            transition: 0.2s;
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        /* Abas de Navegação */
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; }
+        .tab-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .tab-btn.active, .tab-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+        /* Banner Vivo & Boas-Vindas Corporativas */
+        .banner-vivo-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px; }
+        @media(max-width: 768px) { .banner-vivo-grid { grid-template-columns: 1fr; } }
+
+        .hero-banner { 
+            background: linear-gradient(135deg, var(--primary), #002244); 
+            color: white; 
+            padding: 35px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
         }
-
-        header nav a:hover, header nav a.ativo {
-            background: #e6fffa;
-            color: var(--accent);
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        /* Hero Executivo Grupo Fleury */
-        .hero {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            padding: 40px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            color: white;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::after {
-            content: "🏥";
-            position: absolute;
-            right: -20px;
-            bottom: -30px;
-            font-size: 10rem;
-            opacity: 0.08;
-        }
-
-        /* KPIs Executivos */
-        .home-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
+        .hero-banner h2 { margin: 0 0 15px 0; font-size: 1.8rem; }
+        .hero-banner p { margin: 0 0 10px 0; font-size: 0.95rem; line-height: 1.6; opacity: 0.95; }
+        
+        .status-card-vivo {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
             border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .numero-kpi {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-top: 5px;
-        }
-
-        /* Tabela e Filtros */
-        .card-tabela {
-            background: white;
-            border-radius: 20px;
             padding: 25px;
-            border: 1px solid #e2e8f0;
-            box-shadow: var(--shadow-lg);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            margin-top: 10px;
-        }
-
-        th, td {
-            padding: 14px 16px;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 0.95rem;
-            vertical-align: middle;
-        }
-
-        th {
-            background: #f8fafc;
-            color: var(--primary-dark);
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-        }
-
-        tr:hover {
-            background: #f8fafc;
-        }
-
-        .badge-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            display: inline-block;
-        }
-
-        .badge-ativo { background: #def7ec; color: #03543f; }
-        .badge-manutencao { background: #fef08a; color: #713f12; }
-        .badge-baixado { background: #fde8e8; color: #9b1c1c; }
-
-        .btn-acao {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.85rem;
-        }
-
-        .btn-acao:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        /* Modal Corporativo */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 800px;
-            width: 100%;
-            box-shadow: var(--shadow-lg);
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .fechar-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #e2e8f0;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-weight: bold;
-            cursor: pointer;
+            box-shadow: 0 4px 6px var(--shadow);
             display: flex;
-            align-items: center;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: space-between;
         }
+        .status-card-vivo h3 { margin: 0 0 15px 0; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .status-info-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 12px; }
 
-        footer {
+        /* Central de Alertas & NOC */
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .painel-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px var(--shadow); }
+        .painel-card h3 { margin-top: 0; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        
+        .alerta-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 0.9rem; }
+        .alerta-item:last-child { border-bottom: none; }
+
+        /* Gráficos Chart.js na Home */
+        .graficos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        @media(max-width: 768px) { .graficos-grid { grid-template-columns: 1fr; } }
+        .chart-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px var(--shadow); }
+        .chart-box h4 { margin: 0 0 15px 0; color: var(--primary); font-size: 1rem; text-align: center; }
+
+        /* Seção Missão e Valores */
+        .missao-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 35px; margin-bottom: 30px; box-shadow: 0 4px 6px var(--shadow); text-align: center; }
+        .missao-section h3 { color: var(--primary); font-size: 1.5rem; margin-top: 0; }
+        .missao-section p { max-width: 800px; margin: 0 auto; font-size: 1.05rem; line-height: 1.6; opacity: 0.9; }
+
+        .valores-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-top: 25px; }
+        .valor-badge { background: rgba(14, 165, 233, 0.08); border: 1px solid var(--border); border-radius: 10px; padding: 15px; text-align: center; font-weight: 600; font-size: 0.9rem; color: var(--primary); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .valor-badge i { font-size: 1.4rem; color: var(--accent); }
+
+        /* Card Francisly & Equipe */
+        .gerencia-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 30px; margin-bottom: 30px; box-shadow: 0 4px 6px var(--shadow); display: flex; align-items: center; gap: 25px; flex-wrap: wrap; }
+        .gerencia-card img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); }
+        .gerencia-content h4 { margin: 0 0 5px 0; font-size: 1.2rem; color: var(--primary); }
+        .gerencia-content p { margin: 0 0 10px 0; font-size: 0.85rem; color: #64748b; font-weight: 600; }
+        .gerencia-content blockquote { margin: 0; font-style: italic; font-size: 1.05rem; color: var(--text); border-left: 4px solid var(--accent); padding-left: 12px; }
+
+        /* Faixa Final Elegante */
+        .frase-final {
+            background: linear-gradient(135deg, #003366, #005599);
+            color: white;
             text-align: center;
-            padding: 30px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            margin-top: 50px;
-            color: #718096;
+            padding: 50px 20px;
+            border-radius: 16px;
+            margin-top: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
+        .frase-final h2 { margin: 0; font-size: 2rem; font-weight: 700; }
+        .frase-final p { margin-top: 10px; opacity: 0.9; font-size: 1.05rem; }
 
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #modalDetalhes, #modalDetalhes * {
-                visibility: visible;
-            }
-            #modalDetalhes {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                background: white;
-            }
-            .fechar-modal, .btn-acao {
-                display: none !important;
-            }
-        }
+        footer { text-align: center; padding: 30px; margin-top: 30px; border-top: 1px solid var(--border); font-size: 0.85rem; color: #64748b; line-height: 1.5; }
     </style>
 </head>
 <body>
+
     <header>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 1.8rem;">🏥</span>
-            <div style="display: flex; flex-direction: column;">
-                <span style="font-size: 1.4rem; font-weight: 800; color: var(--primary);">SIGEM 2.5</span>
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 600;">Grupo Fleury • Engenharia Clínica & Prisma</span>
+        <div class="brand-container">
+            <img src="imagens/logo.png" alt="Logo Grupo Fleury" onerror="this.style.display='none'">
+            <div class="brand">
+                <h1>GRUPO FLEURY</h1>
+                <p>SIGEM — Sistema Integrado de Gestão de Engenharia Clínica</p>
             </div>
         </div>
-        <nav>
-            <a href="cadastro.html" aria-label="Página de Cadastro">➕ Cadastro</a>
-            <a href="equipamentos.html" class="ativo" aria-label="Lista de Equipamentos">📋 Equipamentos</a>
-            <a href="relatorios.html" aria-label="Relatórios Executivos">📊 Relatórios</a>
-            <a href="index.html" aria-label="Dashboard Principal">🏠 Dashboard</a>
-        </nav>
+        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <div id="relogio-topo" style="font-size: 0.85rem; font-weight: 500; opacity: 0.95;"><i class="fa-regular fa-clock"></i> 13/08/2026 12:58</div>
+            <div style="display: flex; background: rgba(255,255,255,0.1); border-radius: 8px; padding: 4px; gap: 4px;">
+                <button onclick="definirTema('light')" class="tab-btn" style="padding: 6px 10px;" title="Modo Claro"><i class="fa-solid fa-sun"></i></button>
+                <button onclick="definirTema('dark')" class="tab-btn" style="padding: 6px 10px;" title="Modo Escuro"><i class="fa-solid fa-moon"></i></button>
+                <button onclick="definirTema('executive')" class="tab-btn" style="padding: 6px 10px;" title="Modo Executivo 💎"><i class="fa-solid fa-gem"></i></button>
+            </div>
+        </div>
     </header>
 
-    <main class="container">
-        <!-- Hero Executivo -->
-        <div class="hero">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">VERSÃO 2.5 INTEGRADA</span>
-                <span style="background: rgba(0,163,173,0.4); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">🟢 FILA PRISMA ATIVA</span>
-            </div>
-            <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 8px;">Parque Tecnológico e Ativos</h1>
-            <p style="opacity: 0.9; font-size: 1.05rem; max-width: 900px;">Gestão avançada de equipamentos com suporte a Base64, geolocalização por CEP/GPS, fichas técnicas para impressão e validação automática para o sistema Prisma.</p>
+    <div class="container">
+
+        <!-- Abas de Navegação -->
+        <div class="nav-tabs">
+            <a href="index.html" class="tab-btn active"><i class="fa-solid fa-house"></i> Página Inicial</a>
+            <a href="cadastro.html" class="tab-btn"><i class="fa-solid fa-file-circle-plus"></i> Cadastro</a>
+            <a href="consulta.html" class="tab-btn"><i class="fa-solid fa-magnifying-glass"></i> Consultar Chamado</a>
+            <a href="equipamentos.html" class="tab-btn"><i class="fa-solid fa-boxes-stacked"></i> Consultar Ativos</a>
+            <a href="admin.html" class="tab-btn"><i class="fa-solid fa-lock"></i> Administração</a>
         </div>
 
-        <!-- Seção de KPIs -->
-        <section class="home-grid">
-            <div class="card">
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">TOTAL CADASTRADOS</span>
-                <p id="kpi-total" class="numero-kpi">0</p>
+        <!-- Banner Vivo & Status do Sistema (Painel Corporativo) -->
+        <div class="banner-vivo-grid">
+            <div class="hero-banner">
+                <h2>Bem-vindo ao SIGEM</h2>
+                <p>O Sistema Integrado de Gestão de Engenharia Clínica foi desenvolvido para apoiar a gestão, rastreabilidade e controle dos ativos tecnológicos do Grupo Fleury, promovendo segurança, padronização e excelência operacional.</p>
+                <p>Por meio desta plataforma, os usuários podem realizar cadastros, consultar equipamentos, acompanhar chamados e acessar informações estratégicas do parque tecnológico. Agradecemos sua colaboração na manutenção de dados confiáveis e atualizados.</p>
+                <div style="margin-top: 15px; font-weight: 600; font-size: 1.05rem;"><i class="fa-solid fa-heart-pulse"></i> Cuidar da tecnologia é cuidar de vidas.</div>
             </div>
-            <div class="card">
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">EQUIPAMENTOS ATIVOS</span>
-                <p id="kpi-ativos" class="numero-kpi" style="color: var(--success);">0</p>
+
+            <div class="status-card-vivo">
+                <h3><i class="fa-solid fa-circle-user" style="color: var(--accent);"></i> Sessão Ativa</h3>
+                <div>
+                    <div class="status-info-row"><span>Usuário:</span> <b>Danilo Costa</b></div>
+                    <div class="status-info-row"><span>Último Acesso:</span> <b>13/08/2026 11:22</b></div>
+                    <div class="status-info-row"><span>Perfil:</span> <b>Engenharia Clínica</b></div>
+                    <div class="status-info-row"><span>Sistema:</span> <b style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> 100% Online</b></div>
+                </div>
+                <a href="equipamentos.html" class="tab-btn" style="text-align: center; justify-content: center; background: var(--primary); color: white; margin-top: 15px;">
+                    <i class="fa-solid fa-rocket"></i> Acessar Catálogo
+                </a>
             </div>
-            <div class="card">
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">APTOS PARA PRISMA</span>
-                <p id="kpi-prisma" class="numero-kpi" style="color: var(--purple);">0</p>
+        </div>
+
+        <!-- Central de Alertas & Monitoramento NOC -->
+        <div class="grid-3">
+            <div class="painel-card">
+                <h3><i class="fa-solid fa-bell" style="color: var(--warning);"></i> Central de Alertas</h3>
+                <div class="alerta-item"><span>Ativos sem foto obrigatória</span> <b style="color: var(--warning);">2 ativos</b></div>
+                <div class="alerta-item"><span>Chamados aguardando análise</span> <b style="color: var(--accent);">5 chamados</b></div>
+                <div class="alerta-item"><span>Cadastros pendentes de validação</span> <b style="color: var(--warning);">1 cadastro</b></div>
+                <div class="alerta-item"><span>Falhas de integração Prisma</span> <b style="color: var(--success);">Nenhuma falha</b></div>
             </div>
-            <div class="card">
-                <span style="font-size: 0.75rem; color: #718096; font-weight: 700;">PENDENTES CADASTRO</span>
-                <p id="kpi-pendente" class="numero-kpi" style="color: var(--danger);">0</p>
+
+            <div class="painel-card">
+                <h3><i class="fa-solid fa-satellite-dish" style="color: var(--success);"></i> Central de Monitoramento (NOC)</h3>
+                <div class="alerta-item"><span>SIGEM Core</span> <b style="color: var(--success);"><i class="fa-solid fa-circle"></i> Online</b></div>
+                <div class="alerta-item"><span>Integração Prisma</span> <b style="color: var(--success);"><i class="fa-solid fa-circle"></i> Sincronizado</b></div>
+                <div class="alerta-item"><span>Banco de Dados</span> <b style="color: var(--success);"><i class="fa-solid fa-circle"></i> Operacional</b></div>
+                <div class="alerta-item"><span>Upload de Fotos</span> <b style="color: var(--success);"><i class="fa-solid fa-circle"></i> Funcionando</b></div>
             </div>
+
+            <div class="painel-card">
+                <h3><i class="fa-solid fa-chart-line" style="color: var(--accent);"></i> Inteligência e Tendências</h3>
+                <div class="alerta-item"><span>Cadastros este mês</span> <b style="color: var(--success);">+18% 📈</b></div>
+                <div class="alerta-item"><span>Novas unidades integradas</span> <b style="color: var(--primary);">+2 unidades</b></div>
+                <div class="alerta-item"><span>Tempo médio de cadastro</span> <b>3 min</b></div>
+                <div class="alerta-item"><span>Qualidade média dos dados</span> <b style="color: var(--success);">98%</b></div>
+            </div>
+        </div>
+
+        <!-- Gráficos Executivos Chart.js na Home -->
+        <div class="graficos-grid">
+            <div class="chart-box">
+                <h4>Cadastros por Mês (Parque Tecnológico)</h4>
+                <canvas id="chartCadastrosMes" height="140"></canvas>
+            </div>
+            <div class="chart-box">
+                <h4>Ativos por Unidade / Regional</h4>
+                <canvas id="chartAtivosUnidade" height="140"></canvas>
+            </div>
+        </div>
+
+        <!-- Missão e Valores do SIGEM -->
+        <div class="missao-section">
+            <h3><i class="fa-solid fa-bullseye" style="color: var(--accent);"></i> Nossa Missão</h3>
+            <p>Garantir a disponibilidade, segurança e rastreabilidade dos ativos médicos, contribuindo para a excelência dos serviços prestados pelo Grupo Fleury.</p>
+            
+            <div class="valores-grid">
+                <div class="valor-badge"><i class="fa-solid fa-shield-halved"></i> Segurança</div>
+                <div class="valor-badge"><i class="fa-solid fa-circle-check"></i> Confiabilidade</div>
+                <div class="valor-badge"><i class="fa-solid fa-lightbulb"></i> Inovação</div>
+                <div class="valor-badge"><i class="fa-solid fa-medal"></i> Excelência</div>
+                <div class="valor-badge"><i class="fa-solid fa-handshake"></i> Transparência</div>
+                <div class="valor-badge"><i class="fa-solid fa-star"></i> Qualidade</div>
+            </div>
+        </div>
+
+        <!-- Mensagem da Gerência (Francisly Cardoso) -->
+        <div class="gerencia-card">
+            <img src="imagens/engenharia-clinica.jpg" alt="Francisly Cardoso" onerror="this.src='https://via.placeholder.com/100?text=FC'">
+            <div class="gerencia-content" style="flex: 1;">
+                <h4>Francisly Cardoso</h4>
+                <p>Gerente de Engenharia Clínica • Grupo Fleury</p>
+                <blockquote>"A tecnologia salva vidas quando é gerenciada com excelência."</blockquote>
+            </div>
+        </div>
+
+        <!-- Faixa Final Elegante com a Frase Institucional -->
+        <section class="frase-final">
+            <h2>Cuidar da tecnologia é cuidar de vidas.</h2>
+            <p>Engenharia Clínica • Grupo Fleury</p>
         </section>
 
-        <!-- Barra de Ferramentas e Filtros -->
-        <section class="card-tabela" style="margin-bottom: 25px; padding: 20px;">
-            <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
-                <div style="flex: 1; min-width: 280px;">
-                    <input type="text" id="pesquisa-patrimonio" placeholder="🔍 Pesquisar por patrimônio, série, nome, setor..." style="width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.95rem;">
-                </div>
-
-                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-                    <select id="filtro-status" style="padding: 12px; border-radius: 10px; border: 1px solid #cbd5e1; background: white;">
-                        <option value="">Todos os Status</option>
-                        <option value="ativo">Ativo</option>
-                        <option value="manutencao">Manutenção</option>
-                        <option value="baixado">Baixado</option>
-                    </select>
-
-                    <button type="button" id="exportarCSV" class="btn-acao">📊 Exportar CSV</button>
-                    <button type="button" id="exportarJSON" class="btn-acao" style="background: var(--purple);">📁 Backup JSON</button>
-                    <button type="button" onclick="limparSistema()" class="btn-acao" style="background: var(--danger);">🗑 Limpar Sistema</button>
-                </div>
-            </div>
-        </section>
-
-        <p id="contadorEquipamentos" style="font-weight: 600; color: #4a5568; margin-bottom: 15px;"></p>
-
-        <!-- Tabela de Listagem Completa com Foto Base64 -->
-        <div class="card-tabela">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Foto</th>
-                        <th>Status</th>
-                        <th>Patrimônio</th>
-                        <th>Série</th>
-                        <th>Equipamento</th>
-                        <th>Fabricante / Modelo</th>
-                        <th>Unidade / Sala</th>
-                        <th>Prisma Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="listaEquipamentos">
-                    <!-- Preenchido via JavaScript -->
-                </tbody>
-            </table>
-
-            <div id="mensagemVazia" style="text-align: center; padding: 40px; color: #718096; display: none;">
-                Nenhum equipamento cadastrado no momento.
-            </div>
-        </div>
-    </main>
-
-    <!-- Modal de Detalhes Corporativo & Ficha Prisma -->
-    <div id="modalDetalhes" class="modal">
-        <div class="modal-content">
-            <button type="button" class="fechar-modal" onclick="fecharModalDetalhes()">✕</button>
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #edf2f7; padding-bottom: 12px; margin-bottom: 20px;">
-                <h2 style="color: var(--primary-dark); margin: 0;">📋 Ficha Técnica e Validação Prisma</h2>
-                <div id="badgePrismaHeader"></div>
-            </div>
-            
-            <div id="conteudoDetalhes" style="display: flex; flex-direction: column; gap: 20px;">
-                <!-- Preenchido dinamicamente -->
-            </div>
-
-            <div style="display: flex; gap: 12px; margin-top: 30px; border-top: 1px solid #edf2f7; padding-top: 20px; justify-content: flex-end;">
-                <button type="button" class="btn-acao" style="background: var(--accent);" onclick="window.print()">🖨 Imprimir Ficha</button>
-                <button type="button" class="btn-acao" onclick="fecharModalDetalhes()">Fechar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Edição Rápida -->
-    <div id="modalEditar" class="modal">
-        <div class="modal-content">
-            <button type="button" class="fechar-modal" onclick="fecharModalEditar()">✕</button>
-            <h2 style="color: var(--primary-dark); margin-bottom: 20px; border-bottom: 2px solid #edf2f7; padding-bottom: 10px;">✏️ Editar Cadastro do Ativo</h2>
-            
-            <form id="formEdicao" onsubmit="salvarEdicao(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">
-                <input type="hidden" id="editIndex">
-                <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 4px;">Patrimônio</label>
-                    <input type="text" id="editPatrimonio" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
-                </div>
-                <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 4px;">Número de Série</label>
-                    <input type="text" id="editSerie" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
-                </div>
-                <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 4px;">Equipamento</label>
-                    <input type="text" id="editEquipamento" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
-                </div>
-                <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 4px;">Fabricante</label>
-                    <input type="text" id="editFabricante" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
-                </div>
-                <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 4px;">Modelo</label>
-                    <input type="text" id="editModelo" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
-                </div>
-                <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 4px;">ANVISA</label>
-                    <input type="text" id="editAnvisa" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
-                </div>
-                <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 4px;">CEP</label>
-                    <input type="text" id="editCep" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
-                </div>
-                <div>
-                    <label style="font-size: 0.8rem; font-weight: 700; color: #4a5568; display: block; margin-bottom: 4px;">Status</label>
-                    <select id="editStatus" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; background: white;">
-                        <option value="ativo">Ativo</option>
-                        <option value="manutencao">Manutenção</option>
-                        <option value="baixado">Baixado</option>
-                    </select>
-                </div>
-                <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-                    <button type="button" class="btn-acao" style="background: #cbd5e1; color: #2d3748;" onclick="fecharModalEditar()">Cancelar</button>
-                    <button type="submit" class="btn-acao" style="background: var(--success);">Salvar Alterações</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <footer>
-        <p>Grupo Fleury • Engenharia Clínica</p>
-        <p style="font-weight: 600; color: var(--primary); margin-top: 4px;">SIGEM v2.5 • Plataforma Integrada de Preparação para o Prisma</p>
-        <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 6px;">Última atualização: <span id="ultimaAtualizacao">12/08/2026</span></p>
+        <b>GRUPO FLEURY</b><br>
+        SIGEM — Sistema Integrado de Gestão de Engenharia Clínica<br>
+        Portal Oficial de Gestão de Ativos | Versão 3.0<br>
+        © Engenharia Clínica — Cuidar da tecnologia é cuidar de vidas.
     </footer>
 
-    <!-- Script Completo SIGEM 2.5 -->
     <script>
-        function verificarAptidaoPrisma(eq) {
-            const completo = eq.patrimonio && eq.fabricante && eq.modelo && eq.numeroSerie && eq.fotoEquipamento && eq.anvisa;
-            return completo;
-        }
-
-        function carregarEquipamentos() {
-            const equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
-            const tbody = document.getElementById("listaEquipamentos");
-            const mensagemVazia = document.getElementById("mensagemVazia");
-            const pesquisa = document.getElementById("pesquisa-patrimonio").value.toLowerCase();
-            const filtroStatus = document.getElementById("filtro-status").value;
-
-            tbody.innerHTML = "";
-
-            const filtrados = equipamentos.filter(eq => {
-                const matchTexto = (eq.patrimonio && eq.patrimonio.toLowerCase().includes(pesquisa)) ||
-                                   (eq.numeroSerie && eq.numeroSerie.toLowerCase().includes(pesquisa)) ||
-                                   (eq.equipamento && eq.equipamento.toLowerCase().includes(pesquisa)) ||
-                                   (eq.unidadeFleury && eq.unidadeFleury.toLowerCase().includes(pesquisa)) ||
-                                   (eq.fabricante && eq.fabricante.toLowerCase().includes(pesquisa));
-                
-                const matchStatus = !filtroStatus || eq.status === filtroStatus;
-                return matchTexto && matchStatus;
-            });
-
-            // Atualiza KPIs
-            const aptosCount = equipamentos.filter(e => verificarAptidaoPrisma(e)).length;
-            document.getElementById("kpi-total").textContent = equipamentos.length;
-            document.getElementById("kpi-ativos").textContent = equipamentos.filter(e => e.status === 'ativo').length;
-            document.getElementById("kpi-prisma").textContent = aptosCount;
-            document.getElementById("kpi-pendente").textContent = equipamentos.length - aptosCount;
-            document.getElementById("contadorEquipamentos").textContent = `Exibindo ${filtrados.length} de ${equipamentos.length} equipamento(s) cadastrado(s).`;
-
-            if (filtrados.length === 0) {
-                mensagemVazia.style.display = 'block';
-                return;
+        function definirTema(tema) {
+            const html = document.documentElement;
+            if (tema === 'executive') {
+                html.setAttribute('data-theme', 'executive');
+            } else if (tema === 'dark') {
+                html.setAttribute('data-theme', 'dark');
             } else {
-                mensagemVazia.style.display = 'none';
-            }
-
-            filtrados.forEach((eq, index) => {
-                const fotoUrl = eq.fotoEquipamento || 'https://via.placeholder.com/80?text=Sem+Foto';
-                
-                let badgeClass = 'badge-manutencao';
-                let statusTexto = 'Manutenção';
-                if (eq.status === 'ativo') {
-                    badgeClass = 'badge-ativo';
-                    statusTexto = 'Ativo';
-                } else if (eq.status === 'baixado') {
-                    badgeClass = 'badge-baixado';
-                    statusTexto = 'Baixado';
-                }
-
-                const apto = verificarAptidaoPrisma(eq);
-                const prismaBadge = apto 
-                    ? '<span style="color: var(--success); font-weight: 700; font-size: 0.85rem;">🟢 Apto Prisma</span>' 
-                    : '<span style="color: var(--danger); font-weight: 700; font-size: 0.85rem;">🔴 Incompleto</span>';
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>
-                            <img src="${fotoUrl}" onclick="abrirImagem('${fotoUrl}')" alt="Foto Base64" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;" title="Clique para ampliar">
-                        </td>
-                        <td><span class="badge-status ${badgeClass}">${statusTexto}</span></td>
-                        <td><strong>${eq.patrimonio || '--'}</strong></td>
-                        <td><code>${eq.numeroSerie || '--'}</code></td>
-                        <td>${eq.equipamento || '--'}</td>
-                        <td>${eq.fabricante || '--'} / ${eq.modelo || '--'}</td>
-                        <td>${eq.unidadeFleury || '--'} (${eq.sala || '--'})</td>
-                        <td>${prismaBadge}</td>
-                        <td>
-                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                <button type="button" class="btn-acao" style="background: var(--accent); padding: 6px 10px;" onclick="verDetalhes(${index})" title="Visualizar Detalhes e Ficha">🔍</button>
-                                <button type="button" class="btn-acao" style="background: var(--purple); padding: 6px 10px;" onclick="abrirEditar(${index})" title="Editar Cadastro">✏️</button>
-                                <button type="button" class="btn-acao" style="background: var(--danger); padding: 6px 10px;" onclick="removerEquipamento(${index})" title="Excluir Ativo">🗑</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function abrirImagem(url) {
-            window.open(url, "_blank");
-        }
-
-        // Exibir Detalhes Completos e Ficha Prisma
-        function verDetalhes(index) {
-            const equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
-            const eq = equipamentos[index];
-            if (!eq) return;
-
-            const modal = document.getElementById("modalDetalhes");
-            const conteudo = document.getElementById("conteudoDetalhes");
-            const badgeHeader = document.getElementById("badgePrismaHeader");
-
-            const fotoUrl = eq.fotoEquipamento || 'https://via.placeholder.com/200?text=Sem+Foto';
-            const apto = verificarAptidaoPrisma(eq);
-
-            badgeHeader.innerHTML = apto 
-                ? '<span style="background: #def7ec; color: #03543f; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem;">🟢 APTO PARA CADASTRO NO PRISMA</span>'
-                : '<span style="background: #fde8e8; color: #9b1c1c; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 0.9rem;">🔴 CADASTRO INCOMPLETO PARA PRISMA</span>';
-
-            const formatadorMoeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-            const valorFormatado = eq.valor ? formatadorMoeda.format(eq.valor) : '--';
-
-            conteudo.innerHTML = `
-                <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
-                    <img src="${fotoUrl}" onclick="abrirImagem('${fotoUrl}')" style="width: 120px; height: 120px; object-fit: cover; border-radius: 10px; border: 1px solid #cbd5e1; cursor: pointer;" title="Clique para ampliar">
-                    <div>
-                        <h3 style="color: var(--primary); margin: 0 0 5px 0;">${eq.equipamento || 'Equipamento'}</h3>
-                        <p style="margin: 0; color: #718096; font-size: 0.9rem;"><strong>Patrimônio:</strong> ${eq.patrimonio || '--'}</p>
-                        <p style="margin: 4px 0 0 0; color: #718096; font-size: 0.9rem;"><strong>Série:</strong> <code>${eq.numeroSerie || '--'}</code></p>
-                    </div>
-                </div>
-
-                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 20px;">
-                    <h4 style="color: #166534; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">📌 Bloco de Dados Direto para o Prisma</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
-                        <div><span style="font-size: 0.75rem; color: #15803d; display: block;">PATRIMÔNIO</span><strong>${eq.patrimonio || '--'}</strong></div>
-                        <div><span style="font-size: 0.75rem; color: #15803d; display: block;">NÚMERO DE SÉRIE</span><strong>${eq.numeroSerie || '--'}</strong></div>
-                        <div><span style="font-size: 0.75rem; color: #15803d; display: block;">FABRICANTE</span><strong>${eq.fabricante || '--'}</strong></div>
-                        <div><span style="font-size: 0.75rem; color: #15803d; display: block;">MODELO</span><strong>${eq.modelo || '--'}</strong></div>
-                        <div><span style="font-size: 0.75rem; color: #15803d; display: block;">REGISTRO ANVISA</span><strong>${eq.anvisa || '--'}</strong></div>
-                        <div><span style="font-size: 0.75rem; color: #15803d; display: block;">UNIDADE / SALA</span><strong>${eq.unidadeFleury || '--'} (${eq.sala || '--'})</strong></div>
-                        <div><span style="font-size: 0.75rem; color: #15803d; display: block;">CEP DA UNIDADE</span><strong>${eq.cep || '--'}</strong></div>
-                        <div><span style="font-size: 0.75rem; color: #15803d; display: block;">VALOR DO ATIVO</span><strong>${valorFormatado}</strong></div>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
-                    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                        <span style="font-size: 0.75rem; color: #718096; display: block;">GEOLOCALIZAÇÃO GPS</span>
-                        <strong>${eq.latitude && eq.longitude ? `${eq.latitude}, ${eq.longitude}` : 'Não capturada'}</strong>
-                    </div>
-                    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                        <span style="font-size: 0.75rem; color: #718096; display: block;">RESPONSÁVEL / COLETA</span>
-                        <strong>${eq.respTecnico || 'Danilo Costa'}</strong>
-                    </div>
-                </div>
-
-                <div style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0;">
-                    <span style="font-size: 0.75rem; color: #718096; display: block; margin-bottom: 4px;">OBSERVAÇÕES PARA O LANÇADOR DO PRISMA</span>
-                    <p style="margin: 0; font-size: 0.95rem; color: #2d3748;">${eq.obsPrisma || eq.historico || 'Nenhuma observação registrada.'}</p>
-                </div>
-            `;
-
-            modal.style.display = 'flex';
-        }
-
-        function fecharModalDetalhes() {
-            document.getElementById("modalDetalhes").style.display = 'none';
-        }
-
-        // Abrir Modal de Edição
-        function abrirEditar(index) {
-            const equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
-            const eq = equipamentos[index];
-            if (!eq) return;
-
-            document.getElementById("editIndex").value = index;
-            document.getElementById("editPatrimonio").value = eq.patrimonio || '';
-            document.getElementById("editSerie").value = eq.numeroSerie || '';
-            document.getElementById("editEquipamento").value = eq.equipamento || '';
-            document.getElementById("editFabricante").value = eq.fabricante || '';
-            document.getElementById("editModelo").value = eq.modelo || '';
-            document.getElementById("editAnvisa").value = eq.anvisa || '';
-            document.getElementById("editCep").value = eq.cep || '';
-            document.getElementById("editStatus").value = eq.status || 'ativo';
-
-            document.getElementById("modalEditar").style.display = 'flex';
-        }
-
-        function fecharModalEditar() {
-            document.getElementById("modalEditar").style.display = 'none';
-        }
-
-        function salvarEdicao(event) {
-            event.preventDefault();
-            const index = document.getElementById("editIndex").value;
-            let equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
-
-            if (equipamentos[index]) {
-                equipamentos[index].patrimonio = document.getElementById("editPatrimonio").value;
-                equipamentos[index].numeroSerie = document.getElementById("editSerie").value;
-                equipamentos[index].equipamento = document.getElementById("editEquipamento").value;
-                equipamentos[index].fabricante = document.getElementById("editFabricante").value;
-                equipamentos[index].modelo = document.getElementById("editModelo").value;
-                equipamentos[index].anvisa = document.getElementById("editAnvisa").value;
-                equipamentos[index].cep = document.getElementById("editCep").value;
-                equipamentos[index].status = document.getElementById("editStatus").value;
-
-                localStorage.setItem("sigemEquipamentos", JSON.stringify(equipamentos));
-                fecharModalEditar();
-                carregarEquipamentos();
-                alert("Cadastro atualizado com sucesso!");
+                html.setAttribute('data-theme', 'light');
             }
         }
 
-        // Remover Equipamento
-        function removerEquipamento(index) {
-            if (confirm("Tem certeza que deseja excluir este equipamento do inventário do Grupo Fleury?")) {
-                let equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
-                equipamentos.splice(index, 1);
-                localStorage.setItem("sigemEquipamentos", JSON.stringify(equipamentos));
-                carregarEquipamentos();
-            }
-        }
-
-        // Limpar todo o sistema
-        function limparSistema() {
-            if (confirm("ATENÇÃO: Deseja apagar todos os registros de equipamentos do navegador?")) {
-                localStorage.removeItem("sigemEquipamentos");
-                carregarEquipamentos();
-            }
-        }
-
-        // Exportar CSV
-        document.getElementById("exportarCSV").addEventListener("click", () => {
-            const equipamentos = JSON.parse(localStorage.getItem("sigemEquipamentos")) || [];
-            if (equipamentos.length === 0) {
-                alert("Não há dados para exportar.");
-                return;
-            }
-
-            let csv = "Patrimonio;Serie;Equipamento;Fabricante;Modelo;Anvisa;Setor;Status;Valor\n";
-            equipamentos.forEach(eq => {
-                csv += `${eq.patrimonio};${eq.numeroSerie};${eq.equipamento};${eq.fabricante};${eq.modelo};${eq.anvisa};${eq.unidadeFleury};${eq.status};${eq.valor}\n`;
+        // Inicialização de Gráficos Chart.js
+        window.addEventListener('DOMContentLoaded', () => {
+            const ctx1 = document.getElementById('chartCadastrosMes').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago'],
+                    datasets: [{
+                        label: 'Novos Cadastros',
+                        data: [145, 170, 190, 210, 235, 294],
+                        backgroundColor: '#0ea5e9',
+                        borderRadius: 6
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
             });
 
-            const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'sigem_equipamentos_fleury.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            const ctx2 = document.getElementById('chartAtivosUnidade').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Morumbi', 'Paraíso', 'Anália Franco', 'Rio de Janeiro', 'Outras (PR/BA)'],
+                    datasets: [{
+                        data: [420, 310, 220, 180, 124],
+                        backgroundColor: ['#003366', '#0ea5e9', '#10b981', '#f59e0b', '#64748b']
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } } }
+            });
         });
-
-        // Backup JSON
-        document.getElementById("exportarJSON").addEventListener("click", () => {
-            const dados = localStorage.getItem("sigemEquipamentos");
-            if (!dados) {
-                alert("Nenhum dado encontrado para backup.");
-                return;
-            }
-            const blob = new Blob([dados], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'sigem_backup_fleury.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        });
-
-        // Event Listeners de Filtro
-        document.getElementById("pesquisa-patrimonio").addEventListener("input", carregarEquipamentos);
-        document.getElementById("filtro-status").addEventListener("change", carregarEquipamentos);
-
-        // Inicialização
-        window.addEventListener('load', carregarEquipamentos);
     </script>
 </body>
 </html>
