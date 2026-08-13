@@ -3,165 +3,422 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM v2.7 | Gestão Clínica</title>
+    <title>SIGEM | Grupo Fleury - Engenharia Clínica</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg: #f8fafc; --text: #1e293b; --card-bg: white; --primary: #2563eb; }
-        [data-theme="dark"] { --bg: #0f172a; --text: #f8fafc; --card-bg: #1e293b; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); padding: 20px; transition: 0.3s; box-sizing: border-box; }
+        :root { 
+            --bg: #f1f5f9; 
+            --text: #1e293b; 
+            --card-bg: #ffffff; 
+            --primary: #003366; 
+            --primary-hover: #002244;
+            --accent: #2563eb; 
+            --border: #cbd5e1;
+        }
+        [data-theme="dark"] { 
+            --bg: #0f172a; 
+            --text: #f8fafc; 
+            --card-bg: #1e293b; 
+            --primary: #38bdf8; 
+            --primary-hover: #0ea5e9;
+            --border: #475569;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding: 0; margin: 0; transition: 0.3s; }
         
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .card { background: var(--card-bg); padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
-        
-        .table-responsive { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: var(--card-bg); min-width: 600px; }
-        th, td { padding: 12px; border: 1px solid #444; text-align: left; vertical-align: middle; }
-        
-        form, .search-container { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid #444; margin-bottom: 15px; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        .btn-acao { background: var(--primary); color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; }
-        .tabela-foto { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: 0.2s; }
-        .tabela-foto:hover { transform: scale(1.1); }
-        
-        #resultadoPatrimonio { font-size: 0.85rem; margin-top: 2px; font-weight: bold; }
-        
-        /* Modal de Imagem Ampliada */
-        #modalFoto { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
-        #modalFoto img { max-width: 90%; max-height: 90%; border-radius: 8px; }
+        header { background: var(--primary); color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .brand h1 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
+        .brand p { margin: 5px 0 0 0; font-size: 0.85rem; opacity: 0.9; }
 
-        @media(max-width:768px){
-            body { padding: 10px; }
-            .dashboard { grid-template-columns: 1fr; }
+        .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+
+        /* Abas de Navegação */
+        .nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; }
+        .tab-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .tab-btn.active, .tab-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Aviso Prisma */
+        .aviso-prisma { background: #eff6ff; border-left: 5px solid var(--accent); padding: 15px 20px; border-radius: 4px; margin-bottom: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        [data-theme="dark"] .aviso-prisma { background: #1e293b; }
+        .aviso-prisma h4 { margin: 0 0 5px 0; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+        .aviso-prisma p { margin: 0; font-size: 0.9rem; line-height: 1.4; }
+
+        /* Dashboard Indicadores */
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; border: 1px solid var(--border); }
+        .card span { font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: bold; }
+        .card div { font-size: 1.6rem; font-weight: bold; color: var(--primary); margin-top: 5px; }
+
+        /* Formulário e Seções */
+        .form-section { background: var(--card-bg); padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border); margin-bottom: 30px; }
+        .form-section h3 { margin-top: 0; border-bottom: 2px solid var(--border); padding-bottom: 10px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+
+        label { display: block; margin-top: 15px; font-weight: 600; font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; background: var(--card-bg); color: var(--text); font-size: 0.95rem; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+
+        /* Caixa de Evidência Fotográfica Ampliada */
+        .evidencia-box { border: 2px dashed var(--border); padding: 30px; text-align: center; border-radius: 8px; margin-top: 15px; background: rgba(0,0,0,0.01); cursor: pointer; transition: 0.2s; }
+        .evidencia-box:hover { border-color: var(--accent); }
+        
+        .btn-acao { background: var(--primary); color: white; border: none; padding: 12px 20px; cursor: pointer; border-radius: 6px; font-weight: bold; font-size: 1rem; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-acao:hover { background: var(--primary-hover); }
+        
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); min-width: 900px; }
+        th, td { padding: 14px; border-bottom: 1px solid var(--border); text-align: left; font-size: 0.9rem; }
+        th { background: rgba(0,0,0,0.03); color: var(--primary); font-weight: 700; }
+        [data-theme="dark"] th { background: rgba(255,255,255,0.05); color: #38bdf8; }
+
+        /* Modais */
+        .modal-overlay { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
+        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 10px; width: 90%; max-width: 550px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
+        .chamado-destaque { background: #f0fdf4; border: 2px dashed #22c55e; padding: 15px; border-radius: 6px; font-size: 1.3rem; font-weight: bold; color: #16a34a; margin: 20px 0; letter-spacing: 1px; }
+        [data-theme="dark"] .chamado-destaque { background: #064e3b; color: #4ade80; }
+
+        footer { text-align: center; padding: 30px; margin-top: 40px; border-top: 1px solid var(--border); font-size: 0.85rem; color: #64748b; }
+
+        @media(max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            header { flex-direction: column; align-items: flex-start; gap: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1>SIGEM <small>v2.7</small></h1>
+    <header>
+        <div class="brand">
+            <h1>GRUPO FLEURY</h1>
+            <p>SIGEM — Sistema Integrado de Gestão de Engenharia Clínica</p>
+        </div>
         <div style="display: flex; gap: 10px; align-items: center;">
-            <button onclick="alternarTema()" class="btn-acao" style="background:#475569;"><i class="fa-solid fa-circle-half-stroke"></i></button>
-            <label class="btn-acao" style="cursor: pointer; margin: 0; display: inline-flex; align-items: center; gap: 5px;">
-                <i class="fa-solid fa-upload"></i> Importar <input type="file" id="importarJson" accept=".json" onchange="importarBackup(event)" style="display: none;">
-            </label>
-            <button onclick="baixarBackup()" class="btn-acao"><i class="fa-solid fa-download"></i> JSON</button>
+            <button onclick="alternarTema()" class="btn-acao" style="background: #475569; padding: 8px 12px;" title="Alternar Tema"><i class="fa-solid fa-circle-half-stroke"></i></button>
+            <button onclick="exportarExcelCSV()" class="btn-acao" style="padding: 8px 12px; background: #16a34a;" title="Exportar CSV/Excel"><i class="fa-solid fa-file-excel"></i> Excel</button>
         </div>
     </header>
 
-    <div class="dashboard">
-        <div class="card">TOTAL<div id="kpi-total">0</div></div>
-        <div class="card">OPERACIONAIS<div id="kpi-operacionais">0</div></div>
-        <div class="card">CONFORMIDADE<div id="kpi-conformidade">100%</div></div>
-        <div class="card">UNIDADES<div id="kpi-unidades">0</div></div>
-    </div>
+    <div class="container">
 
-    <!-- Verificação rápida antes do cadastro -->
-    <div class="search-container">
-        <input type="text" id="buscaPatrimonio" placeholder="🔍 Verificar patrimônio antes de cadastrar..." onkeyup="verificarPatrimonioRapido()">
-        <div id="resultadoPatrimonio"></div>
-    </div>
-
-    <form id="form-equipamento" onsubmit="salvarEquipamento(event)">
-        <input type="hidden" id="editIndex" value="">
-        <input type="text" id="patrimonio" required placeholder="Patrimônio (Obrigatório)">
-        <input type="text" id="nomeEquipamento" required placeholder="Nome do Equipamento (Obrigatório)">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <input type="text" id="unidade" required placeholder="Unidade (Obrigatório)">
-            <input type="text" id="localDetalhado" placeholder="Sala, leito ou setor (Opcional)">
+        <!-- Aviso Obrigatório & Prisma -->
+        <div class="aviso-prisma">
+            <h4><i class="fa-solid fa-triangle-exclamation"></i> ATENÇÃO: Diretrizes de Cadastro e Processamento</h4>
+            <p>Todos os campos com asterisco (<b>*</b>) são obrigatórios. O cadastro será processado automaticamente na plataforma <b>Prisma</b>. Prazo médio: <b>até 3 dias úteis</b>.</p>
         </div>
-        <input type="date" id="dataCadastro">
-        <select id="status"><option>Operacional</option><option>Manutenção</option><option>Inativo</option></select>
-        <input type="file" id="fotoInput" accept="image/*" onchange="previewImagem()">
-        <img id="previewFoto" style="max-width: 100px; display: none; margin-top: 5px;">
-        <textarea id="observacao" placeholder="Observações (Opcional)"></textarea>
-        <button type="submit" id="btnSalvar" class="btn-acao">Salvar Equipamento</button>
-    </form>
 
-    <input type="text" id="busca" placeholder="🔍 Buscar por patrimônio, nome, unidade, local ou status..." onkeyup="filtrarTabela()" style="margin-top:20px">
+        <!-- Dashboard Indicadores -->
+        <div class="dashboard">
+            <div class="card"><span>Total de Cadastros</span><div id="kpi-total">0</div></div>
+            <div class="card"><span>Operacionais</span><div id="kpi-operacionais">0</div></div>
+            <div class="card"><span>Manutenção</span><div id="kpi-manutencao">0</div></div>
+            <div class="card"><span>Inativos</span><div id="kpi-inativos">0</div></div>
+        </div>
 
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Foto</th>
-                    <th>Patrimônio</th>
-                    <th>Nome</th>
-                    <th>Localização</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-corpo"></tbody>
-        </table>
+        <!-- Navegação por Abas -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="mudarAba('cadastro')"><i class="fa-solid fa-file-circle-plus"></i> Cadastro</button>
+            <button class="tab-btn" onclick="mudarAba('consulta-chamado')"><i class="fa-solid fa-magnifying-glass"></i> Consultar Chamado</button>
+            <button class="tab-btn" onclick="mudarAba('listar')"><i class="fa-solid fa-database"></i> Consultar Ativos</button>
+            <button class="tab-btn" onclick="mudarAba('admin')"><i class="fa-solid fa-lock"></i> Administração</button>
+        </div>
+
+        <!-- ABA 1: CADASTRO -->
+        <div id="aba-cadastro" class="tab-content active">
+            <div class="form-section">
+                <h3><i class="fa-solid fa-file-medical"></i> Novo Cadastro de Ativo</h3>
+                
+                <form id="form-equipamento" onsubmit="salvarEquipamento(event)">
+                    <input type="hidden" id="editIndex" value="">
+                    
+                    <div class="grid-2">
+                        <div>
+                            <label>Solicitante *</label>
+                            <input type="text" id="solicitante" required placeholder="Nome completo">
+                        </div>
+                        <div>
+                            <label>Regional *</label>
+                            <input type="text" id="regional" required placeholder="Ex: SP Capital, RJ">
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div>
+                            <label>Descrição do Ativo *</label>
+                            <input type="text" id="descricaoAtivo" required placeholder="Ex: Monitor Multiparâmetro">
+                        </div>
+                        <div>
+                            <label>Patrimônio *</label>
+                            <input type="text" id="patrimonio" required placeholder="Número de Patrimônio">
+                            <div id="erroPatrimonio" style="font-size:0.8rem; margin-top:3px; font-weight:bold;"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-3">
+                        <div>
+                            <label>Setor (Ativo Pai) *</label>
+                            <input type="text" id="setorAtivoPai" required placeholder="Ex: UTI Adulto">
+                        </div>
+                        <div>
+                            <label>Unidade *</label>
+                            <input type="text" id="unidade" required placeholder="Ex: Fleury Morumbi">
+                        </div>
+                        <div>
+                            <label>Número de Série *</label>
+                            <input type="text" id="numeroSerie" required placeholder="Série do fabricante">
+                            <div id="erroSerie" style="font-size:0.8rem; margin-top:3px; font-weight:bold;"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div>
+                            <label>Modelo *</label>
+                            <input type="text" id="modelo" required placeholder="Ex: Philips MX800">
+                        </div>
+                        <div>
+                            <label>Status Operacional</label>
+                            <select id="status">
+                                <option>Operacional</option>
+                                <option>Manutenção</option>
+                                <option>Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div>
+                            <label>Local Detalhado (Sala / Leito)</label>
+                            <input type="text" id="localDetalhado" placeholder="Ex: Leito 08">
+                        </div>
+                        <div>
+                            <label>Cadastrado por (Automático)</label>
+                            <input type="text" id="cadastradoPor" value="Danilo Costa" readonly style="background: rgba(0,0,0,0.03); font-weight: bold;">
+                        </div>
+                    </div>
+
+                    <!-- Evidência Fotográfica Reformulada -->
+                    <label>Evidência Fotográfica</label>
+                    <div class="evidencia-box" onclick="document.getElementById('fotoInput').click()">
+                        <i class="fa-solid fa-camera" style="font-size: 2rem; color: var(--accent); margin-bottom: 8px;"></i>
+                        <p style="margin: 0; font-weight: bold;">Clique para Tirar Foto ou Selecionar Arquivo</p>
+                        <input type="file" id="fotoInput" accept="image/*" onchange="previewImagem()" style="display: none;">
+                        <img id="previewFoto" style="max-width: 140px; display: none; margin: 15px auto 0 auto; border-radius: 6px; border: 1px solid var(--border);">
+                    </div>
+
+                    <label>Observações</label>
+                    <textarea id="observacao" rows="3" placeholder="Informações adicionais..."></textarea>
+
+                    <div style="margin-top: 25px; text-align: right;">
+                        <button type="submit" id="btnSalvar" class="btn-acao"><i class="fa-solid fa-floppy-disk"></i> Salvar e Gerar Chamado</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ABA 2: CONSULTAR CHAMADO -->
+        <div id="aba-consulta-chamado" class="tab-content">
+            <div class="form-section">
+                <h3><i class="fa-solid fa-magnifying-glass"></i> Consultar Chamado por Protocolo</h3>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <input type="text" id="inputConsultaChamado" placeholder="Digite o número do chamado exato (Ex: FLY-000001)...">
+                    <button onclick="buscarChamado()" class="btn-acao">Consultar</button>
+                </div>
+                <div id="resultadoConsultaChamado" style="margin-top: 25px;"></div>
+            </div>
+        </div>
+
+        <!-- ABA 3: LISTAR E CONSULTAR ATIVOS -->
+        <div id="aba-listar" class="tab-content">
+            <div class="form-section">
+                <h3><i class="fa-solid fa-database"></i> Base de Ativos Cadastrados</h3>
+                <input type="text" id="busca" placeholder="🔍 Filtrar por patrimônio, solicitante, unidade, modelo, série ou status..." onkeyup="filtrarTabela()">
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Chamado</th>
+                                <th>Foto</th>
+                                <th>Patrimônio / Série</th>
+                                <th>Ativo / Modelo</th>
+                                <th>Unidade / Setor</th>
+                                <th>Solicitante</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-corpo"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 4: ADMINISTRAÇÃO -->
+        <div id="aba-admin" class="tab-content">
+            <div class="form-section">
+                <h3><i class="fa-solid fa-lock"></i> Área Administrativa Restrita</h3>
+                <div id="painelLoginAdmin" style="max-width: 400px; margin: 20px auto; text-align: center;">
+                    <p>Digite a senha de administrador para acessar as ferramentas de gerenciamento de dados.</p>
+                    <input type="password" id="senhaAdmin" placeholder="Senha de acesso" style="text-align: center;">
+                    <button onclick="validarAdmin()" class="btn-acao" style="width: 100%; margin-top: 15px;">Autenticar Admin</button>
+                </div>
+
+                <div id="painelOpcoesAdmin" style="display: none; margin-top: 20px;">
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button onclick="baixarBackupJson()" class="btn-acao" style="background: #2563eb;"><i class="fa-solid fa-download"></i> Exportar Dados JSON</button>
+                        <label class="btn-acao" style="cursor: pointer; margin: 0; background: #475569;">
+                            <i class="fa-solid fa-upload"></i> Importar Dados JSON <input type="file" id="importarJson" accept=".json" onchange="importarBackupJson(event)" style="display: none;">
+                        </label>
+                        <button onclick="limparTodosRegistros()" class="btn-acao" style="background: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Limpar Todos os Registros</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Modal para foto ampliada -->
-    <div id="modalFoto" onclick="fecharModalFoto()">
-        <img id="imgAmpliada">
+    <!-- Modal de Sucesso / Protocolo -->
+    <div id="modalProtocolo" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: #22c55e; margin-bottom: 10px;"></i>
+            <h2 style="margin: 0; color: var(--primary);">Cadastro Realizado com Sucesso!</h2>
+            <p style="font-size: 0.9rem; color: #64748b; margin-top: 5px;">Seu registro foi enviado para processamento no Prisma.</p>
+            
+            <div class="chamado-destaque" id="textoChamadoGerado">FLY-000001</div>
+            
+            <p style="font-size: 0.85rem; line-height: 1.4;">Prazo médio de processamento: <b>até 3 dias úteis</b>.<br>Guarde este número para acompanhamento.</p>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="imprimirProtocoloModal()" class="btn-acao" style="flex: 1; background: #475569;"><i class="fa-solid fa-print"></i> Imprimir Protocolo</button>
+                <button onclick="fecharModalProtocolo()" class="btn-acao" style="flex: 1;">Concluir</button>
+            </div>
+        </div>
     </div>
+
+    <!-- Modal de Histórico -->
+    <div id="modalHistorico" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 10px;"><i class="fa-solid fa-clock-rotate-left"></i> Histórico de Alterações</h3>
+            <div id="conteudoHistorico" style="text-align: left; margin: 20px 0; max-height: 250px; overflow-y: auto;"></div>
+            <button onclick="fecharModalHistorico()" class="btn-acao" style="width: 100%;">Fechar</button>
+        </div>
+    </div>
+
+    <footer>
+        <b>Grupo Fleury</b> — Sistema Integrado de Gestão de Engenharia Clínica (SIGEM)<br>
+        Prazo médio de processamento institucional: até 3 dias úteis | Suporte: engenhariaclinica@grupofleury.com.br
+    </footer>
 
     <script>
-        let lista = JSON.parse(localStorage.getItem('sigem_equipamentos') || '[]');
+        let lista = JSON.parse(localStorage.getItem('sigem_equipamentos_fleury_v2') || '[]');
+        let ultimoChamadoNum = parseInt(localStorage.getItem('sigem_ultimo_chamado') || '0', 10);
+        let chamadoAtualVisualizado = null;
 
-        function definirDataHoje() {
-            document.getElementById("dataCadastro").value = new Date().toISOString().split("T")[0];
+        function mudarAba(abaId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('aba-' + abaId).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
 
-        function verificarPatrimonioRapido() {
-            const termo = document.getElementById('buscaPatrimonio').value.trim().toLowerCase();
-            const resDiv = document.getElementById('resultadoPatrimonio');
-            const inputPat = document.getElementById('buscaPatrimonio');
-            
-            if (!termo) {
-                resDiv.innerHTML = "";
-                inputPat.style.borderColor = "#ddd";
-                return;
-            }
-            
-            const encontrado = lista.find(i => i.patrimonio.toLowerCase() === termo);
-            if (encontrado) {
-                inputPat.style.borderColor = "#ef4444";
-                resDiv.innerHTML = "⚠ Patrimônio já cadastrado";
-                resDiv.style.color = "#ef4444";
+        // Validação dupla em tempo real (Patrimônio e Série)
+        function validarDuplicidadeCampos() {
+            const pat = document.getElementById('patrimonio').value.trim().toLowerCase();
+            const serie = document.getElementById('numeroSerie').value.trim().toLowerCase();
+            const editIndex = document.getElementById('editIndex').value;
+
+            const errPat = document.getElementById('erroPatrimonio');
+            const errSer = document.getElementById('erroSerie');
+            const inputPat = document.getElementById('patrimonio');
+            const inputSer = document.getElementById('numeroSerie');
+
+            let patDuplicado = false;
+            let serieDuplicada = false;
+
+            if (pat) {
+                patDuplicado = lista.some((i, idx) => i.patrimonio.toLowerCase() === pat && (editIndex === "" || idx != editIndex));
+                if (patDuplicado) {
+                    inputPat.style.borderColor = "#ef4444";
+                    errPat.innerHTML = "⚠ Patrimônio já cadastrado";
+                    errPat.style.color = "#ef4444";
+                } else {
+                    inputPat.style.borderColor = "#22c55e";
+                    errPat.innerHTML = "✅ Disponível";
+                    errPat.style.color = "#22c55e";
+                }
             } else {
-                inputPat.style.borderColor = "#22c55e";
-                resDiv.innerHTML = "✅ Patrimônio disponível";
-                resDiv.style.color = "#22c55e";
+                inputPat.style.borderColor = "var(--border)";
+                errPat.innerHTML = "";
             }
+
+            if (serie) {
+                serieDuplicada = lista.some((i, idx) => i.numeroSerie.toLowerCase() === serie && (editIndex === "" || idx != editIndex));
+                if (serieDuplicada) {
+                    inputSer.style.borderColor = "#ef4444";
+                    errSer.innerHTML = "⚠ Nº de Série já cadastrado";
+                    errSer.style.color = "#ef4444";
+                } else {
+                    inputSer.style.borderColor = "#22c55e";
+                    errSer.innerHTML = "✅ Disponível";
+                    errSer.style.color = "#22c55e";
+                }
+            } else {
+                inputSer.style.borderColor = "var(--border)";
+                errSer.innerHTML = "";
+            }
+
+            return patDuplicado || serieDuplicada;
         }
+
+        document.getElementById('patrimonio').addEventListener('input', validarDuplicidadeCampos);
+        document.getElementById('numeroSerie').addEventListener('input', validarDuplicidadeCampos);
 
         async function salvarEquipamento(e) {
             e.preventDefault();
-            const pat = document.getElementById('patrimonio').value;
+            const pat = document.getElementById('patrimonio').value.trim();
+            const serie = document.getElementById('numeroSerie').value.trim();
             const editIndex = document.getElementById('editIndex').value;
 
-            // Validação de duplicidade para novos e edições
-            if (editIndex !== "") {
-                const duplicado = lista.some((item, index) => item.patrimonio === pat && index != editIndex);
-                if (duplicado) {
-                    alert("Já existe outro equipamento com este patrimônio.");
-                    return;
-                }
-            } else {
-                if (lista.some(item => item.patrimonio === pat)) {
-                    alert("Este patrimônio já está cadastrado.");
-                    return;
-                }
+            // Validação estrita
+            if (validarDuplicidadeCampos()) {
+                alert("Erro: Já existe um registro cadastrado com este Patrimônio ou Número de Série.");
+                return;
             }
 
+            // Gerar chamado sequencial se for novo
+            let numeroChamado = "";
+            if (editIndex !== "") {
+                numeroChamado = lista[editIndex].chamado;
+            } else {
+                ultimoChamadoNum++;
+                localStorage.setItem('sigem_ultimo_chamado', ultimoChamadoNum);
+                numeroChamado = `FLY-${ultimoChamadoNum.toString().padStart(6, '0')}`;
+            }
+
+            const dataHoraAtual = new Date().toLocaleString('pt-BR');
             const historicoExistente = editIndex !== "" ? (lista[editIndex].historico || []) : [];
             historicoExistente.push({
-                data: new Date().toISOString(),
+                data: dataHoraAtual,
                 acao: editIndex !== "" ? "Editado" : "Criado"
             });
 
             const dadosEquipamento = {
+                chamado: numeroChamado,
+                dataCriacao: editIndex !== "" ? lista[editIndex].dataCriacao : new Date().toLocaleDateString('pt-BR'),
+                solicitante: document.getElementById('solicitante').value,
+                regional: document.getElementById('regional').value,
+                descricaoAtivo: document.getElementById('descricaoAtivo').value,
                 patrimonio: pat,
-                nome: document.getElementById('nomeEquipamento').value,
+                setorAtivoPai: document.getElementById('setorAtivoPai').value,
                 unidade: document.getElementById('unidade').value,
-                localDetalhado: document.getElementById('localDetalhado').value,
+                numeroSerie: serie,
+                modelo: document.getElementById('modelo').value,
                 status: document.getElementById('status').value,
-                data: document.getElementById('dataCadastro').value,
+                localDetalhado: document.getElementById('localDetalhado').value,
+                cadastradoPor: document.getElementById('cadastradoPor').value,
                 obs: document.getElementById('observacao').value,
                 foto: document.getElementById('previewFoto').src || '',
                 historico: historicoExistente
@@ -170,19 +427,109 @@
             if (editIndex !== "") {
                 lista[editIndex] = dadosEquipamento;
                 document.getElementById('editIndex').value = "";
-                document.getElementById('btnSalvar').innerText = "Salvar Equipamento";
+                document.getElementById('btnSalvar').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Salvar e Gerar Chamado';
+                alert("Cadastro atualizado com sucesso!");
+                mudarAba('listar');
             } else {
                 lista.push(dadosEquipamento);
+                chamadoAtualVisualizado = dadosEquipamento;
+                document.getElementById('textoChamadoGerado').innerText = numeroChamado;
+                document.getElementById('modalProtocolo').style.display = 'flex';
             }
 
-            localStorage.setItem('sigem_equipamentos', JSON.stringify(lista));
+            localStorage.setItem('sigem_equipamentos_fleury_v2', JSON.stringify(lista));
             e.target.reset();
             document.getElementById('previewFoto').style.display = "none";
             document.getElementById('previewFoto').src = "";
-            document.getElementById('buscaPatrimonio').style.borderColor = "#ddd";
-            document.getElementById('resultadoPatrimonio').innerHTML = "";
-            definirDataHoje();
+            document.getElementById('patrimonio').style.borderColor = "var(--border)";
+            document.getElementById('numeroSerie').style.borderColor = "var(--border)";
+            document.getElementById('erroPatrimonio').innerHTML = "";
+            document.getElementById('erroSerie').innerHTML = "";
+            document.getElementById('cadastradoPor').value = "Danilo Costa";
             atualizarDashboard();
+        }
+
+        function fecharModalProtocolo() {
+            document.getElementById('modalProtocolo').style.display = 'none';
+            mudarAba('listar');
+        }
+
+        function imprimirProtocoloModal() {
+            if (!chamadoAtualVisualizado) return;
+            gerarJanelaImpressao(chamadoAtualVisualizado);
+        }
+
+        function gerarJanelaImpressao(item) {
+            const janela = window.open('', '_blank');
+            janela.document.write(`
+                <html>
+                <head>
+                    <title>Protocolo de Ativo - ${item.chamado}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 30px; color: #1e293b; }
+                        .header { text-align: center; border-bottom: 2px solid #003366; padding-bottom: 15px; margin-bottom: 20px; }
+                        .header h2 { color: #003366; margin: 0; }
+                        .info-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
+                        .info-box p { margin: 8px 0; font-size: 0.95rem; }
+                        .footer { text-align: center; margin-top: 40px; font-size: 0.8rem; color: #64748b; border-top: 1px solid #cbd5e1; padding-top: 15px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h2>GRUPO FLEURY</h2>
+                        <p>SIGEM — Sistema Integrado de Gestão de Engenharia Clínica</p>
+                        <h3>PROTOCOLO DE CADASTRO: ${item.chamado}</h3>
+                    </div>
+                    <div class="info-box">
+                        <p><b>Data do Registro:</b> ${item.dataCriacao}</p>
+                        <p><b>Solicitante:</b> ${item.solicitante} (Regional: ${item.regional})</p>
+                        <p><b>Cadastrado por:</b> ${item.cadastradoPor}</p>
+                    </div>
+                    <div class="info-box">
+                        <p><b>Ativo:</b> ${item.descricaoAtivo} - Modelo: ${item.modelo}</p>
+                        <p><b>Patrimônio:</b> ${item.patrimonio}</p>
+                        <p><b>Número de Série:</b> ${item.numeroSerie}</p>
+                        <p><b>Localização:</b> Unidade ${item.unidade} / Setor: ${item.setorAtivoPai} ${item.localDetalhado ? ' - ' + item.localDetalhado : ''}</p>
+                        <p><b>Status:</b> ${item.status}</p>
+                    </div>
+                    <p style="font-size: 0.9rem; margin-top: 20px;"><b>Aviso:</b> Este protocolo confirma o envio do ativo para processamento na plataforma Prisma. Prazo médio: até 3 dias úteis.</p>
+                    <div class="footer">
+                        Grupo Fleury — Engenharia Clínica | Documento gerado automaticamente pelo SIGEM
+                    </div>
+                    <script>window.print();<\/script>
+                </body>
+                </html>
+            `);
+            janela.document.close();
+        }
+
+        // Consultar Chamado
+        function buscarChamado() {
+            const codigo = document.getElementById('inputConsultaChamado').value.trim().toUpperCase();
+            const resDiv = document.getElementById('resultadoConsultaChamado');
+            if (!codigo) {
+                resDiv.innerHTML = "<p style='color:#ef4444;'>Digite um número de chamado válido.</p>";
+                return;
+            }
+
+            const item = lista.find(i => i.chamado.toUpperCase() === codigo);
+            if (!item) {
+                resDiv.innerHTML = `<div style="background:#fef2f2; border:1px solid #fecaca; padding:15px; border-radius:6px; color:#991b1b;">❌ Nenhum chamado encontrado com o código <b>${codigo}</b>.</div>`;
+                return;
+            }
+
+            resDiv.innerHTML = `
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:20px; border-radius:8px;">
+                    <h4 style="color:#166534; margin-top:0;"><i class="fa-solid fa-circle-check"></i> Chamado Localizado: ${item.chamado}</h4>
+                    <p><b>Data:</b> ${item.dataCriacao}</p>
+                    <p><b>Status do Processamento:</b> <span style="background:#dcfce7; color:#166534; padding:2px 8px; border-radius:4px; font-weight:bold;">Enviado / Em Processamento (Prisma)</span></p>
+                    <p><b>Patrimônio:</b> ${item.patrimonio} | <b>Série:</b> ${item.numeroSerie}</p>
+                    <p><b>Ativo:</b> ${item.descricaoAtivo} (${item.modelo})</p>
+                    <p><b>Unidade:</b> ${item.unidade} - ${item.setorAtivoPai}</p>
+                    <p><b>Solicitante:</b> ${item.solicitante} (${item.regional})</p>
+                    <button onclick='gerarJanelaImpressao(${JSON.stringify(item)})' class="btn-acao" style="margin-top:15px; background:#475569;"><i class="fa-solid fa-print"></i> Imprimir Protocolo</button>
+                </div>
+            `;
         }
 
         function editarEquipamento(patrimonio) {
@@ -191,12 +538,17 @@
             const item = lista[index];
 
             document.getElementById('editIndex').value = index;
+            document.getElementById('solicitante').value = item.solicitante;
+            document.getElementById('regional').value = item.regional;
+            document.getElementById('descricaoAtivo').value = item.descricaoAtivo;
             document.getElementById('patrimonio').value = item.patrimonio;
-            document.getElementById('nomeEquipamento').value = item.nome;
+            document.getElementById('setorAtivoPai').value = item.setorAtivoPai;
             document.getElementById('unidade').value = item.unidade;
-            document.getElementById('localDetalhado').value = item.localDetalhado || '';
-            document.getElementById('dataCadastro').value = item.data || new Date().toISOString().split("T")[0];
+            document.getElementById('numeroSerie').value = item.numeroSerie;
+            document.getElementById('modelo').value = item.modelo;
             document.getElementById('status').value = item.status;
+            document.getElementById('localDetalhado').value = item.localDetalhado || '';
+            document.getElementById('cadastradoPor').value = item.cadastradoPor || "Danilo Costa";
             document.getElementById('observacao').value = item.obs || '';
             
             if (item.foto && item.foto.startsWith('data:image')) {
@@ -205,29 +557,84 @@
                 img.style.display = 'block';
             }
 
-            document.getElementById('btnSalvar').innerText = "Atualizar Equipamento";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('btnSalvar').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Atualizar Registro';
+            mudarAba('cadastro');
         }
 
         function excluirEquipamento(patrimonio) {
-            const codigoDigitado = prompt("Para confirmar a exclusão, digite o patrimônio do equipamento:");
+            const codigoDigitado = prompt("Área restrita / Segurança:\nDigite o número do Patrimônio exato para confirmar a exclusão:");
             if (codigoDigitado !== patrimonio) {
-                if (codigoDigitado !== null) alert("Código incorreto. Exclusão cancelada por segurança.");
+                if (codigoDigitado !== null) alert("Patrimônio incorreto. Exclusão cancelada.");
                 return;
             }
             
             lista = lista.filter(i => i.patrimonio !== patrimonio);
-            localStorage.setItem('sigem_equipamentos', JSON.stringify(lista));
+            localStorage.setItem('sigem_equipamentos_fleury_v2', JSON.stringify(lista));
             atualizarDashboard();
+        }
+
+        function verHistorico(patrimonio) {
+            const item = lista.find(i => i.patrimonio === patrimonio);
+            if (!item || !item.historico) return;
+            
+            const cont = document.getElementById('conteudoHistorico');
+            cont.innerHTML = item.historico.map(h => `
+                <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                    <b>${h.data}</b> — Ação: <span style="color:var(--accent); font-weight:bold;">${h.acao}</span>
+                </div>
+            `).join('');
+            document.getElementById('modalHistorico').style.display = 'flex';
+        }
+
+        function fecharModalHistorico() {
+            document.getElementById('modalHistorico').style.display = 'none';
+        }
+
+        // Exportação Excel Organizada (CSV)
+        function exportarExcelCSV() {
+            if (lista.length === 0) {
+                alert("Não há dados cadastrados para exportar.");
+                return;
+            }
+
+            let csvContent = "Chamado;Data;Solicitante;Regional;Descrição do Ativo;Patrimônio;Setor (Ativo Pai);Unidade;Número de Série;Modelo;Status;Observação\n";
+            
+            lista.forEach(i => {
+                let linha = [
+                    i.chamado,
+                    i.dataCriacao,
+                    i.solicitante,
+                    i.regional,
+                    i.descricaoAtivo,
+                    i.patrimonio,
+                    i.setorAtivoPai,
+                    i.unidade,
+                    i.numeroSerie,
+                    i.modelo,
+                    i.status,
+                    (i.obs || '').replace(/[\n\r]+/g, ' ')
+                ].map(val => `"${val}"`).join(';');
+                csvContent += linha + "\n";
+            });
+
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sigem_fleury_ativos_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
         }
 
         function filtrarTabela() {
             const termo = document.getElementById('busca').value.toLowerCase();
             const filtrados = lista.filter(i => 
+                i.chamado.toLowerCase().includes(termo) ||
                 i.patrimonio.toLowerCase().includes(termo) || 
-                i.nome.toLowerCase().includes(termo) || 
+                i.numeroSerie.toLowerCase().includes(termo) ||
+                i.descricaoAtivo.toLowerCase().includes(termo) || 
                 i.unidade.toLowerCase().includes(termo) ||
-                (i.localDetalhado && i.localDetalhado.toLowerCase().includes(termo)) ||
+                i.solicitante.toLowerCase().includes(termo) ||
+                i.modelo.toLowerCase().includes(termo) ||
                 i.status.toLowerCase().includes(termo)
             );
             renderizarTabela(filtrados);
@@ -237,41 +644,82 @@
             const tbody = document.getElementById("tabela-corpo");
             tbody.innerHTML = dados.map(item => `
                 <tr>
-                    <td>${item.foto && item.foto.startsWith('data:image') ? `<img src="${item.foto}" class="tabela-foto" onclick="ampliarFoto('${item.foto}')">` : '<i class="fa-solid fa-image" style="color:#ccc; font-size:1.5rem;"></i>'}</td>
-                    <td><b>${item.patrimonio}</b></td>
-                    <td>${item.nome}</td>
-                    <td>${item.unidade} ${item.localDetalhado ? `<br><small style="color:gray;">${item.localDetalhado}</small>` : ''}</td>
-                    <td>${item.status}</td>
+                    <td><code style="font-weight:bold; color:var(--accent);">${item.chamado}</code></td>
+                    <td>${item.foto && item.foto.startsWith('data:image') ? `<img src="${item.foto}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; cursor:pointer;" onclick="window.open('${item.foto}')" title="Ampliar">` : '<i class="fa-solid fa-image" style="color:#cbd5e1; font-size:1.2rem;"></i>'}</td>
+                    <td><b>${item.patrimonio}</b><br><small style="color:#64748b;">Série: ${item.numeroSerie}</small></td>
+                    <td>${item.descricaoAtivo}<br><small style="color:#64748b;">${item.modelo}</small></td>
+                    <td>${item.unidade}<br><small style="color:#64748b;">${item.setorAtivoPai} ${item.localDetalhado ? ' - ' + item.localDetalhado : ''}</small></td>
+                    <td>${item.solicitante}<br><small style="color:#64748b;">Reg: ${item.regional}</small></td>
+                    <td><span style="padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; background: ${item.status === 'Operacional' ? '#dcfce7; color:#166534' : item.status === 'Manutenção' ? '#fef9c3; color:#854d0e' : '#fee2e2; color:#991b1b'}">${item.status}</span></td>
                     <td>
-                        <div style="display:flex; gap:5px;">
-                            <button onclick="editarEquipamento('${item.patrimonio}')" class="btn-acao" style="background:#2563eb; padding: 6px 10px;" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="excluirEquipamento('${item.patrimonio}')" class="btn-acao" style="background:#ef4444; padding: 6px 10px;" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                        <div style="display:flex; gap:6px;">
+                            <button onclick="editarEquipamento('${item.patrimonio}')" class="btn-acao" style="background:#2563eb; padding: 6px 10px; font-size:0.8rem;" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="verHistorico('${item.patrimonio}')" class="btn-acao" style="background:#475569; padding: 6px 10px; font-size:0.8rem;" title="Ver Histórico"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                            <button onclick="excluirEquipamento('${item.patrimonio}')" class="btn-acao" style="background:#ef4444; padding: 6px 10px; font-size:0.8rem;" title="Excluir"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function ampliarFoto(src) {
-            document.getElementById('imgAmpliada').src = src;
-            document.getElementById('modalFoto').style.display = 'flex';
-        }
-
-        function fecharModalFoto() {
-            document.getElementById('modalFoto').style.display = 'none';
-        }
-
         function atualizarDashboard() {
             document.getElementById('kpi-total').innerText = lista.length;
             document.getElementById('kpi-operacionais').innerText = lista.filter(i => i.status === "Operacional").length;
-            document.getElementById('kpi-conformidade').innerText = calcularConformidade() + "%";
-            document.getElementById('kpi-unidades').innerText = new Set(lista.map(i => i.unidade)).size;
+            document.getElementById('kpi-manutencao').innerText = lista.filter(i => i.status === "Manutenção").length;
+            document.getElementById('kpi-inativos').innerText = lista.filter(i => i.status === "Inativo").length;
             renderizarTabela();
         }
 
-        function calcularConformidade() {
-            if (lista.length === 0) return 100;
-            return Math.round((lista.filter(i => i.nome && i.patrimonio && i.unidade).length / lista.length) * 100);
+        // Administração
+        function validarAdmin() {
+            const senha = document.getElementById('senhaAdmin').value;
+            if (senha === "casa2templo") {
+                document.getElementById('painelLoginAdmin').style.display = 'none';
+                document.getElementById('painelOpcoesAdmin').style.display = 'block';
+                alert("Acesso administrativo autorizado.");
+            } else {
+                alert("Senha incorreta.");
+            }
+        }
+
+        function limparTodosRegistros() {
+            if (confirm("ATENÇÃO: Deseja realmente apagar todos os registros do sistema? Esta ação é irreversível.")) {
+                lista = [];
+                ultimoChamadoNum = 0;
+                localStorage.removeItem('sigem_equipamentos_fleury_v2');
+                localStorage.setItem('sigem_ultimo_chamado', '0');
+                atualizarDashboard();
+                alert("Todos os registros foram limpos.");
+            }
+        }
+
+        function baixarBackupJson() {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(lista, null, 2)], {type: 'application/json'}));
+            a.download = `sigem_backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        }
+
+        function importarBackupJson(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const dados = JSON.parse(e.target.result);
+                    if (Array.isArray(dados)) {
+                        lista = dados;
+                        localStorage.setItem('sigem_equipamentos_fleury_v2', JSON.stringify(lista));
+                        atualizarDashboard();
+                        alert("Backup importado com sucesso!");
+                    } else {
+                        alert("Arquivo JSON inválido.");
+                    }
+                } catch (err) {
+                    alert("Erro ao processar o arquivo.");
+                }
+            };
+            reader.readAsText(file);
         }
 
         function previewImagem() {
@@ -290,42 +738,12 @@
             const html = document.documentElement;
             const novo = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
             html.setAttribute('data-theme', novo);
-            localStorage.setItem('tema', novo);
-        }
-
-        function baixarBackup() {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([JSON.stringify(lista)], {type: 'application/json'}));
-            a.download = "sigem_backup.json";
-            a.click();
-        }
-
-        function importarBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const dadosImportados = JSON.parse(e.target.result);
-                    if (Array.isArray(dadosImportados)) {
-                        lista = dadosImportados;
-                        localStorage.setItem('sigem_equipamentos', JSON.stringify(lista));
-                        atualizarDashboard();
-                        alert("Backup importado com sucesso!");
-                    } else {
-                        alert("Arquivo JSON inválido.");
-                    }
-                } catch (err) {
-                    alert("Erro ao ler o arquivo JSON.");
-                }
-            };
-            reader.readAsText(file);
+            localStorage.setItem('tema_fleury_v2', novo);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const temaSalvo = localStorage.getItem('tema');
+            const temaSalvo = localStorage.getItem('tema_fleury_v2');
             if (temaSalvo) document.documentElement.setAttribute('data-theme', temaSalvo);
-            definirDataHoje();
             atualizarDashboard();
         });
     </script>
