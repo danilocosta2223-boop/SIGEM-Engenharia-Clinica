@@ -1,15 +1,32 @@
 [
   {
+    "patrimonio": "PAT-001",
+    "equipamento": "Monitor Multiparamétrico Philips MX800",
+    "serial": "SN123456",
+    "setor": "UTI Adulto - Leito 04",
+    "unidade": "Hospital Alphaville",
     "status": "Ativo",
-    "data": "12/08/2026",
-    "responsavel": "Danilo Costa",
-    "patrimonio": "123456",
-    "equipamento": "Monitor Multiparamétrico",
-    "ativoPai": "UTI01",
-    "setor": "UTI Adulto",
-    "classificacao": "Equipamento Médico",
-    "instalacao": "Hospital Central",
-    "serie": "MP123456",
-    "notaFiscal": "NF987654"
+    "criticidade": "Alta",
+    "disponibilidade": "98.7",
+    "mtbf": "132 dias",
+    "mttr": "02h 35min",
+    "ultimaPreventiva": "05/08/2026",
+    "proximaPreventiva": "05/02/2027",
+    "custoAcumulado": 8540.00
+  },
+  {
+    "patrimonio": "PAT-002",
+    "equipamento": "Ventilador Mecânico Servo-u",
+    "serial": "SN987654",
+    "setor": "UTI Neonatal - Leito 01",
+    "unidade": "Hospital Alphaville",
+    "status": "Ativo",
+    "criticidade": "Alta",
+    "disponibilidade": "96.2",
+    "mtbf": "110 dias",
+    "mttr": "01h 50min",
+    "ultimaPreventiva": "10/07/2026",
+    "proximaPreventiva": "10/01/2027",
+    "custoAcumulado": 12300.00
   }
 ]

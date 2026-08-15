@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Dashboard</title>
+    <link rel="stylesheet" href="../estilos/style.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">SIGEM</div>
+        <a href="dashboard.html" class="ativo">📊 Dashboard</a>
+        <a href="estoque.html">📦 Estoque</a>
+        <a href="equipamentos.html">🏥 Equipamentos</a>
+        <a href="ordens-servico.html">🔧 Ordens de Serviço</a>
+        <a href="relatorios.html">📄 Relatórios</a>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="content">
+        
+        <!-- Topbar -->
+        <div class="topbar">
+            <span>Central de Engenharia Clínica - Grupo Fleury</span>
+            <span id="relogio">14/08/2026</span>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="hero-dashboard">
+            <div>
+                <h1>SIGEM</h1>
+                <p>Sistema Integrado de Gestão da Engenharia Clínica</p>
+            </div>
+            <div class="hero-status">
+                <span class="status-online"></span> Sistema Operacional
+            </div>
+        </div>
+
+        <!-- Painel NOC (Centro de Operações) -->
+        <section class="content-section">
+            <div class="status-wall">
+                <div class="status-wall-item">
+                    <span class="status-online"></span>
+                    <span>NOC Ativo</span>
+                </div>
+                <div class="status-wall-item">
+                    <span>🏥 Equipamentos: <strong id="totalEquipamentos">532</strong></span>
+                </div>
+                <div class="status-wall-item">
+                    <span>📦 Peças: <strong id="totalPecasNOC">842</strong></span>
+                </div>
+                <div class="status-wall-item">
+                    <span>🔧 OS Abertas: <strong id="totalOS" style="color: #f59e0b;">12</strong></span>
+                </div>
+                <div class="status-wall-item">
+                    <span>⚠️ Alertas: <strong id="totalAlertas" style="color: #ef4444;">7</strong></span>
+                </div>
+                <div class="status-wall-item">
+                    <span>📈 Disponibilidade: <strong style="color: #22c55e;">98,4%</strong></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ações Rápidas -->
+        <div class="acoes-rapidas">
+            <button onclick="alert('Nova OS')">➕ Nova OS</button>
+            <button onclick="alert('Nova Entrada')" style="background: #0284c7;">📦 Nova Entrada</button>
+            <button onclick="alert('Nova Saída')" style="background: #0369a1;">⬇ Nova Saída</button>
+            <button onclick="alert('Novo Equipamento')" style="background: #0f172a;">🏥 Equipamento</button>
+            <button onclick="alert('Gerar Relatório')" style="background: #334155;">📄 Relatório</button>
+        </div>
+
+        <!-- Cards de Indicadores (KPIs) -->
+        <div class="cards-container">
+            <div class="card">
+                <span class="card-icon">📦</span>
+                <h3>Peças Cadastradas</h3>
+                <p>842</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">🏥</span>
+                <h3>Equipamentos Ativos</h3>
+                <p>532</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">🔧</span>
+                <h3>Ordens de Serviço</h3>
+                <p>12</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">⚠️</span>
+                <h3>Alertas Críticos</h3>
+                <p>7</p>
+            </div>
+        </div>
+
+        <!-- Tabela de Últimas Movimentações -->
+        <section class="content-section" style="margin-top: 30px;">
+            <h3 style="margin-bottom: 15px;">🕒 Últimas Movimentações em Tempo Real</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Peça</th>
+                        <th>Tipo</th>
+                        <th>Qtd</th>
+                        <th>Técnico</th>
+                    </tr>
+                </thead>
+                <tbody id="ultimasMovimentacoes">
+                    <!-- Preenchido via JavaScript -->
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <!-- Script do Dashboard -->
+    <script src="../scripts/dashboard.js"></script>
+</body>
+</html>

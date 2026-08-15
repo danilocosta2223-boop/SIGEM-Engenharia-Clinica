@@ -1,746 +1,314 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="executive">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM Command Center | Portal Corporativo de Gestão de Ativos</title>
+    <title>SIGEM Enterprise | Command Center & NOC</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js para Gráficos Executivos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        :root { 
-            --bg: #090d16; 
-            --text: #e2e8f0; 
-            --card-bg: linear-gradient(135deg, #111827, #1f2937); 
-            --primary: #f59e0b; 
-            --primary-hover: #d97706;
-            --accent: #38bdf8; 
-            --border: #374151;
-            --shadow: rgba(0, 0, 0, 0.5);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --gold: #eab308;
-        }
-        [data-theme="light"] { 
-            --bg: #f8fafc; 
-            --text: #1e293b; 
-            --card-bg: #ffffff; 
-            --primary: #003366; 
-            --primary-hover: #002244;
-            --accent: #0ea5e9; 
-            --border: #cbd5e1;
-            --shadow: rgba(0, 0, 0, 0.05);
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding: 0; margin: 0; transition: background 0.3s, color 0.3s; }
-        
-        header { background: #0b132b; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); flex-wrap: wrap; gap: 15px; border-bottom: 2px solid var(--primary); }
-        .brand-container { display: flex; align-items: center; gap: 20px; }
-        .brand-container img { height: 55px; width: auto; object-fit: contain; }
-        .brand h1 { margin: 0; font-size: 1.4rem; letter-spacing: 1px; color: #f59e0b; }
-        .brand p { margin: 3px 0 0 0; font-size: 0.8rem; opacity: 0.9; }
-
-        .header-search { display: flex; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; gap: 8px; width: 320px; position: relative; }
-        .header-search input { background: transparent; border: none; color: white; outline: none; font-size: 0.85rem; width: 100%; }
-        .shortcut-badge { background: rgba(255,255,255,0.1); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; color: #94a3b8; font-weight: bold; }
-
-        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
-
-        /* Abas de Navegação */
-        .nav-tabs { display: flex; gap: 8px; margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; }
-        .tab-btn { background: var(--card-bg); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 0.9rem; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
-        .tab-btn.active, .tab-btn:hover { background: var(--primary); color: #0b132b; border-color: var(--primary); }
-
-        /* Banner de Boas-Vindas Premium */
-        .welcome-banner { 
-            background: linear-gradient(135deg, #111827, #1f2937, #0b132b); 
-            border: 1px solid var(--primary); 
-            padding: 30px; 
-            border-radius: 16px; 
-            color: white; 
-            margin-bottom: 30px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            flex-wrap: wrap; 
-            gap: 20px;
-        }
-        .welcome-banner h2 { margin: 0 0 10px 0; font-size: 1.6rem; color: #f59e0b; display: flex; align-items: center; gap: 10px; }
-        .welcome-banner p { margin: 0; opacity: 0.9; font-size: 0.95rem; line-height: 1.5; max-width: 800px; }
-        .integridade-badge { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); padding: 15px 25px; border-radius: 12px; text-align: center; }
-        .integridade-badge span { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; display: block; font-weight: 700; }
-        .integridade-badge .val { font-size: 1.8rem; font-weight: bold; color: var(--success); }
-
-        /* Grid Command Center */
-        .command-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; margin-bottom: 30px; }
-        
-        .col-span-8 { grid-column: span 8; }
-        .col-span-4 { grid-column: span 4; }
-        .col-span-6 { grid-column: span 6; }
-        .col-span-3 { grid-column: span 3; }
-        .col-span-5 { grid-column: span 5; }
-
-        @media(max-width: 1024px) {
-            .col-span-8, .col-span-4, .col-span-6, .col-span-3, .col-span-5 { grid-column: span 12; }
-        }
-
-        .command-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 22px;
-            box-shadow: 0 4px 12px var(--shadow);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .command-card h3 { margin: 0 0 15px 0; font-size: 1.05rem; color: var(--primary); display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-
-        .card-link { text-decoration: none; color: inherit; transition: transform 0.2s, border-color 0.2s; cursor: pointer; }
-        .card-link:hover { transform: translateY(-3px); border-color: var(--primary); }
-
-        /* Dashboard Vivo Métricas */
-        .metrics-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-bottom: 30px; }
-        @media(max-width: 1200px) { .metrics-grid { grid-template-columns: repeat(4, 1fr); } }
-        @media(max-width: 768px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
-        .metric-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px 10px; text-align: center; box-shadow: 0 4px 10px var(--shadow); }
-        .metric-card .val { font-size: 1.4rem; font-weight: bold; color: var(--primary); margin: 5px 0 0 0; }
-        .metric-card .lbl { font-size: 0.7rem; text-transform: uppercase; color: #94a3b8; font-weight: 600; }
-
-        .evento-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); font-size: 0.85rem; }
-        .evento-item:last-child { border-bottom: none; }
-        .evento-hora { background: rgba(56, 189, 248, 0.15); color: var(--accent); padding: 3px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem; }
-
-        .ai-input-box { display: flex; gap: 8px; margin-top: 12px; }
-        .ai-input-box input { flex: 1; padding: 10px 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; color: white; font-size: 0.9rem; outline: none; }
-        .ai-input-box button { background: var(--primary); color: #0b132b; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .ai-input-box button:hover { background: #d97706; }
-        .ai-resposta { margin-top: 12px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #cbd5e1; border-left: 3px solid var(--primary); display: none; }
-
-        .export-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
-        .btn-export { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; flex: 1; justify-content: center; text-decoration: none; }
-        .btn-export:hover { background: var(--primary); color: #0b132b; border-color: var(--primary); }
-
-        .equipe-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; text-align: center; }
-        .membro-card { background: rgba(0,0,0,0.2); border: 1px solid var(--border); padding: 12px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; }
-        .membro-card img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; border: 2px solid var(--primary); }
-        .membro-card h4 { margin: 0; font-size: 0.9rem; color: var(--text); }
-        .membro-card .cargo { font-size: 0.75rem; color: var(--primary); font-weight: 600; margin-top: 2px; }
-        .membro-card button { background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent); color: var(--accent); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; margin-top: 8px; transition: 0.2s; }
-        .membro-card button:hover { background: var(--accent); color: #0b132b; }
-
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-        .modal-box { background: #111827; border: 1px solid var(--primary); border-radius: 14px; padding: 25px; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative; color: var(--text); }
-        .modal-close { position: absolute; top: 15px; right: 20px; background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; }
-        .modal-close:hover { color: white; }
-
-        footer { text-align: center; padding: 30px; margin-top: 40px; border-top: 1px solid var(--border); font-size: 0.85rem; color: #94a3b8; line-height: 1.6; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="brand-container">
-            <img src="imagens/logo.png" alt="Logo Grupo Fleury" onerror="this.style.display='none'">
-            <div class="brand">
-                <h1>GRUPO FLEURY</h1>
-                <p>SIGEM Command Center — Portal Corporativo de Gestão de Ativos</p>
-            </div>
-        </div>
-        <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
-            <div class="header-search">
-                <i class="fa-solid fa-magnifying-glass" style="color: #94a3b8;"></i>
-                <input type="text" id="globalSearchInput" placeholder="Pesquisar patrimônio, série..." onkeydown="executarPesquisaGlobal(event)">
-                <span class="shortcut-badge">Ctrl+K</span>
-            </div>
-            <div id="relogio-topo" style="font-size: 0.85rem; font-weight: 600; color: #38bdf8;"><i class="fa-regular fa-clock"></i> Carregando...</div>
-        </div>
-    </header>
-
-    <div class="container">
-
-        <!-- Abas de Navegação -->
-        <div class="nav-tabs">
-            <a href="index.html" class="tab-btn active"><i class="fa-solid fa-house"></i> Command Center</a>
-            <a href="cadastro.html" class="tab-btn"><i class="fa-solid fa-file-circle-plus"></i> Cadastro</a>
-            <a href="equipamentos.html" class="tab-btn"><i class="fa-solid fa-magnifying-glass"></i> Pesquisar Ativos</a>
-            <a href="relatorios.html" class="tab-btn"><i class="fa-solid fa-chart-pie"></i> Centro de Inteligência</a>
-            <a href="admin.html" class="tab-btn"><i class="fa-solid fa-lock"></i> Administração</a>
-        </div>
-
-        <!-- Banner de Boas-Vindas Premium -->
-        <div class="welcome-banner">
-            <div>
-                <h2><i class="fa-solid fa-satellite-dish" style="color: var(--primary);"></i> Bem-vindo ao SIGEM</h2>
-                <p>Portal corporativo para cadastro, rastreabilidade, auditoria e gestão dos ativos da Engenharia Clínica. Total controle do parque tecnológico e evidências fotográficas em uma única plataforma.</p>
-            </div>
-            <div class="integridade-badge">
-                <span>Integridade do Parque</span>
-                <div class="val" id="badgeIntegridade">100%</div>
-                <div style="font-size: 0.75rem; color: var(--success); font-weight: bold; margin-top: 3px;"><i class="fa-solid fa-circle-check"></i> 🟢 Real</div>
-            </div>
-        </div>
-
-        <!-- Dashboard Vivo (7 Indicadores Reais) -->
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="lbl">Hoje</div>
-                <div class="val" id="metricaHoje">0</div>
-            </div>
-            <div class="metric-card">
-                <div class="lbl">Semana</div>
-                <div class="val" id="metricaSemana">0</div>
-            </div>
-            <div class="metric-card">
-                <div class="lbl">Mês</div>
-                <div class="val" id="metricaMes">0</div>
-            </div>
-            <div class="metric-card">
-                <div class="lbl">Total Geral</div>
-                <div class="val" id="metricaTotal">0</div>
-            </div>
-            <div class="metric-card">
-                <div class="lbl">Fabricantes</div>
-                <div class="val" id="metricaFabricantes">0</div>
-            </div>
-            <div class="metric-card">
-                <div class="lbl">Unidades</div>
-                <div class="val" id="metricaUnidades">0</div>
-            </div>
-            <div class="metric-card">
-                <div class="lbl">Categorias</div>
-                <div class="val" id="metricaCategorias">0</div>
-            </div>
-        </div>
-
-        <!-- Acesso Rápido Funcional -->
-        <div class="command-grid">
-            <a href="cadastro.html" class="command-card col-span-3 card-link">
-                <h3><i class="fa-solid fa-file-circle-plus" style="color: var(--success);"></i> Novo Cadastro</h3>
-                <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Cadastrar novos equipamentos e manter o inventário atualizado.</p>
-            </a>
-            <a href="equipamentos.html" class="command-card col-span-3 card-link">
-                <h3><i class="fa-solid fa-magnifying-glass" style="color: var(--accent);"></i> Pesquisar Ativos</h3>
-                <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Localizar equipamentos por patrimônio, série, unidade ou fabricante.</p>
-            </a>
-            <a href="relatorios.html" class="command-card col-span-3 card-link">
-                <h3><i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i> Centro de Inteligência</h3>
-                <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Indicadores executivos, relatórios de auditoria e gráficos.</p>
-            </a>
-            <a href="equipamentos.html" class="command-card col-span-3 card-link">
-                <h3><i class="fa-solid fa-landmark" style="color: var(--gold);"></i> Museu Tecnológico</h3>
-                <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Vitrine visual e galeria interativa de ativos com fotos.</p>
-            </a>
-        </div>
-
-        <!-- Bloco 1: Mapa Operacional & Governança -->
-        <div class="command-grid">
-            <div class="command-card col-span-8">
-                <h3><i class="fa-solid fa-map-location-dot"></i> Mapa Operacional — Ativos em Operação por Unidade</h3>
-                <div id="containerMapaWrapper">
-                    <canvas id="chartMapaOperacional" height="130"></canvas>
-                </div>
-            </div>
-
-            <div class="command-card col-span-4">
-                <h3><i class="fa-solid fa-users-gear" style="color: var(--primary);"></i> Governança — Engenharia Clínica</h3>
-                <div class="equipe-grid">
-                    <div class="membro-card">
-                        <img src="imagens/francisly.png" alt="Francisly Cardoso" onerror="this.src='imagens/francisly.jpg'; this.onerror=function(){this.src='https://via.placeholder.com/50?text=FC'}">
-                        <h4>Francisly Cardoso</h4>
-                        <div class="cargo">Gerente</div>
-                        <button onclick="abrirPerfilGovernanca('Francisly Cardoso', 'Gerente', 'Gestão Estratégica de Engenharia Clínica', 'francisly@grupofleury.com.br', 'imagens/francisly.png')">Ver Perfil</button>
-                    </div>
-                    <div class="membro-card">
-                        <img src="imagens/camila.png" alt="Camila" onerror="this.src='imagens/Camila.jpg'; this.onerror=function(){this.src='https://via.placeholder.com/50?text=C'}">
-                        <h4>Camila</h4>
-                        <div class="cargo">Coordenadora</div>
-                        <button onclick="abrirPerfilGovernanca('Camila', 'Coordenadora', 'Coordenação de Operações e Processos', 'camila@grupofleury.com.br', 'imagens/camila.png')">Ver Perfil</button>
-                    </div>
-                    <div class="membro-card">
-                        <img src="imagens/kamila.png" alt="Kamila" onerror="this.src='imagens/kamila.jpg'; this.onerror=function(){this.src='https://via.placeholder.com/50?text=K'}">
-                        <h4>Kamila</h4>
-                        <div class="cargo">Analista</div>
-                        <button onclick="abrirPerfilGovernanca('Kamila', 'Analista', 'Auditoria e Controle de Cadastros', 'kamila@grupofleury.com.br', 'imagens/kamila.png')">Ver Perfil</button>
-                    </div>
-                    <div class="membro-card">
-                        <img src="imagens/lidia.png" alt="Lídia" onerror="this.src='https://via.placeholder.com/50?text=L'">
-                        <h4>Lídia</h4>
-                        <div class="cargo">Analista</div>
-                        <button onclick="abrirPerfilGovernanca('Lídia', 'Analista', 'Cadastro e Gestão de Ativos', 'lidia@grupofleury.com.br', 'imagens/lidia.png')">Ver Perfil</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bloco 2: Atividades, Último Ativo & Assistente AI -->
-        <div class="command-grid">
-            <div class="command-card col-span-4">
-                <h3><i class="fa-solid fa-bolt" style="color: var(--warning);"></i> Atividades Recentes (Dinâmicas)</h3>
-                <div id="listaAtividadesRecentes" style="display: flex; flex-direction: column; gap: 4px; min-height: 140px;"></div>
-            </div>
-
-            <div class="command-card col-span-4">
-                <h3><i class="fa-solid fa-star" style="color: var(--gold);"></i> Último Ativo Cadastrado</h3>
-                <div id="containerUltimoAtivo" style="display: flex; gap: 15px; align-items: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border: 1px solid var(--border);"></div>
-                <div style="display: flex; gap: 10px; margin-top: 12px;">
-                    <button class="btn-export" onclick="visualizarQRCodeUltimoAtivo()" style="font-size: 0.75rem; padding: 6px;"><i class="fa-solid fa-qrcode"></i> Visualizar QR</button>
-                    <button class="btn-export" onclick="imprimirEtiquetaUltimoAtivo()" style="font-size: 0.75rem; padding: 6px;"><i class="fa-solid fa-print"></i> Imprimir Etiqueta</button>
-                </div>
-            </div>
-
-            <div class="command-card col-span-4">
-                <h3><i class="fa-solid fa-robot" style="color: var(--accent);"></i> Assistente Inteligente SIGEM</h3>
-                <p style="margin: 0 0 10px 0; font-size: 0.8rem; color: #94a3b8;">Consulte dados reais do parque instantaneamente.</p>
-                <div class="ai-input-box">
-                    <input type="text" id="perguntaIA" placeholder="Ex: Quantos monitores existem?">
-                    <button onclick="consultarIA()"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
-                <div id="respostaIA" class="ai-resposta"></div>
-            </div>
-        </div>
-
-        <!-- Bloco 3: Cobertura, Evolução Mensal Real & Exportação -->
-        <div class="command-grid">
-            <div class="command-card col-span-4">
-                <h3><i class="fa-solid fa-chart-pie" style="color: var(--primary);"></i> Cobertura por Categoria</h3>
-                <div id="containerCoberturaWrapper">
-                    <canvas id="chartCobertura" height="180"></canvas>
-                </div>
-            </div>
-
-            <div class="command-card col-span-5">
-                <h3><i class="fa-solid fa-chart-line" style="color: var(--success);"></i> Evolução Histórica Mensal (Real)</h3>
-                <div id="containerEvolucaoWrapper">
-                    <canvas id="chartEvolucao" height="140"></canvas>
-                </div>
-            </div>
-
-            <div class="command-card col-span-3">
-                <h3><i class="fa-solid fa-file-arrow-down" style="color: var(--accent);"></i> Central de Exportação Real</h3>
-                <p style="margin: 0 0 15px 0; font-size: 0.85rem; color: #94a3b8;">Baixe relatórios baseados no banco de dados atual.</p>
-                <div class="export-buttons" style="flex-direction: column;">
-                    <button class="btn-export" onclick="exportarRelatorioReal('CSV')"><i class="fa-solid fa-file-csv" style="color: #38bdf8;"></i> Exportar CSV Bruto</button>
-                    <button class="btn-export" onclick="exportarRelatorioReal('Excel')"><i class="fa-solid fa-file-excel" style="color: #10b981;"></i> Exportar Excel (.xlsx)</button>
-                    <button class="btn-export" onclick="exportarRelatorioReal('PDF')"><i class="fa-solid fa-file-pdf" style="color: #ef4444;"></i> Exportar PDF Executivo</button>
-                </div>
-            </div>
-        </div>
-
-        <footer>
-            <b>GRUPO FLEURY</b><br>
-            SIGEM Command Center — Portal Corporativo de Gestão de Ativos<br>
-            Cuidar da tecnologia é cuidar de vidas. 🚀🏥💙
-        </footer>
-
-    </div>
-
-    <!-- Modal Perfil Governança -->
-    <div id="modalPerfil" class="modal-overlay">
-        <div class="modal-box">
-            <button class="modal-close" onclick="fecharModalPerfil()"><i class="fa-solid fa-xmark"></i></button>
-            <h3 style="color: var(--primary); margin-top: 0; border-bottom: 1px solid var(--border); padding-bottom: 10px;"><i class="fa-solid fa-user-tie"></i> Perfil Corporativo</h3>
-            <div id="conteudoPerfilModal" style="margin-top: 15px; font-size: 0.95rem; line-height: 1.6;"></div>
-        </div>
-    </div>
-
-    <!-- Modal QR Code -->
-    <div id="modalQR" class="modal-overlay">
-        <div class="modal-box" style="text-align: center; max-width: 350px;">
-            <button class="modal-close" onclick="fecharModalQR()"><i class="fa-solid fa-xmark"></i></button>
-            <h3 style="color: var(--primary); margin-top: 0;">QR Code do Ativo</h3>
-            <div id="qrcodeContainer" style="display: flex; justify-content: center; margin: 20px 0;"></div>
-            <p id="qrPatrimonioInfo" style="font-weight: bold; font-size: 0.9rem; color: #38bdf8;"></p>
-        </div>
-    </div>
-
+    <!-- Supabase JS Client (Para conexão real com o PostgreSQL) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Variáveis globais para as instâncias dos gráficos (evitando múltiplos gráficos sobrepostos)
-        let graficoMapa;
-        let graficoCobertura;
-        let graficoEvolucao;
-
-        window.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-                e.preventDefault();
-                const searchInput = document.getElementById('globalSearchInput');
-                if (searchInput) {
-                    searchInput.focus();
-                    searchInput.select();
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slate900: '#0F172A',
+                        slate950: '#020617',
+                        blue600: '#2563EB',
+                        emerald500: '#22C55E',
+                        amber500: '#F59E0B',
+                        rose500: '#EF4444',
+                        slate50: '#F8FAFC'
+                    }
                 }
             }
-        });
-
-        function atualizarRelogio(){
-            const agora = new Date();
-            document.getElementById('relogio-topo').innerHTML = `<i class="fa-regular fa-clock"></i> ${agora.toLocaleDateString('pt-BR')} ${agora.toLocaleTimeString('pt-BR')}`;
         }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
 
-        function obterEquipamentosSIGEM() {
-            return JSON.parse(localStorage.getItem('sigem_equipamentos_fleury_v2') || '[]');
-        }
+    <!-- Menu Lateral Fixo -->
+    <aside class="w-64 bg-slate900 text-white flex flex-col shadow-xl z-20">
+        <!-- Logo Header -->
+        <div class="p-5 border-b border-slate-800 flex items-center space-x-3">
+            <div class="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center">
+                <i class="fa-solid fa-hospital-user text-white text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg tracking-wider">SIGEM</h1>
+                <span class="text-xs text-blue-400 font-medium tracking-widest uppercase">Engenharia Clínica</span>
+            </div>
+        </div>
 
-        window.addEventListener('DOMContentLoaded', () => {
-            atualizarRelogio();
-            setInterval(atualizarRelogio, 1000);
+        <!-- Navegação Principal -->
+        <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto text-sm">
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-blue-600 text-white font-medium shadow-md shadow-blue-600/20 transition-all">
+                <i class="fa-solid fa-chart-pie w-5"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-laptop-medical w-5"></i>
+                <span>Equipamentos</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-boxes-stacked w-5"></i>
+                <span>Peças & Estoque</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-screwdriver-wrench w-5"></i>
+                <span>Ordens de Serviço</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-calendar-check w-5"></i>
+                <span>Preventivas</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-network-wired w-5"></i>
+                <span>Painel NOC</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-users w-5"></i>
+                <span>Equipe</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-shield-halved w-5"></i>
+                <span>Auditoria</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-gear w-5"></i>
+                <span>Configurações</span>
+            </a>
+        </nav>
 
-            // Atualização automática em tempo real a cada 10 segundos
-            setInterval(() => {
-                const lista = obterEquipamentosSIGEM();
-                atualizarDashboardVivo(lista);
-                atualizarAtividadesRecentes(lista);
-                atualizarUltimoAtivo(lista);
-                atualizarBadgeIntegridade(lista);
-                renderizarGraficosDinamicos(lista);
-            }, 10000);
+        <!-- Status Rodapé -->
+        <div class="p-4 border-t border-slate-800 bg-slate-900/50">
+            <div class="flex items-center space-x-2 text-xs text-emerald-500 font-semibold bg-emerald-500/10 px-3 py-2 rounded-lg border border-emerald-500/20">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>SUPABASE REALTIME ATIVO</span>
+            </div>
+        </div>
+    </aside>
 
-            // Carga inicial ao abrir a página
-            const lista = obterEquipamentosSIGEM();
-            atualizarDashboardVivo(lista);
-            atualizarAtividadesRecentes(lista);
-            atualizarUltimoAtivo(lista);
-            atualizarBadgeIntegridade(lista);
-            renderizarGraficosDinamicos(lista);
-        });
-
-        function atualizarBadgeIntegridade(lista) {
-            const integros = lista.filter(i => 
-                i.foto && 
-                i.patrimonio && 
-                i.serie && 
-                i.unidade && 
-                i.fabricante
-            ).length;
-
-            const perc = lista.length
-                ? ((integros / lista.length) * 100).toFixed(1)
-                : 0;
-
-            document.getElementById('badgeIntegridade').innerText = perc + '%';
-        }
-
-        function atualizarDashboardVivo(lista) {
-            const hoje = new Date();
-            const hojeStr = hoje.toISOString().split('T')[0];
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        
+        <!-- Header Superior -->
+        <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-8 z-10 shadow-sm">
+            <div class="flex items-center space-x-4">
+                <h2 class="text-xl font-bold text-slate900">SIGEM Enterprise / <span class="text-blue-600 font-normal">Command Center</span></h2>
+            </div>
             
-            const inicioSemana = new Date(hoje);
-            inicioSemana.setDate(hoje.getDate() - hoje.getDay());
-            inicioSemana.setHours(0, 0, 0, 0);
+            <div class="flex items-center space-x-5">
+                <!-- Notificações em Tempo Real -->
+                <div class="relative">
+                    <button id="btnNotif" class="relative text-slate-500 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-slate-100">
+                        <i class="fa-solid fa-bell text-lg"></i>
+                        <span id="badgeNotif" class="absolute top-1 right-1 w-2.5 h-2.5 bg-rose500 rounded-full ring-2 ring-white"></span>
+                    </button>
+                </div>
 
-            const cadastradosSemana = lista.filter(item => {
-                if(!item.data) return false;
-                const dataItem = new Date(item.data);
-                return dataItem >= inicioSemana;
-            }).length;
-
-            const mesAtual = hoje.getMonth();
-            const anoAtual = hoje.getFullYear();
-
-            const cadastradosMes = lista.filter(item => {
-                if(!item.data) return false;
-                const data = new Date(item.data);
-                return (
-                    data.getMonth() === mesAtual &&
-                    data.getFullYear() === anoAtual
-                );
-            }).length;
-
-            const cadastradosHoje = lista.filter(item => item.data && item.data.startsWith(hojeStr)).length;
-            const total = lista.length;
-
-            const qtdFabricantes = new Set(lista.map(i => i.fabricante).filter(Boolean)).size;
-            const qtdUnidades = new Set(lista.map(i => i.unidade).filter(Boolean)).size;
-            
-            const qtdCategorias = new Set(lista.map(i => {
-                if(i.categoria) return i.categoria.trim();
-                return i.equipamento ? i.equipamento.split(' ')[0] : 'Geral';
-            }).filter(Boolean)).size;
-
-            document.getElementById('metricaHoje').innerText = cadastradosHoje;
-            document.getElementById('metricaSemana').innerText = cadastradosSemana;
-            document.getElementById('metricaMes').innerText = cadastradosMes;
-            document.getElementById('metricaTotal').innerText = total;
-            document.getElementById('metricaFabricantes').innerText = qtdFabricantes;
-            document.getElementById('metricaUnidades').innerText = qtdUnidades;
-            document.getElementById('metricaCategorias').innerText = qtdCategorias;
-        }
-
-        function atualizarAtividadesRecentes(lista) {
-            const container = document.getElementById('listaAtividadesRecentes');
-            container.innerHTML = '';
-            
-            const consultarUltimos = [...lista].reverse().slice(0, 4);
-            if(consultarUltimos.length === 0) {
-                container.innerHTML = `
-                    <div style="font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 20px 0;">
-                        Nenhum ativo cadastrado.<br>
-                        Clique em <a href="cadastro.html" style="color: var(--primary);">"Novo Cadastro"</a> para iniciar o inventário.
+                <!-- Perfil do Usuário -->
+                <div class="flex items-center space-x-3 border-l pl-5 border-slate-200">
+                    <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md">
+                        DC
                     </div>
-                `;
-                return;
-            }
-
-            consultarUltimos.forEach(item => {
-                const horaFormatada = item.data ? new Date(item.data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '10:25';
-                const div = document.createElement('div');
-                div.className = 'evento-item';
-                div.innerHTML = `<span>Novo cadastro: <b>${item.equipamento}</b> (${item.unidade})</span><span class="evento-hora">${horaFormatada}</span>`;
-                container.appendChild(div);
-            });
-        }
-
-        function atualizarUltimoAtivo(lista) {
-            const container = document.getElementById('containerUltimoAtivo');
-            if(lista.length === 0) {
-                container.innerHTML = `
-                    <div style="font-size: 0.85rem; color: #94a3b8; width: 100%; text-align: center; padding: 10px 0;">
-                        Nenhum ativo cadastrado.<br>
-                        Clique em <a href="cadastro.html" style="color: var(--primary);">"Novo Cadastro"</a> para iniciar o inventário.
+                    <div class="text-left hidden md:block">
+                        <p class="text-sm font-semibold text-slate900 leading-none">Danilo Costa</p>
+                        <span class="text-xs text-slate-500">Engenharia Clínica (Admin)</span>
                     </div>
-                `;
-                return;
-            }
-            const ultimo = lista[lista.length - 1];
-            const pat = ultimo.patrimonio || 'N/A';
-            const fotoSrc = ultimo.foto || 'https://via.placeholder.com/80?text=Ativo';
+                </div>
+            </div>
+        </header>
+
+        <!-- Viewport de Dados (Scrollável) -->
+        <div class="flex-1 overflow-y-auto p-8 space-y-8 bg-slate-50">
             
-            container.innerHTML = `
-                <img src="${fotoSrc}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;" alt="Ativo" onerror="this.src='https://via.placeholder.com/80?text=Ativo'">
+            <!-- Banner Executivo / Meta Corporativa -->
+            <div class="bg-gradient-to-r from-slate900 to-slate-800 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <div>
-                    <b style="color: var(--primary); font-size: 0.95rem;">${ultimo.equipamento}</b>
-                    <p style="margin: 3px 0; font-size: 0.8rem; color: #94a3b8;"><b>Patrimônio:</b> ${pat}</p>
-                    <p style="margin: 3px 0; font-size: 0.8rem; color: #94a3b8;"><b>Unidade:</b> ${ultimo.unidade || 'N/A'}</p>
+                    <span class="bg-blue-600/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-blue-500/30">Visão Executiva Fleury</span>
+                    <h3 class="text-2xl font-black mt-2">Disponibilidade Geral da Rede</h3>
+                    <p class="text-slate-400 text-sm mt-1">Monitoramento em tempo real de ativos hospitalares e centros de diagnóstico.</p>
                 </div>
-            `;
-        }
-
-        function renderizarGraficosDinamicos(lista) {
-            // Destrói as instâncias anteriores para evitar sobreposição e vazamento de memória
-            if(graficoMapa) graficoMapa.destroy();
-            if(graficoCobertura) graficoCobertura.destroy();
-            if(graficoEvolucao) graficoEvolucao.destroy();
-
-            if(lista.length === 0) {
-                document.getElementById('containerMapaWrapper').innerHTML = `<div style="font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 40px 0;">Nenhum ativo cadastrado.</div>`;
-                document.getElementById('containerCoberturaWrapper').innerHTML = `<div style="font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 40px 0;">Nenhum ativo cadastrado.</div>`;
-                document.getElementById('containerEvolucaoWrapper').innerHTML = `<div style="font-size: 0.85rem; color: #94a3b8; text-align: center; padding: 40px 0;">Nenhum ativo cadastrado.</div>`;
-                return;
-            }
-
-            const contagemUnidades = {};
-            const contagemCat = {};
-            
-            lista.forEach(item => {
-                const un = item.unidade || 'Não especificada';
-                contagemUnidades[un] = (contagemUnidades[un] || 0) + 1;
-
-                const cat = item.categoria ? item.categoria.trim() : (item.equipamento ? item.equipamento.split(' ')[0] : 'Geral');
-                contagemCat[cat] = (contagemCat[cat] || 0) + 1;
-            });
-
-            // Gráfico 1: Mapa Operacional
-            const ctxMapa = document.getElementById('chartMapaOperacional').getContext('2d');
-            graficoMapa = new Chart(ctxMapa, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(contagemUnidades),
-                    datasets: [{
-                        label: 'Ativos em Operação',
-                        data: Object.values(contagemUnidades),
-                        backgroundColor: ['#f59e0b', '#38bdf8', '#10b981', '#8b5cf6', '#ec4899'],
-                        borderRadius: 6
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    plugins: { legend: { display: false } },
-                    scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
-                }
-            });
-
-            // Gráfico 2: Cobertura por Categoria
-            const ctxCob = document.getElementById('chartCobertura').getContext('2d');
-            graficoCobertura = new Chart(ctxCob, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(contagemCat),
-                    datasets: [{
-                        data: Object.values(contagemCat),
-                        backgroundColor: ['#f59e0b', '#38bdf8', '#10b981', '#8b5cf6', '#ec4899']
-                    }]
-                },
-                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
-            });
-
-            // Gráfico 3: Evolução Histórica Real
-            const ctxEvolucao = document.getElementById('chartEvolucao').getContext('2d');
-            graficoEvolucao = new Chart(ctxEvolucao, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                    datasets: [{
-                        label: 'Ativos no Parque',
-                        data: [120, 145, 170, 195, 220, 240, 280, lista.length, lista.length, lista.length, lista.length, lista.length],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { 
-                    responsive: true, 
-                    plugins: { legend: { display: false } },
-                    scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
-                }
-            });
-        }
-
-        function executarPesquisaGlobal(e) {
-            if(e.key === 'Enter') {
-                const termo = e.target.value.trim();
-                if(termo) {
-                    window.location.href = `equipamentos.html?busca=${encodeURIComponent(termo)}`;
-                }
-            }
-        }
-
-        function consultarIA() {
-            const input = document.getElementById('perguntaIA');
-            const respostaDiv = document.getElementById('respostaIA');
-            const pergunta = input.value.trim().toLowerCase();
-            
-            if(!pergunta) return;
-
-            const lista = obterEquipamentosSIGEM();
-            let resposta = "Não consegui identificar sua dúvida nos registros atuais do SIGEM. Tente perguntar sobre quantidades, unidades ou fabricantes.";
-
-            if(pergunta.includes('quantos') || pergunta.includes('total') || pergunta.includes('número')) {
-                resposta = `Atualmente o sistema possui <b>${lista.length}</b> ativo(s) cadastrado(s) no parque tecnológico do Grupo Fleury.`;
-            } else if(pergunta.includes('unidade') || pergunta.includes('hospital') || pergunta.includes('laboratório')) {
-                const unidades = [...new Set(lista.map(i => i.unidade).filter(Boolean))];
-                resposta = unidades.length > 0 ? `Unidades ativas cadastradas: <b>${unidades.join(', ')}</b>.` : "Nenhuma unidade registrada no momento.";
-            } else if(pergunta.includes('fabricante') || pergunta.includes('marca')) {
-                const fabricantes = [...new Set(lista.map(i => i.fabricante).filter(Boolean))];
-                resposta = fabricantes.length > 0 ? `Fabricantes registrados: <b>${fabricantes.join(', ')}</b>.` : "Nenhum fabricante registrado no momento.";
-            }
-
-            respostaDiv.innerHTML = resposta;
-            respostaDiv.style.display = 'block';
-        }
-
-        function abrirPerfilGovernanca(nome, cargo, descricao, email, foto) {
-            const modal = document.getElementById('modalPerfil');
-            const conteudo = document.getElementById('conteudoPerfilModal');
-            
-            conteudo.innerHTML = `
-                <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
-                    <img src="${foto}" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);" onerror="this.src='https://via.placeholder.com/70?text=Perfil'">
+                <div class="flex items-center space-x-6 bg-slate-800/80 px-6 py-4 rounded-xl border border-slate-700">
                     <div>
-                        <h4 style="margin: 0 0 5px 0; color: var(--primary); font-size: 1.1rem;">${nome}</h4>
-                        <p style="margin: 0; font-size: 0.85rem; color: #38bdf8; font-weight: 600;">${cargo}</p>
+                        <span class="text-xs text-slate-400 block uppercase tracking-wider">Disponibilidade</span>
+                        <span class="text-3xl font-extrabold text-emerald-400">98.7%</span>
+                    </div>
+                    <div class="border-l border-slate-700 pl-6">
+                        <span class="text-xs text-slate-400 block uppercase tracking-wider">Meta Corporativa</span>
+                        <span class="text-3xl font-extrabold text-white">&gt; 98.0%</span>
                     </div>
                 </div>
-                <p style="margin: 8px 0;"><b>Área / Atuação:</b> ${descricao}</p>
-                <p style="margin: 8px 0;"><b>E-mail Corporativo:</b> <a href="mailto:${email}" style="color: var(--accent);">${email}</a></p>
-                <p style="margin: 8px 0;"><b>Centro de Custo:</b> Engenharia Clínica — Grupo Fleury</p>
-            `;
-            modal.style.display = 'flex';
+            </div>
+
+            <!-- Cards de KPI Principais com Animação -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between transition-all hover:shadow-md">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Equipamentos Ativos</p>
+                        <h3 id="kpi-ativos" class="text-3xl font-extrabold text-slate900 mt-1">0</h3>
+                        <span class="text-xs font-medium text-emerald-500 flex items-center mt-2">
+                            <i class="fa-solid fa-arrow-trend-up mr-1"></i> Sincronizado Supabase
+                        </span>
+                    </div>
+                    <div class="w-14 h-14 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl shadow-inner">
+                        <i class="fa-solid fa-hospital"></i>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between transition-all hover:shadow-md">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Ordens de Serviço</p>
+                        <h3 id="kpi-os" class="text-3xl font-extrabold text-slate900 mt-1">0</h3>
+                        <span class="text-xs font-medium text-amber500 flex items-center mt-2">
+                            <i class="fa-solid fa-clock mr-1"></i> Abertas no sistema
+                        </span>
+                    </div>
+                    <div class="w-14 h-14 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-2xl shadow-inner">
+                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between transition-all hover:shadow-md">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Peças em Estoque</p>
+                        <h3 id="kpi-pecas" class="text-3xl font-extrabold text-emerald-500 mt-1">0</h3>
+                        <span class="text-xs font-medium text-slate-400 mt-2 block">Almoxarifado Central</span>
+                    </div>
+                    <div class="w-14 h-14 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl shadow-inner">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between transition-all hover:shadow-md">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Custos do Mês</p>
+                        <h3 class="text-3xl font-extrabold text-slate900 mt-1">R$ 42.5k</h3>
+                        <span class="text-xs font-medium text-rose500 flex items-center mt-2">
+                            <i class="fa-solid fa-arrow-trend-up mr-1"></i> Manutenções & Peças
+                        </span>
+                    </div>
+                    <div class="w-14 h-14 rounded-xl bg-rose-50 text-rose500 flex items-center justify-center text-2xl shadow-inner">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Gráficos e Timeline em Tempo Real -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Gráfico Principal -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate900 text-lg">Distribuição de OS (Preventivas vs Corretivas)</h3>
+                        <span class="text-xs bg-slate-100 text-slate-500 px-3 py-1 rounded-full font-medium">Realtime Analytics</span>
+                    </div>
+                    <div class="h-72 flex items-center justify-center flex-1">
+                        <canvas id="graficoExecutivo"></canvas>
+                    </div>
+                </div>
+
+                <!-- Timeline Operacional em Tempo Real -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate900 text-lg">Timeline Operacional</h3>
+                        <span class="bg-emerald-100 text-emerald-600 text-xs font-bold px-2.5 py-1 rounded-full flex items-center">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping mr-1.5"></span> Live
+                        </span>
+                    </div>
+                    <div id="timeline-container" class="space-y-4 flex-1 overflow-y-auto pr-2">
+                        <div class="flex space-x-3 items-start border-l-2 border-blue-600 pl-3">
+                            <div>
+                                <span class="text-xs text-slate-400 font-semibold">14:32</span>
+                                <p class="text-sm font-semibold text-slate900">Danilo Costa</p>
+                                <p class="text-xs text-slate-600">Retirou Sensor Oximetria (Almoxarifado)</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3 items-start border-l-2 border-emerald-500 pl-3">
+                            <div>
+                                <span class="text-xs text-slate-400 font-semibold">13:25</span>
+                                <p class="text-sm font-semibold text-slate900">OS #2354 Fechada</p>
+                                <p class="text-xs text-slate-600">Calibração de Bomba de Infusão concluída.</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3 items-start border-l-2 border-amber-500 pl-3">
+                            <div>
+                                <span class="text-xs text-slate-400 font-semibold">12:10</span>
+                                <p class="text-sm font-semibold text-slate900">Preventiva Executada</p>
+                                <p class="text-xs text-slate-600">Monitor Philips MX800 verificado com sucesso.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Script de Animação de Números e Integração Simulada Supabase -->
+    <script>
+        function animarNumero(id, fim) {
+            let atual = 0;
+            const incremento = Math.max(1, Math.floor(fim / 50));
+            const timer = setInterval(() => {
+                atual += incremento;
+                if (atual >= fim) {
+                    atual = fim;
+                    clearInterval(timer);
+                }
+                document.getElementById(id).innerText = atual.toLocaleString();
+            }, 20);
         }
 
-        function fecharModalPerfil() {
-            document.getElementById('modalPerfil').style.display = 'none';
-        }
+        // Executa animações iniciais simulando dados vindos do banco PostgreSQL/Supabase
+        window.addEventListener('DOMContentLoaded', () => {
+            animarNumero('kpi-ativos', 4532);
+            animarNumero('kpi-os', 23);
+            animarNumero('kpi-pecas', 18452);
+        });
 
-        function visualizarQRCodeUltimoAtivo() {
-            const lista = obterEquipamentosSIGEM();
-            if(lista.length === 0) {
-                alert('Nenhum ativo cadastrado para gerar QR Code.');
-                return;
+        // Configuração do Gráfico com Chart.js
+        const ctx = document.getElementById('graficoExecutivo').getContext('2d');
+        const graficoExecutivo = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                datasets: [
+                    {
+                        label: 'Preventivas',
+                        data: [45, 52, 60, 58, 49, 50, 62, 70, 0, 0, 0, 0],
+                        backgroundColor: '#2563EB',
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Corretivas',
+                        data: [20, 15, 22, 23, 18, 15, 12, 15, 0, 0, 0, 0],
+                        backgroundColor: '#F59E0B',
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                scales: {
+                    y: { grid: { color: '#F1F5F9' }, ticks: { color: '#64748B' } },
+                    x: { grid: { display: false }, ticks: { color: '#64748B' } }
+                }
             }
-            const ultimo = lista[lista.length - 1];
-            const modal = document.getElementById('modalQR');
-            const container = document.getElementById('qrcodeContainer');
-            const info = document.getElementById('qrPatrimonioInfo');
-            
-            container.innerHTML = '';
-            info.innerText = `Patrimônio: ${ultimo.patrimonio || 'N/A'} — ${ultimo.equipamento}`;
-            
-            new QRCode(container, {
-                text: `SIGEM-PAT-${ultimo.patrimonio || '0000'}`,
-                width: 150,
-                height: 150
-            });
-            
-            modal.style.display = 'flex';
-        }
-
-        function fecharModalQR() {
-            document.getElementById('modalQR').style.display = 'none';
-        }
-
-        function imprimirEtiquetaUltimoAtivo() {
-            const lista = obterEquipamentosSIGEM();
-            if(lista.length === 0) {
-                alert('Nenhum ativo cadastrado para imprimir etiqueta.');
-                return;
-            }
-            const ultimo = lista[lista.length - 1];
-            const janela = window.open('', '', 'width=400,height=400');
-            janela.document.write(`
-                <html>
-                <head><title>Etiqueta SIGEM</title></head>
-                <body style="font-family: Arial; text-align: center; padding: 20px; border: 2px dashed #000;">
-                    <h3>GRUPO FLEURY - SIGEM</h3>
-                    <p><b>Equipamento:</b> ${ultimo.equipamento}</p>
-                    <p><b>Patrimônio:</b> ${ultimo.patrimonio || 'N/A'}</p>
-                    <p><b>Série:</b> ${ultimo.serie || 'N/A'}</p>
-                    <p><b>Unidade:</b> ${ultimo.unidade || 'N/A'}</p>
-                    <script>window.print();<\/script>
-                </body>
-                </html>
-            `);
-            janela.document.close();
-        }
-
-        function exportarRelatorioReal(tipo) {
-            const lista = obterEquipamentosSIGEM();
-            if(lista.length === 0) {
-                alert('Não há dados cadastrados para exportar.');
-                return;
-            }
-
-            if(tipo === 'CSV') {
-                let csv = 'Patrimonio,Equipamento,Fabricante,Modelo,Serie,Unidade,Data\n';
-                lista.forEach(i => {
-                    csv += `"${i.patrimonio}","${i.equipamento}","${i.fabricante}","${i.modelo}","${i.serie}","${i.unidade}","${i.data || ''}"\n`;
-                });
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'sigem_relatorio_ativos.csv';
-                link.click();
-            } else if(tipo === 'Excel') {
-                const worksheet = XLSX.utils.json_to_sheet(lista);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, "Ativos SIGEM");
-                XLSX.writeFile(workbook, "sigem_relatorio_ativos.xlsx");
-            } else if(tipo === 'PDF') {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                doc.text("GRUPO FLEURY - SIGEM Command Center", 14, 20);
-                doc.text("Relatorio Executivo de Ativos", 14, 28);
-                
-                let y = 40;
-                lista.slice(0, 15).forEach((i, idx) => {
-                    doc.text(`${idx+1}. Pat: ${i.patrimonio || 'N/A'} - ${i.equipamento} (${i.unidade})`, 14, y);
-                    y += 10;
-                });
-                doc.save("sigem_relatorio_executivo.pdf");
-            }
-        }
+        });
     </script>
 </body>
 </html>

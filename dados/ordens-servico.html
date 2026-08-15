@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Ordens de Serviço</title>
+    <link rel="stylesheet" href="../estilos/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="loading" id="loadingScreen" style="display:none;">
+        Carregando dados...
+    </div>
+
+    <div class="layout-wrapper">
+        <nav class="sidebar">
+            <div class="logo">🏥 SIGEM</div>
+            <a href="dashboard.html">🏠 Dashboard</a>
+            <a href="estoque.html">📦 Estoque</a>
+            <a href="entrada.html">⬆ Entrada</a>
+            <a href="saida.html">⬇ Saída</a>
+            <a href="movimentacoes.html">🔄 Movimentações</a>
+            <a href="equipamentos.html">🏥 Equipamentos</a>
+            <a href="ordens-servico.html" class="active">🔧 Ordens de Serviço</a>
+            <a href="relatorios.html">📊 Relatórios</a>
+            <button id="btnTema" style="margin-top: 20px; width: 100%; padding: 10px; border-radius: 8px; border: none; background: #334155; color: white; cursor: pointer;">🌙 Modo Escuro</button>
+        </nav>
+
+        <main class="content">
+            <header class="topbar">
+                <div>
+                    <h1>Ordens de Serviço (OS)</h1>
+                    <small>Gestão de Manutenção Corretiva e Preventiva</small>
+                </div>
+                <div id="relogio"></div>
+            </header>
+
+            <div class="cards-container">
+                <div class="card card-info">
+                    <h3>Total de OS Abertas</h3>
+                    <p id="totalOS">0</p>
+                </div>
+                <div class="card card-danger">
+                    <h3>Corretivas</h3>
+                    <p id="totalCorretivas">0</p>
+                </div>
+                <div class="card card-success">
+                    <h3>Preventivas</h3>
+                    <p id="totalPreventivas">0</p>
+                </div>
+                <div class="card card-warning">
+                    <h3>Peças Aplicadas</h3>
+                    <p id="pecasAplicadas">0</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+                <h3>Nova Ordem de Serviço</h3>
+                <form id="formOS" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div>
+                        <label style="display:block; margin-bottom:5px; font-size:14px;">Nº Patrimônio / Equipamento</label>
+                        <input type="text" id="patrimonioOS" required placeholder="Ex: PAT001" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:5px; font-size:14px;">Tipo de Manutenção</label>
+                        <select id="tipoOS" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
+                            <option value="Corretiva">Corretiva</option>
+                            <option value="Preventiva">Preventiva</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:5px; font-size:14px;">Técnico Responsável</label>
+                        <input type="text" id="tecnicoOS" required placeholder="Seu Nome" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display:block; margin-bottom:5px; font-size:14px;">Descrição do Defeito / Serviço</label>
+                        <textarea id="descricaoOS" required rows="3" placeholder="Relate o problema ou atividade realizada..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;"></textarea>
+                    </div>
+                    <div>
+                        <button type="submit" style="background: #0ea5e9; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">Abrir e Registrar OS</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Histórico de Ordens de Serviço</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #e2e8f0; text-align: left;">
+                            <th style="padding: 10px;">Nº OS</th>
+                            <th style="padding: 10px;">Data</th>
+                            <th style="padding: 10px;">Patrimônio</th>
+                            <th style="padding: 10px;">Tipo</th>
+                            <th style="padding: 10px;">Técnico</th>
+                            <th style="padding: 10px;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaOS">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <footer>
+                SIGEM v1.0 | Engenharia Clínica - Grupo Fleury
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // Relógio em tempo real
+        setInterval(() => {
+            document.getElementById("relogio").innerText = new Date().toLocaleString("pt-BR");
+        }, 1000);
+
+        // Modo Escuro
+        document.getElementById("btnTema").addEventListener("click", () => {
+            document.body.classList.toggle("dark");
+        });
+
+        // Simulação de listagem e cadastro de OS
+        const osExemplo = [
+            { id: "OS-001", data: "14/08/2026", patrimonio: "PAT001", tipo: "Corretiva", tecnico: "Danilo Costa", status: "Concluída" },
+            { id: "OS-002", data: "14/08/2026", patrimonio: "PAT045", tipo: "Preventiva", tecnico: "Carlos Silva", status: "Em Aberto" }
+        ];
+
+        function carregarOS() {
+            const tbody = document.getElementById("tabelaOS");
+            tbody.innerHTML = "";
+            osExemplo.forEach(os => {
+                tbody.innerHTML += `
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 10px;"><b>${os.id}</b></td>
+                        <td style="padding: 10px;">${os.data}</td>
+                        <td style="padding: 10px;">${os.patrimonio}</td>
+                        <td style="padding: 10px;">${os.tipo}</td>
+                        <td style="padding: 10px;">${os.tecnico}</td>
+                        <td style="padding: 10px;"><span class="badge" style="background:${os.status === 'Concluída' ? '#22c55e' : '#f59e0b'};">${os.status}</span></td>
+                    </tr>
+                `;
+            });
+            document.getElementById("totalOS").innerText = osExemplo.length;
+            document.getElementById("totalCorretivas").innerText = osExemplo.filter(o => o.tipo === 'Corretiva').length;
+            document.getElementById("totalPreventivas").innerText = osExemplo.filter(o => o.tipo === 'Preventiva').length;
+            document.getElementById("pecasAplicadas").innerText = "3";
+        }
+
+        document.getElementById("formOS").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const novaOS = {
+                id: `OS-00${osExemplo.length + 1}`,
+                data: new Date().toLocaleDateString("pt-BR"),
+                patrimonio: document.getElementById("patrimonioOS").value,
+                tipo: document.getElementById("tipoOS").value,
+                tecnico: document.getElementById("tecnicoOS").value,
+                status: "Em Aberto"
+            };
+            osExemplo.unshift(novaOS);
+            carregarOS();
+            alert("Ordem de Serviço aberta com sucesso!");
+            this.reset();
+        });
+
+        carregarOS();
+    </script>
+</body>
+</html>

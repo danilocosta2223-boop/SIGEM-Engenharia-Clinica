@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Histórico e Rastreabilidade Corporativa</title>
+    <link rel="stylesheet" href="../styles/dashboard.css">
+    <!-- Chart.js para os gráficos gerenciais -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Hero Corporativo */
+        .hero-dashboard {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 25px 30px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .hero-dashboard h1 {
+            font-size: 1.8rem;
+            color: #f8fafc;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .hero-dashboard p {
+            color: #94a3b8;
+            margin: 5px 0 0 0;
+            font-size: 0.95rem;
+        }
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #0f172a;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #334155;
+            font-size: 0.85rem;
+            color: #22c55e;
+            font-weight: 500;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #22c55e;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        /* Grid de Filtros */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .filter-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .filter-group input, .filter-group select {
+            width: 100%;
+            padding: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #f8fafc;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* KPIs */
+        .kpi-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .kpi-card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #0ea5e9;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .kpi-card h4 {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .kpi-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f8fafc;
+        }
+        
+        /* Analytics Grid (Gráfico, Top Peças, Top Técnicos, Unidades) */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        @media(max-width: 1400px) {
+            .analytics-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media(max-width: 768px) {
+            .analytics-grid { grid-template-columns: 1fr; }
+        }
+        .analytics-card {
+            background: #1e293b;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .analytics-card h3 {
+            margin-bottom: 15px;
+            color: #f8fafc;
+            font-size: 1rem;
+        }
+        .list-ranking {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .list-ranking li {
+            display: flex;
+            justify-content: space-between;
+            padding: 7px 0;
+            border-bottom: 1px solid #334155;
+            font-size: 0.88rem;
+            color: #cbd5e1;
+        }
+        .list-ranking li:last-child { border-bottom: none; }
+
+        /* Timeline */
+        .timeline-container {
+            position: relative;
+            margin-top: 20px;
+            padding-left: 30px;
+            border-left: 2px solid #334155;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+            background: #1e293b;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .timeline-item:hover { transform: translateX(4px); }
+        .timeline-item.entrada { border-left: 6px solid #22c55e; }
+        .timeline-item.saida { border-left: 6px solid #ef4444; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 22px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #0ea5e9;
+            border: 3px solid #0f172a;
+        }
+        
+        .timeline-content-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .equipamento-foto {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            flex-shrink: 0;
+        }
+        .timeline-details { flex-grow: 1; }
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+            font-size: 0.88rem;
+            color: #cbd5e1;
+        }
+
+        /* Mapa de Rastreabilidade */
+        .trace-map {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #334155;
+            font-size: 0.8rem;
+        }
+        .trace-node {
+            background: #0f172a;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            color: #38bdf8;
+            font-weight: 500;
+        }
+        .trace-arrow { color: #64748b; font-weight: bold; }
+
+        .btn-export {
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        .btn-export:hover { background: #0284c7; }
+
+        @media print {
+            body { background: white; color: black; }
+            .sidebar, .filter-grid, .btn-export, .hero-dashboard { display: none !important; }
+            .timeline-item, .analytics-card, .kpi-card { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; color: black !important; box-shadow: none !important; }
+            .trace-node { background: #e2e8f0; color: black; border-color: #cbd5e1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <!-- Menu Lateral -->
+        <aside class="sidebar">
+            <h2>SIGEM 🏥</h2>
+            <ul>
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="historico.html" class="active">🕒 Histórico & Timeline</a></li>
+                <li><a href="ordens-servico.html">🛠️ Ordens de Serviço</a></li>
+                <li><a href="equipamentos.html">⚡ Equipamentos</a></li>
+            </ul>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Hero Corporativo -->
+            <div class="hero-dashboard">
+                <div>
+                    <h1>SIGEM <span>🏥</span></h1>
+                    <p>Central de Rastreabilidade da Engenharia Clínica</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="system-status">
+                        <div class="status-dot"></div>
+                        Sistema Online • <span id="relogioAtualizacao">--:--:--</span>
+                    </div>
+                    <button class="btn-export" onclick="exportarPDF()">📄 Exportar PDF</button>
+                </div>
+            </div>
+
+            <!-- Indicadores de Criticidade no Topo -->
+            <div class="kpi-container">
+                <div class="kpi-card" style="border-left-color: #ef4444;">
+                    <h4>🔴 Crítica / Alta</h4>
+                    <div class="value" id="kpiCritica">0</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #f59e0b;">
+                    <h4>🟡 Média</h4>
+                    <div class="value" id="kpiMedia">0</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #22c55e;">
+                    <h4>🟢 Baixa</h4>
+                    <div class="value" id="kpiBaixa">0</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #38bdf8;">
+                    <h4>💰 Custo Consumido</h4>
+                    <div class="value" id="kpiCusto">R$ 0,00</div>
+                </div>
+                <div class="kpi-card" style="border-left-color: #a855f7;">
+                    <h4>⏱️ MTTR Médio</h4>
+                    <div class="value" id="kpiMTTR">2h 34min</div>
+                </div>
+            </div>
+
+            <!-- Analytics Grid (Gráfico, Top Peças, Top Técnicos, Unidades) -->
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>📊 Consumo por Setor</h3>
+                    <div style="position: relative; height: 180px; width: 100%;">
+                        <canvas id="graficoConsumoSetor"></canvas>
+                    </div>
+                </div>
+                <div class="analytics-card">
+                    <h3>🏆 Top Peças</h3>
+                    <ul class="list-ranking" id="topPecasLista"></ul>
+                </div>
+                <div class="analytics-card">
+                    <h3>🏆 Top Técnicos</h3>
+                    <ul class="list-ranking" id="topTecnicosLista"></ul>
+                </div>
+                <div class="analytics-card">
+                    <h3>🏥 Consumo Unidade</h3>
+                    <ul class="list-ranking" id="consumoUnidadeLista"></ul>
+                </div>
+            </div>
+
+            <!-- Filtros de Pesquisa Avançada com Datas -->
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>Pesquisar Peça</label>
+                    <input type="text" id="filtroTexto" placeholder="Ex: Sensor..." onkeyup="filtrarMovimentacoes()">
+                </div>
+                <div class="filter-group">
+                    <label>Patrimônio</label>
+                    <input type="text" id="filtroPatrimonio" placeholder="PAT-001" onkeyup="filtrarMovimentacoes()">
+                </div>
+                <div class="filter-group">
+                    <label>Data Inicial</label>
+                    <input type="date" id="filtroDataInicio" onchange="filtrarMovimentacoes()">
+                </div>
+                <div class="filter-group">
+                    <label>Data Final</label>
+                    <input type="date" id="filtroDataFim" onchange="filtrarMovimentacoes()">
+                </div>
+                <div class="filter-group">
+                    <label>Setor</label>
+                    <select id="filtroSetor" onchange="filtrarMovimentacoes()">
+                        <option value="">[ Todos ]</option>
+                        <option value="UTI Adulto">UTI Adulto</option>
+                        <option value="UTI Neonatal">UTI Neonatal</option>
+                        <option value="Centro Cirúrgico">Centro Cirúrgico</option>
+                        <option value="Pronto Socorro">Pronto Socorro</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Técnico</label>
+                    <select id="filtroTecnico" onchange="filtrarMovimentacoes()">
+                        <option value="">[ Todos ]</option>
+                        <option value="Danilo Costa">Danilo Costa</option>
+                        <option value="Carlos Silva">Carlos Silva</option>
+                        <option value="Ana Souza">Ana Souza</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Timeline Dinâmica -->
+            <section class="content-section">
+                <h3 style="margin-bottom: 20px;">🕒 Linha do Tempo Operacional</h3>
+                <div class="timeline-container" id="timelineContainer"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../scripts/historico.js"></script>
+</body>
+</html>
