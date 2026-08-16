@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Baixa Inteligente de Peças</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-xl bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl">
+        <h1 class="text-2xl font-bold mb-6 text-emerald-400 flex items-center gap-2">
+            📦 Registrar Retirada (Rastreabilidade Total)
+        </h1>
+
+        <!-- Preview da Peça (Foto e Localização carregadas via QR Code) -->
+        <div id="info-peca" class="hidden bg-slate-800/60 border border-slate-700/60 p-4 rounded-xl mb-6 flex items-center gap-4">
+            <img id="foto_peca" class="w-20 h-20 rounded-xl object-cover border border-slate-700" src="" alt="Peça">
+            <div>
+                <h2 id="view_nome_peca" class="text-lg font-semibold text-white">---</h2>
+                <p class="text-sm text-slate-400">Código: <span id="view_codigo" class="text-emerald-400">---</span></p>
+                <p class="text-sm text-slate-400">Local: <span id="view_localizacao" class="text-slate-200">---</span></p>
+                <p class="text-sm text-slate-400">Estoque Atual: <span id="view_estoque" class="font-bold text-white">---</span></p>
+            </div>
+        </div>
+
+        <form id="form-retirada" class="space-y-4">
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-1">Código / QR Code *</label>
+                    <input type="text" id="codigo_peca" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Ex: ECG001 ou escaneie" onblur="buscarPeca(this.value)">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-1">Quantidade *</label>
+                    <input type="number" id="quantidade" min="1" value="1" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-1">Nº da OS *</label>
+                    <input type="text" id="os" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Ex: 2547">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-1">Motivo da Retirada *</label>
+                    <select id="motivo" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none">
+                        <option value="Troca">Troca</option>
+                        <option value="Defeito">Defeito</option>
+                        <option value="Preventiva">Preventiva</option>
+                        <option value="Instalação">Instalação</option>
+                        <option value="Corretiva">Corretiva</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-1">Equipamento *</label>
+                    <input type="text" id="equipamento" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Ex: Monitor MX800">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-1">Leito *</label>
+                    <input type="text" id="leito" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Ex: UTI 15">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-1">Responsável (Técnico) *</label>
+                    <input type="text" id="tecnico" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Ex: Ramiro">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-1">Aprovador (Liderança) *</label>
+                    <input type="text" id="aprovador" value="Ivan" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-400 mb-1">Observações</label>
+                <textarea id="observacao" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Detalhes adicionais do atendimento..."></textarea>
+            </div>
+
+            <button type="button" onclick="confirmarRetirada()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold p-3.5 rounded-lg transition duration-200 shadow-lg mt-2">
+                Confirmar Baixa e Rastreabilidade
+            </button>
+        </form>
+    </div>
+
+    <!-- Toast de Notificação -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl opacity-0 transition-opacity duration-300 pointer-events-none font-medium">
+        ✅ Baixa registrada com sucesso
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'SUA_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'SUA_SUPABASE_ANON_KEY';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let pecaCarregada = null;
+
+        // Auto-carregar se vier parâmetro na URL (Ex: qrcode.html?codigo=ECG001)
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const codigo = urlParams.get('codigo');
+            if (codigo) {
+                document.getElementById('codigo_peca').value = codigo;
+                buscarPeca(codigo);
+            }
+        };
+
+        async function buscarPeca(codigo) {
+            if (!codigo) return;
+            const { data, error } = await supabase
+                .from('pecas')
+                .select('*')
+                .eq('codigo', codigo)
+                .single();
+
+            if (data) {
+                pecaCarregada = data;
+                document.getElementById('view_codigo').innerText = data.codigo;
+                document.getElementById('view_nome_peca').innerText = data.nome;
+                document.getElementById('view_localizacao').innerText = data.localizacao || 'Não informada';
+                document.getElementById('view_estoque').innerText = data.estoque_atual;
+                document.getElementById('foto_peca').src = data.foto || 'https://via.placeholder.com/150';
+                document.getElementById('info-peca').classList.remove('hidden');
+            } else {
+                document.getElementById('info-peca').classList.add('hidden');
+                pecaCarregada = null;
+            }
+        }
+
+        function showToast(mensagem) {
+            const toast = document.getElementById('toast');
+            toast.innerText = mensagem;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+            }, 3500);
+        }
+
+        async function confirmarRetirada() {
+            const codigoPeca = document.getElementById('codigo_peca').value.trim();
+            const quantidade = parseInt(document.getElementById('quantidade').value);
+            const os = document.getElementById('os').value.trim();
+            const motivo = document.getElementById('motivo').value;
+            const equipamento = document.getElementById('equipamento').value.trim();
+            const leito = document.getElementById('leito').value.trim();
+            const tecnico = document.getElementById('tecnico').value.trim();
+            const aprovador = document.getElementById('aprovador').value.trim();
+            const observacao = document.getElementById('observacao').value.trim();
+
+            if (!pecaCarregada) {
+                alert("❌ Peça não identificada ou código inválido.");
+                return;
+            }
+
+            if (isNaN(quantidade) || quantidade <= 0) {
+                alert("❌ Quantidade inválida. Informe um valor maior que zero.");
+                return;
+            }
+
+            if (!os || !equipamento || !leito || !tecnico || !aprovador) {
+                alert("❌ Retirada bloqueada: Preencha OS, Equipamento, Leito, Responsável e Aprovador.");
+                return;
+            }
+
+            // Validação de Estoque Suficiente
+            if (quantidade > pecaCarregada.estoque_atual) {
+                alert(`❌ Estoque insuficiente! Disponível no momento: ${pecaCarregada.estoque_atual} unidades.`);
+                return;
+            }
+
+            if (!confirm(`Confirmar retirada de ${quantidade}x ${pecaCarregada.nome} para a OS ${os}?`)) {
+                return;
+            }
+
+            // 1. Inserir na tabela de movimentações (Trilha de Auditoria)
+            const { error: erroMov } = await supabase
+                .from('movimentacoes')
+                .insert([{
+                    data_movimentacao: new Date().toISOString(),
+                    tipo_movimentacao: 'SAIDA',
+                    codigo_peca: pecaCarregada.codigo,
+                    nome_peca: pecaCarregada.nome,
+                    quantidade: quantidade,
+                    tecnico: tecnico,
+                    aprovador: aprovador,
+                    os: os,
+                    equipamento: equipamento,
+                    leito: leito,
+                    unidade: 'Penha',
+                    motivo: motivo,
+                    observacao: observacao,
+                    origem: 'QR_CODE'
+                }]);
+
+            if (erroMov) {
+                console.error("Erro ao registrar movimentação:", erroMov);
+                alert("❌ Erro ao salvar registro de baixa.");
+                return;
+            }
+
+            // 2. Calcular novo estoque e atualizar
+            const novoEstoque = pecaCarregada.estoque_atual - quantidade;
+            const { error: erroEstoque } = await supabase
+                .from('pecas')
+                .update({ 
+                    estoque_atual: novoEstoque,
+                    ultima_movimentacao: new Date().toISOString()
+                })
+                .eq('codigo', pecaCarregada.codigo);
+
+            if (erroEstoque) {
+                console.error("Erro ao atualizar estoque:", erroEstoque);
+            }
+
+            // 3. Alerta inteligente se atingir estoque crítico ou mínimo
+            if (novoEstoque <= pecaCarregada.estoque_minimo) {
+                showToast(`🚨 Alerta: Estoque crítico atingido (${novoEstoque} restantes)!`);
+            } else {
+                showToast('✅ Baixa registrada com sucesso');
+            }
+
+            // Limpar formulário
+            document.getElementById('form-retirada').reset();
+            document.getElementById('info-peca').classList.add('hidden');
+            pecaCarregada = null;
+        }
+    </script>
+</body>
+</html>

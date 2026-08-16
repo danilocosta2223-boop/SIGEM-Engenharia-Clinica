@@ -3,250 +3,600 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM Enterprise | Command Center & NOC</title>
-    <!-- Tailwind CSS CDN -->
+    <title>SIGEM - Engenharia Clínica e Almoxarifado | Command Center</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js para Gráficos Executivos -->
+    <!-- Chart.js para os Gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Supabase JS Client (Para conexão real com o PostgreSQL) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        slate900: '#0F172A',
-                        slate950: '#020617',
-                        blue600: '#2563EB',
-                        emerald500: '#22C55E',
-                        amber500: '#F59E0B',
-                        rose500: '#EF4444',
-                        slate50: '#F8FAFC'
-                    }
-                }
-            }
+    <style>
+        .gradient-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
         }
-    </script>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased flex h-screen overflow-hidden">
+<body class="bg-slate-950 font-sans h-screen flex overflow-hidden text-slate-100">
 
-    <!-- Menu Lateral Fixo -->
-    <aside class="w-64 bg-slate900 text-white flex flex-col shadow-xl z-20">
+    <!-- Menu Lateral Fixo com Command Center e Links Reais -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-2xl z-20 border-r border-slate-800">
         <!-- Logo Header -->
-        <div class="p-5 border-b border-slate-800 flex items-center space-x-3">
+        <div class="p-6 border-b border-slate-800 flex items-center space-x-3">
             <div class="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center">
-                <i class="fa-solid fa-hospital-user text-white text-xl"></i>
+                <i class="fa-solid fa-microchip text-white text-lg"></i>
             </div>
             <div>
                 <h1 class="font-bold text-lg tracking-wider">SIGEM</h1>
-                <span class="text-xs text-blue-400 font-medium tracking-widest uppercase">Engenharia Clínica</span>
+                <span class="text-[10px] text-blue-400 font-semibold tracking-widest uppercase">Engenharia Clínica</span>
             </div>
         </div>
 
         <!-- Navegação Principal -->
         <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto text-sm">
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-blue-600 text-white font-medium shadow-md shadow-blue-600/20 transition-all">
+            <p class="px-3 text-[10px] font-bold tracking-wider text-slate-500 uppercase mb-2">Painel de Controle</p>
+            
+            <a href="index.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-blue-600 text-white font-medium shadow-md shadow-blue-600/20 transition-all">
                 <i class="fa-solid fa-chart-pie w-5"></i>
                 <span>Dashboard</span>
             </a>
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+            
+            <a href="command.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-satellite-dish w-5 text-blue-400"></i>
+                <span>Command Center</span>
+            </a>
+
+            <a href="equipamentos.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
                 <i class="fa-solid fa-laptop-medical w-5"></i>
                 <span>Equipamentos</span>
             </a>
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+
+            <a href="almoxarifado.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
                 <i class="fa-solid fa-boxes-stacked w-5"></i>
-                <span>Peças & Estoque</span>
+                <span>Almoxarifado</span>
             </a>
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
-                <i class="fa-solid fa-screwdriver-wrench w-5"></i>
-                <span>Ordens de Serviço</span>
-            </a>
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
-                <i class="fa-solid fa-calendar-check w-5"></i>
-                <span>Preventivas</span>
-            </a>
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
-                <i class="fa-solid fa-network-wired w-5"></i>
-                <span>Painel NOC</span>
-            </a>
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
-                <i class="fa-solid fa-users w-5"></i>
+
+            <a href="equipe/equipe.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-user-group w-5"></i>
                 <span>Equipe</span>
             </a>
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
-                <i class="fa-solid fa-shield-halved w-5"></i>
-                <span>Auditoria</span>
-            </a>
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
-                <i class="fa-solid fa-gear w-5"></i>
-                <span>Configurações</span>
+
+            <a href="fornecedores.html" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all">
+                <i class="fa-solid fa-industry w-5"></i>
+                <span>Fornecedores</span>
             </a>
         </nav>
 
-        <!-- Status Rodapé -->
-        <div class="p-4 border-t border-slate-800 bg-slate-900/50">
-            <div class="flex items-center space-x-2 text-xs text-emerald-500 font-semibold bg-emerald-500/10 px-3 py-2 rounded-lg border border-emerald-500/20">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>SUPABASE REALTIME ATIVO</span>
+        <!-- Status Rodapé / Supabase Realtime & Segurança -->
+        <div class="p-4 border-t border-slate-800 bg-slate-900/50 space-y-3">
+            <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80">
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                    <span>Supabase Realtime</span>
+                    <span id="status-indicador" class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                </div>
+                <p id="status-conexao" class="text-[10px] text-slate-500 mt-1">Conectado e Sincronizado</p>
+            </div>
+            
+            <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 text-xs flex items-center justify-between text-slate-400">
+                <div>
+                    <span class="block text-[10px] uppercase font-bold text-slate-500">Último Backup</span>
+                    <span class="text-slate-300 font-semibold text-[11px]">Hoje 03:00 (Online)</span>
+                </div>
+                <i class="fa-solid fa-shield-halved text-emerald-400"></i>
             </div>
         </div>
     </aside>
 
     <!-- Conteúdo Principal -->
-    <main class="flex-1 flex flex-col overflow-hidden">
+    <main class="flex-1 flex flex-col overflow-hidden bg-slate-950 text-slate-100">
         
-        <!-- Header Superior -->
-        <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-8 z-10 shadow-sm">
-            <div class="flex items-center space-x-4">
-                <h2 class="text-xl font-bold text-slate900">SIGEM Enterprise / <span class="text-blue-600 font-normal">Command Center</span></h2>
-            </div>
+        <!-- Header Superior com Pesquisa Global, Relógio, Alertas Críticos e Gestor Ivan -->
+        <header class="bg-slate-900 border-b border-slate-800 h-20 flex items-center justify-between px-8 z-10 shadow-sm gap-4">
             
-            <div class="flex items-center space-x-5">
-                <!-- Notificações em Tempo Real -->
-                <div class="relative">
-                    <button id="btnNotif" class="relative text-slate-500 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-slate-100">
-                        <i class="fa-solid fa-bell text-lg"></i>
-                        <span id="badgeNotif" class="absolute top-1 right-1 w-2.5 h-2.5 bg-rose500 rounded-full ring-2 ring-white"></span>
-                    </button>
-                </div>
+            <!-- Pesquisa Global -->
+            <div class="flex-1 max-w-md relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                <input type="text" placeholder="Pesquisar equipamento, peça, OS..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition-all">
+            </div>
 
-                <!-- Perfil do Usuário -->
-                <div class="flex items-center space-x-3 border-l pl-5 border-slate-200">
-                    <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-md">
-                        DC
-                    </div>
-                    <div class="text-left hidden md:block">
-                        <p class="text-sm font-semibold text-slate900 leading-none">Danilo Costa</p>
-                        <span class="text-xs text-slate-500">Engenharia Clínica (Admin)</span>
+            <!-- Relógio Operacional & Botão Alertas Críticos -->
+            <div class="hidden xl:flex items-center space-x-6 text-xs text-slate-400 bg-slate-950/50 border border-slate-800 px-4 py-2 rounded-xl">
+                <div>
+                    <span class="text-[10px] uppercase block text-slate-500 font-bold">São Paulo</span>
+                    <span id="relogio-operacional" class="text-slate-200 font-semibold">16/08/2026 15:50</span>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- Botão de Emergência / Alertas Críticos -->
+                <button onclick="toggleAlertasModal()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-400 border border-rose-800/50 text-xs font-semibold px-4 py-2.5 rounded-xl transition-all flex items-center space-x-2 shadow-lg shadow-rose-950/30">
+                    <i class="fa-solid fa-triangle-exclamation text-xs animate-pulse"></i>
+                    <span>🚨 Alertas Críticos</span>
+                </button>
+
+                <!-- Card de Identificação do Gestor -->
+                <div class="flex items-center space-x-3 bg-slate-950/60 border border-slate-800 px-3 py-1.5 rounded-2xl">
+                    <img src="img/ivan.jpg" alt="Ivan" class="w-9 h-9 rounded-xl object-cover border border-slate-700 shadow-md">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h2 class="text-xs font-bold text-white leading-none">Ivan</h2>
+                            <span class="bg-blue-950 text-blue-400 border border-blue-800/50 text-[9px] font-bold px-2 py-0.5 rounded-full">Gestor</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-0.5">Almoxarifado</p>
                     </div>
                 </div>
             </div>
         </header>
 
-        <!-- Viewport de Dados (Scrollável) -->
-        <div class="flex-1 overflow-y-auto p-8 space-y-8 bg-slate-50">
+        <!-- Viewport Principal de Dados (Scrollável) -->
+        <div class="flex-1 overflow-y-auto p-8 space-y-8 bg-slate-950">
             
-            <!-- Banner Executivo / Meta Corporativa -->
-            <div class="bg-gradient-to-r from-slate900 to-slate-800 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                <div>
-                    <span class="bg-blue-600/30 text-blue-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-blue-500/30">Visão Executiva Fleury</span>
-                    <h3 class="text-2xl font-black mt-2">Disponibilidade Geral da Rede</h3>
-                    <p class="text-slate-400 text-sm mt-1">Monitoramento em tempo real de ativos hospitalares e centros de diagnóstico.</p>
-                </div>
-                <div class="flex items-center space-x-6 bg-slate-800/80 px-6 py-4 rounded-xl border border-slate-700">
-                    <div>
-                        <span class="text-xs text-slate-400 block uppercase tracking-wider">Disponibilidade</span>
-                        <span class="text-3xl font-extrabold text-emerald-400">98.7%</span>
-                    </div>
-                    <div class="border-l border-slate-700 pl-6">
-                        <span class="text-xs text-slate-400 block uppercase tracking-wider">Meta Corporativa</span>
-                        <span class="text-3xl font-extrabold text-white">&gt; 98.0%</span>
+            <!-- Centro de Missão (Hero Card com Progresso) -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+                    <h3 class="font-bold text-sm text-slate-200 uppercase tracking-wider flex items-center">
+                        <i class="fa-solid fa-bullseye text-blue-400 mr-2"></i> MISSÃO DO DIA
+                    </h3>
+                    <div class="flex items-center space-x-3 text-xs text-slate-400">
+                        <span>Meta do Dia: <strong class="text-emerald-400">96%</strong></span>
+                        <span class="bg-slate-800 px-2.5 py-1 rounded-lg text-slate-300 font-bold">█████████░ 92%</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Cards de KPI Principais com Animação -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Card 1 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between transition-all hover:shadow-md">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Equipamentos Ativos</p>
-                        <h3 id="kpi-ativos" class="text-3xl font-extrabold text-slate900 mt-1">0</h3>
-                        <span class="text-xs font-medium text-emerald-500 flex items-center mt-2">
-                            <i class="fa-solid fa-arrow-trend-up mr-1"></i> Sincronizado Supabase
-                        </span>
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 text-center">
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] font-semibold text-slate-400 block uppercase">OS Abertas</span>
+                        <span class="text-2xl font-black text-blue-400 mt-1 block">48</span>
                     </div>
-                    <div class="w-14 h-14 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl shadow-inner">
-                        <i class="fa-solid fa-hospital"></i>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] font-semibold text-slate-400 block uppercase">Críticas</span>
+                        <span class="text-2xl font-black text-rose-400 mt-1 block">3</span>
                     </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between transition-all hover:shadow-md">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Ordens de Serviço</p>
-                        <h3 id="kpi-os" class="text-3xl font-extrabold text-slate900 mt-1">0</h3>
-                        <span class="text-xs font-medium text-amber500 flex items-center mt-2">
-                            <i class="fa-solid fa-clock mr-1"></i> Abertas no sistema
-                        </span>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] font-semibold text-slate-400 block uppercase">Itens Críticos</span>
+                        <span class="text-2xl font-black text-amber-400 mt-1 block">5</span>
                     </div>
-                    <div class="w-14 h-14 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-2xl shadow-inner">
-                        <i class="fa-solid fa-screwdriver-wrench"></i>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-[11px] font-semibold text-slate-400 block uppercase">Disponibilidade</span>
+                        <span class="text-2xl font-black text-emerald-400 mt-1 block">99%</span>
                     </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between transition-all hover:shadow-md">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Peças em Estoque</p>
-                        <h3 id="kpi-pecas" class="text-3xl font-extrabold text-emerald-500 mt-1">0</h3>
-                        <span class="text-xs font-medium text-slate-400 mt-2 block">Almoxarifado Central</span>
-                    </div>
-                    <div class="w-14 h-14 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl shadow-inner">
-                        <i class="fa-solid fa-boxes-stacked"></i>
-                    </div>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between transition-all hover:shadow-md">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Custos do Mês</p>
-                        <h3 class="text-3xl font-extrabold text-slate900 mt-1">R$ 42.5k</h3>
-                        <span class="text-xs font-medium text-rose500 flex items-center mt-2">
-                            <i class="fa-solid fa-arrow-trend-up mr-1"></i> Manutenções & Peças
-                        </span>
-                    </div>
-                    <div class="w-14 h-14 rounded-xl bg-rose-50 text-rose500 flex items-center justify-center text-2xl shadow-inner">
-                        <i class="fa-solid fa-wallet"></i>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 col-span-2 sm:col-span-1">
+                        <span class="text-[11px] font-semibold text-slate-400 block uppercase">Economia Mês</span>
+                        <span class="text-2xl font-black text-emerald-400 mt-1 block">R$ 12.5k</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Seção de Gráficos e Timeline em Tempo Real -->
+            <!-- Saúde do Hospital (Card de Status Geral) -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-sm text-slate-200 uppercase tracking-wider flex items-center">
+                        <i class="fa-solid fa-heart-pulse text-emerald-400 mr-2"></i> 🩺 Saúde do Hospital
+                    </h3>
+                    <span class="text-xs text-slate-400">Tempo real Supabase</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
+                    <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                        <span class="block text-xl mb-1">🟢</span>
+                        <span class="text-[11px] font-semibold text-slate-300">Equipamentos</span>
+                    </div>
+                    <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                        <span class="block text-xl mb-1">🟢</span>
+                        <span class="text-[11px] font-semibold text-slate-300">Estoque</span>
+                    </div>
+                    <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                        <span class="block text-xl mb-1">🟢</span>
+                        <span class="text-[11px] font-semibold text-slate-300">Equipe</span>
+                    </div>
+                    <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                        <span class="block text-xl mb-1">🟢</span>
+                        <span class="text-[11px] font-semibold text-slate-300">Fornecedores</span>
+                    </div>
+                    <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                        <span class="block text-xl mb-1">🟡</span>
+                        <span class="text-[11px] font-semibold text-amber-400">OS (3 Atrasadas)</span>
+                    </div>
+                    <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                        <span class="block text-xl mb-1">🔴</span>
+                        <span class="text-[11px] font-semibold text-rose-400">Itens Críticos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Radar do Almoxarifado (Vinculado ao Supabase via IDs) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl relative overflow-hidden">
+                    <div class="absolute right-4 top-4 text-slate-800 text-5xl font-black pointer-events-none opacity-40">📦</div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total de Peças</p>
+                    <h3 id="meta-estoque" class="text-3xl font-extrabold text-white mt-2">18.452</h3>
+                    <span class="text-xs text-emerald-400 font-semibold mt-2 flex items-center">
+                        <i class="fa-solid fa-arrow-trend-up mr-1"></i> Almoxarifado Central
+                    </span>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl relative overflow-hidden">
+                    <div class="absolute right-4 top-4 text-emerald-950 text-5xl font-black pointer-events-none opacity-40">📥</div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Entradas Hoje</p>
+                    <h3 id="radar-entradas-hoje" class="text-3xl font-extrabold text-emerald-400 mt-2">42</h3>
+                    <span class="text-xs text-slate-400 font-medium mt-2 block">Reposições de lotes</span>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl relative overflow-hidden">
+                    <div class="absolute right-4 top-4 text-blue-950 text-5xl font-black pointer-events-none opacity-40">📋</div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Saídas Hoje</p>
+                    <h3 id="radar-saidas-hoje" class="text-3xl font-extrabold text-blue-400 mt-2">18</h3>
+                    <span class="text-xs text-slate-400 font-medium mt-2 block">Por Ramiro, Samuel, Gabriel</span>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl relative overflow-hidden">
+                    <div class="absolute right-4 top-4 text-rose-950 text-5xl font-black pointer-events-none opacity-40">⚠️</div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Itens Críticos</p>
+                    <h3 id="meta-criticos" class="text-3xl font-extrabold text-rose-400 mt-2">5</h3>
+                    <span class="text-xs text-rose-400 font-semibold mt-2 block">🔴 Necessita reposição</span>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl relative overflow-hidden">
+                    <div class="absolute right-4 top-4 text-emerald-950 text-5xl font-black pointer-events-none opacity-40">💰</div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Valor do Estoque</p>
+                    <h3 id="meta-valor" class="text-3xl font-extrabold text-emerald-400 mt-2">R$ 348.000</h3>
+                    <span class="text-xs text-slate-400 font-medium mt-2 block">Capital imobilizado</span>
+                </div>
+            </div>
+
+            <!-- Painel de Performance & Parque Tecnológico -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Parque Tecnológico -->
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                    <h3 class="font-bold text-slate-200 text-sm mb-4 flex items-center">
+                        <i class="fa-solid fa-laptop-medical text-blue-400 mr-2"></i> Parque Tecnológico Hospitalar
+                    </h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 text-[11px] block uppercase font-bold">Ativos</span>
+                            <span id="meta-equipamentos" class="text-xl font-black text-white mt-1 block">4.532</span>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 text-[11px] block uppercase font-bold">Manutenção</span>
+                            <span id="meta-os" class="text-xl font-black text-amber-400 mt-1 block">48</span>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 text-[11px] block uppercase font-bold">Disponíveis</span>
+                            <span class="text-xl font-black text-emerald-400 mt-1 block">4.484</span>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 text-[11px] block uppercase font-bold">Disponibilidade</span>
+                            <span class="text-xl font-black text-blue-400 mt-1 block">99%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Painel de Performance Operacional -->
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                    <h3 class="font-bold text-slate-200 text-sm mb-4 flex items-center">
+                        <i class="fa-solid fa-gauge-high text-blue-400 mr-2"></i> 📊 Painel de Performance
+                    </h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 text-[11px] block uppercase font-bold">Disponibilidade</span>
+                            <span class="text-xl font-black text-emerald-400 mt-1 block">99%</span>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 text-[11px] block uppercase font-bold">SLA</span>
+                            <span class="text-xl font-black text-blue-400 mt-1 block">96%</span>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 text-[11px] block uppercase font-bold">Preventivas</span>
+                            <span class="text-xl font-black text-emerald-400 mt-1 block">98%</span>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 text-[11px] block uppercase font-bold">Corretivas</span>
+                            <span class="text-xl font-black text-amber-400 mt-1 block">2%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mapa das Unidades & SIGEM AI -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Mapa das Unidades Hospitalares -->
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                    <h3 class="font-bold text-slate-200 text-sm mb-4 flex items-center">
+                        <i class="fa-solid fa-map-location-dot text-blue-400 mr-2"></i> 🌎 Mapa das Unidades
+                    </h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-center">
+                            <span class="font-bold text-white text-xs block mb-2">Penha</span>
+                            <span class="text-[10px] text-emerald-400 block">Equipamentos: 1.200</span>
+                            <span class="text-[10px] text-blue-400 block">OS: 12 | Est: 4.8k</span>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-center">
+                            <span class="font-bold text-white text-xs block mb-2">Tatuapé</span>
+                            <span class="text-[10px] text-emerald-400 block">Equipamentos: 1.400</span>
+                            <span class="text-[10px] text-blue-400 block">OS: 15 | Est: 5.2k</span>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-center">
+                            <span class="font-bold text-white text-xs block mb-2">Mooca</span>
+                            <span class="text-[10px] text-emerald-400 block">Equipamentos: 932</span>
+                            <span class="text-[10px] text-blue-400 block">OS: 10 | Est: 3.9k</span>
+                        </div>
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-center">
+                            <span class="font-bold text-white text-xs block mb-2">Centro</span>
+                            <span class="text-[10px] text-emerald-400 block">Equipamentos: 1.000</span>
+                            <span class="text-[10px] text-blue-400 block">OS: 11 | Est: 4.5k</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIGEM AI (Inteligência Executiva) -->
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl relative overflow-hidden">
+                    <div class="absolute right-[-10px] bottom-[-10px] text-slate-800 text-8xl font-black pointer-events-none opacity-20">🤖</div>
+                    <h3 class="font-bold text-slate-200 text-sm mb-4 flex items-center text-blue-400">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> SIGEM AI & Inteligência Operacional
+                    </h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                        <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 block mb-1">Situação</span>
+                            <strong class="text-emerald-400 text-sm">Estável</strong>
+                        </div>
+                        <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 block mb-1">Risco</span>
+                            <strong class="text-amber-400 text-sm">Baixo</strong>
+                        </div>
+                        <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 block mb-1">Ponto Atenção</span>
+                            <strong class="text-rose-400 text-sm">Cabo ECG</strong>
+                        </div>
+                        <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                            <span class="text-slate-400 block mb-1">Previsão</span>
+                            <strong class="text-blue-400 text-sm">Reposição 90d</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos Dinâmicos (Chart.js) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                    <h3 class="font-bold text-slate-200 text-sm mb-4 flex items-center">
+                        <i class="fa-solid fa-chart-pie text-blue-400 mr-2"></i> Distribuição do Estoque (Status)
+                    </h3>
+                    <div class="h-64 relative flex items-center justify-center">
+                        <canvas id="graficoEstoque"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                    <h3 class="font-bold text-slate-200 text-sm mb-4 flex items-center">
+                        <i class="fa-solid fa-chart-bar text-blue-400 mr-2"></i> Retiradas por Técnico
+                    </h3>
+                    <div class="h-64 relative flex items-center justify-center">
+                        <canvas id="graficoTecnicos"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Tendência (Últimos 12 meses) -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                <h3 class="font-bold text-slate-200 text-sm mb-4 flex items-center">
+                    <i class="fa-solid fa-chart-line text-blue-400 mr-2"></i> Tendência Operacional (Últimos 12 Meses: Entradas, Saídas e Custos)
+                </h3>
+                <div class="h-72 relative flex items-center justify-center">
+                    <canvas id="graficoTendencia"></canvas>
+                </div>
+            </div>
+
+            <!-- Grid de Seções (Timeline & Gestão de Compras/Fornecedores) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Timeline Detalhada (Realtime) -->
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-bold text-slate-200 text-base flex items-center">
+                            <i class="fa-solid fa-clock text-blue-400 mr-2"></i> Timeline do Sistema
+                        </h3>
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    </div>
+
+                    <div id="timeline-container" class="space-y-5 flex-1 overflow-y-auto max-h-64 pr-2">
+                        <div class="border-l-2 border-blue-500 pl-4 py-0.5">
+                            <span class="text-[10px] font-bold text-blue-400 uppercase">14:32</span>
+                            <p class="text-sm font-semibold text-white mt-0.5">Nova retirada de Cabo ECG aprovada por Ivan.</p>
+                        </div>
+                        <div class="border-l-2 border-slate-700 pl-4 py-0.5">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">11:15</span>
+                            <p class="text-sm font-semibold text-slate-300 mt-0.5">Reposição de lote Philips recebida no almoxarifado.</p>
+                        </div>
+                        <div class="border-l-2 border-slate-700 pl-4 py-0.5">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">09:00</span>
+                            <p class="text-sm font-semibold text-slate-300 mt-0.5">Sincronização diária com Supabase Realtime concluída.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestão de Compras e Fornecedores -->
+                <div class="gradient-card p-6 rounded-2xl text-white flex flex-col shadow-xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-bold text-base flex items-center">
+                            <i class="fa-solid fa-industry text-blue-400 mr-2"></i> 🚛 Gestão de Compras e Fornecedores
+                        </h3>
+                        <a href="fornecedores.html" class="text-xs text-blue-300 hover:underline">Ver Todos</a>
+                    </div>
+
+                    <div class="space-y-4 flex-1 flex flex-col justify-around text-xs font-medium">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <span class="font-bold text-slate-200">Philips</span>
+                            <span class="text-emerald-400">R$ 145.000 | Prazo: 5 dias | Ativo</span>
+                        </div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <span class="font-bold text-slate-200">GE Healthcare</span>
+                            <span class="text-emerald-400">R$ 98.000 | Prazo: 7 dias | Ativo</span>
+                        </div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <span class="font-bold text-slate-200">Mindray</span>
+                            <span class="text-emerald-400">R$ 62.000 | Prazo: 4 dias | Ativo</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-200">Dräger</span>
+                            <span class="text-emerald-400">R$ 43.000 | Prazo: 6 dias | Ativo</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Hall da Fama & Equipe Destaque com Fotos e Números Reais -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Gráfico Principal -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-bold text-slate900 text-lg">Distribuição de OS (Preventivas vs Corretivas)</h3>
-                        <span class="text-xs bg-slate-100 text-slate-500 px-3 py-1 rounded-full font-medium">Realtime Analytics</span>
-                    </div>
-                    <div class="h-72 flex items-center justify-center flex-1">
-                        <canvas id="graficoExecutivo"></canvas>
+                <!-- Hall da Fama: Top Técnico -->
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex items-center space-x-4">
+                    <div class="text-4xl">🥇</div>
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Top Técnico</span>
+                        <h4 class="font-extrabold text-base text-white">Ramiro</h4>
+                        <span class="text-xs text-blue-400 font-semibold mt-1 block">42 retiradas registradas</span>
                     </div>
                 </div>
 
-                <!-- Timeline Operacional em Tempo Real -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-bold text-slate900 text-lg">Timeline Operacional</h3>
-                        <span class="bg-emerald-100 text-emerald-600 text-xs font-bold px-2.5 py-1 rounded-full flex items-center">
-                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping mr-1.5"></span> Live
-                        </span>
+                <!-- Hall da Fama: Top Analista -->
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex items-center space-x-4">
+                    <div class="text-4xl">📊</div>
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Top Analista</span>
+                        <h4 class="font-extrabold text-base text-white">Kamila</h4>
+                        <span class="text-xs text-emerald-400 font-semibold mt-1 block">25 relatórios gerenciais</span>
                     </div>
-                    <div id="timeline-container" class="space-y-4 flex-1 overflow-y-auto pr-2">
-                        <div class="flex space-x-3 items-start border-l-2 border-blue-600 pl-3">
-                            <div>
-                                <span class="text-xs text-slate-400 font-semibold">14:32</span>
-                                <p class="text-sm font-semibold text-slate900">Danilo Costa</p>
-                                <p class="text-xs text-slate-600">Retirou Sensor Oximetria (Almoxarifado)</p>
-                            </div>
-                        </div>
-                        <div class="flex space-x-3 items-start border-l-2 border-emerald-500 pl-3">
-                            <div>
-                                <span class="text-xs text-slate-400 font-semibold">13:25</span>
-                                <p class="text-sm font-semibold text-slate900">OS #2354 Fechada</p>
-                                <p class="text-xs text-slate-600">Calibração de Bomba de Infusão concluída.</p>
-                            </div>
-                        </div>
-                        <div class="flex space-x-3 items-start border-l-2 border-amber-500 pl-3">
-                            <div>
-                                <span class="text-xs text-slate-400 font-semibold">12:10</span>
-                                <p class="text-sm font-semibold text-slate900">Preventiva Executada</p>
-                                <p class="text-xs text-slate-600">Monitor Philips MX800 verificado com sucesso.</p>
-                            </div>
-                        </div>
+                </div>
+
+                <!-- Hall da Fama: Liderança Destaque -->
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex items-center space-x-4">
+                    <div class="text-4xl">👑</div>
+                    <div>
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block">Liderança</span>
+                        <h4 class="font-extrabold text-base text-white">Camila</h4>
+                        <span class="text-xs text-amber-400 font-semibold mt-1 block">Coordenação de Excelência</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Painel da Liderança com Fotos Reais e Cargos Corrigidos -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="font-bold text-slate-200 text-base flex items-center">
+                        <i class="fa-solid fa-users-gear text-blue-400 mr-2"></i> 👥 Painel da Liderança & Equipe Online
+                    </h3>
+                    <a href="equipe/organograma.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold px-4 py-2 rounded-xl transition-all">
+                        Ver Organograma <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 text-center">
+                    <a href="equipe/francisli.html" class="p-3 bg-slate-950/60 hover:bg-slate-800 border border-slate-800 rounded-xl transition-all relative group">
+                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <img src="img/francisli.jpg" alt="Francisli" class="w-10 h-10 mx-auto rounded-xl object-cover border border-slate-700 mb-2 shadow-md">
+                        <p class="text-xs font-bold text-slate-200">Francisli</p>
+                        <span class="text-[10px] text-blue-400 font-semibold block mt-0.5">Gerente</span>
+                    </a>
+                    <a href="equipe/camila.html" class="p-3 bg-slate-950/60 hover:bg-slate-800 border border-slate-800 rounded-xl transition-all relative group">
+                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <img src="img/camila.jpg" alt="Camila" class="w-10 h-10 mx-auto rounded-xl object-cover border border-slate-700 mb-2 shadow-md">
+                        <p class="text-xs font-bold text-slate-200">Camila</p>
+                        <span class="text-[10px] text-emerald-400 font-semibold block mt-0.5">Coordenadora</span>
+                    </a>
+                    <a href="equipe/ivan.html" class="p-3 bg-slate-950/60 hover:bg-slate-800 border border-slate-800 rounded-xl transition-all relative group">
+                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <img src="img/ivan.jpg" alt="Ivan" class="w-10 h-10 mx-auto rounded-xl object-cover border border-slate-700 mb-2 shadow-md">
+                        <p class="text-xs font-bold text-slate-200">Ivan</p>
+                        <span class="text-[10px] text-blue-400 font-semibold block mt-0.5">Gestor</span>
+                    </a>
+                    <a href="equipe/kamila.html" class="p-3 bg-slate-950/60 hover:bg-slate-800 border border-slate-800 rounded-xl transition-all relative group">
+                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <img src="img/kamila.jpg" alt="Kamila" class="w-10 h-10 mx-auto rounded-xl object-cover border border-slate-700 mb-2 shadow-md">
+                        <p class="text-xs font-bold text-slate-200">Kamila</p>
+                        <span class="text-[10px] text-amber-400 font-semibold block mt-0.5">Analista</span>
+                    </a>
+                    <a href="equipe/lidia.html" class="p-3 bg-slate-950/60 hover:bg-slate-800 border border-slate-800 rounded-xl transition-all relative group">
+                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <img src="img/lidia.jpg" alt="Lidia" class="w-10 h-10 mx-auto rounded-xl object-cover border border-slate-700 mb-2 shadow-md">
+                        <p class="text-xs font-bold text-slate-200">Lidia</p>
+                        <span class="text-[10px] text-rose-400 font-semibold block mt-0.5">Analista</span>
+                    </a>
+                    <a href="equipe/ramiro.html" class="p-3 bg-slate-950/60 hover:bg-slate-800 border border-slate-800 rounded-xl transition-all relative group">
+                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <div class="w-10 h-10 mx-auto rounded-xl bg-slate-700 text-white font-bold flex items-center justify-center text-xs mb-2 shadow-md">RA</div>
+                        <p class="text-xs font-bold text-slate-200">Ramiro</p>
+                        <span class="text-[10px] text-slate-400 font-semibold block mt-0.5">Técnico (🥇)</span>
+                    </a>
+                    <a href="equipe/samuel.html" class="p-3 bg-slate-950/60 hover:bg-slate-800 border border-slate-800 rounded-xl transition-all relative group">
+                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <div class="w-10 h-10 mx-auto rounded-xl bg-slate-700 text-white font-bold flex items-center justify-center text-xs mb-2 shadow-md">SA</div>
+                        <p class="text-xs font-bold text-slate-200">Samuel</p>
+                        <span class="text-[10px] text-slate-400 font-semibold block mt-0.5">Técnico (🥈)</span>
+                    </a>
+                    <a href="equipe/gabriel.html" class="p-3 bg-slate-950/60 hover:bg-slate-800 border border-slate-800 rounded-xl transition-all relative group">
+                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <div class="w-10 h-10 mx-auto rounded-xl bg-amber-600 text-white font-bold flex items-center justify-center text-xs mb-2 shadow-md">GA</div>
+                        <p class="text-xs font-bold text-slate-200">Gabriel</p>
+                        <span class="text-[10px] text-slate-400 font-semibold block mt-0.5">Técnico (🥉)</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bloco Master: CENTRO ESTRATÉGICO SIGEM -->
+            <div class="gradient-card border border-slate-800 p-8 rounded-2xl shadow-2xl text-white">
+                <h3 class="font-extrabold text-lg text-blue-400 mb-6 flex items-center">
+                    <i class="fa-solid fa-chess-queen mr-2 text-xl"></i> CENTRO ESTRATÉGICO SIGEM
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 text-xs">
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-1">Gerente</span>
+                        <strong class="text-sm text-white">Francisli</strong>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-1">Coordenadora</span>
+                        <strong class="text-sm text-white">Camila</strong>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-1">Gestor</span>
+                        <strong class="text-sm text-white">Ivan</strong>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-1">Analistas</span>
+                        <strong class="text-sm text-white">Kamila e Lidia</strong>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-1">Técnicos</span>
+                        <strong class="text-sm text-white">Ramiro, Samuel, Gabriel</strong>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-1">Equipe Total</span>
+                        <strong class="text-sm text-blue-400">8 Profissionais</strong>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-1">Equipamentos</span>
+                        <strong class="text-sm text-white">4.532 Ativos</strong>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-1">Estoque Total</span>
+                        <strong class="text-sm text-white">18.452 Peças</strong>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-1">Valor Imobilizado</span>
+                        <strong class="text-sm text-emerald-400">R$ 348.000</strong>
+                    </div>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block mb-1">Disponibilidade</span>
+                        <strong class="text-sm text-emerald-400">99%</strong>
                     </div>
                 </div>
             </div>
@@ -254,61 +604,154 @@
         </div>
     </main>
 
-    <!-- Script de Animação de Números e Integração Simulada Supabase -->
+    <!-- Modal de Alertas Críticos (Botão de Emergência) -->
+    <div id="modal-alertas" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative text-slate-100">
+            <button onclick="toggleAlertasModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-base font-bold text-rose-400 flex items-center mb-4">
+                <i class="fa-solid fa-triangle-exclamation mr-2"></i> Central de Alertas Críticos
+            </h3>
+            <div class="space-y-3 text-xs">
+                <div class="bg-slate-950/60 p-3 rounded-xl border border-rose-950/50">
+                    <span class="text-[10px] font-bold text-rose-400 uppercase">Estoque Crítico</span>
+                    <p class="font-semibold text-white mt-0.5">Cabo ECG (Abaixo do estoque mínimo - Restam 2 unidades)</p>
+                </div>
+                <div class="bg-slate-950/60 p-3 rounded-xl border border-amber-950/50">
+                    <span class="text-[10px] font-bold text-amber-400 uppercase">OS Atrasadas</span>
+                    <p class="font-semibold text-white mt-0.5">3 Ordens de Serviço ultrapassaram o SLA de atendimento na UTI.</p>
+                </div>
+                <div class="bg-slate-950/60 p-3 rounded-xl border border-rose-950/50">
+                    <span class="text-[10px] font-bold text-rose-400 uppercase">Equipamentos Parados</span>
+                    <p class="font-semibold text-white mt-0.5">Ventilador pulmonar #412 aguardando sensor da Philips.</p>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button onclick="toggleAlertasModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-semibold">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2"></div>
+
+    <!-- Scripts para Inicialização dos Gráficos, Relógio e Sistema Toast -->
     <script>
-        function animarNumero(id, fim) {
-            let atual = 0;
-            const incremento = Math.max(1, Math.floor(fim / 50));
-            const timer = setInterval(() => {
-                atual += incremento;
-                if (atual >= fim) {
-                    atual = fim;
-                    clearInterval(timer);
-                }
-                document.getElementById(id).innerText = atual.toLocaleString();
-            }, 20);
+        // Relógio Operacional em Tempo Real
+        function atualizarRelogio() {
+            const now = new Date();
+            const dataStr = now.toLocaleDateString('pt-BR');
+            const horaStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const el = document.getElementById('relogio-operacional');
+            if(el) el.innerText = `${dataStr} ${horaStr}`;
+        }
+        setInterval(atualizarRelogio, 1000);
+        atualizarRelogio();
+
+        // Modal Alertas Críticos
+        function toggleAlertasModal() {
+            const modal = document.getElementById('modal-alertas');
+            modal.classList.toggle('hidden');
         }
 
-        // Executa animações iniciais simulando dados vindos do banco PostgreSQL/Supabase
-        window.addEventListener('DOMContentLoaded', () => {
-            animarNumero('kpi-ativos', 4532);
-            animarNumero('kpi-os', 23);
-            animarNumero('kpi-pecas', 18452);
+        // Função Toast Realtime
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-slate-900 text-white border border-slate-700 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-xs animate-bounce';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
+
+        // Gráfico de Distribuição do Estoque (Doughnut)
+        const ctxEstoque = document.getElementById('graficoEstoque').getContext('2d');
+        new Chart(ctxEstoque, {
+            type: 'doughnut',
+            data: {
+                labels: ['Disponível', 'Em Uso', 'Crítico / Ruptura'],
+                datasets: [{
+                    data: [75, 20, 5],
+                    backgroundColor: ['#3b82f6', '#10b981', '#f43f5e'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } }
+                }
+            }
         });
 
-        // Configuração do Gráfico com Chart.js
-        const ctx = document.getElementById('graficoExecutivo').getContext('2d');
-        const graficoExecutivo = new Chart(ctx, {
+        // Gráfico de Retiradas por Técnico (Bar)
+        const ctxTecnicos = document.getElementById('graficoTecnicos').getContext('2d');
+        new Chart(ctxTecnicos, {
             type: 'bar',
+            data: {
+                labels: ['Ramiro', 'Samuel', 'Gabriel'],
+                datasets: [{
+                    label: 'Baixas Realizadas',
+                    data: [42, 35, 28],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Gráfico de Tendência (12 Meses)
+        const ctxTendencia = document.getElementById('graficoTendencia').getContext('2d');
+        new Chart(ctxTendencia, {
+            type: 'line',
             data: {
                 labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
                 datasets: [
                     {
-                        label: 'Preventivas',
-                        data: [45, 52, 60, 58, 49, 50, 62, 70, 0, 0, 0, 0],
-                        backgroundColor: '#2563EB',
-                        borderRadius: 6
+                        label: 'Entradas',
+                        data: [120, 150, 180, 160, 210, 190, 220, 240, 200, 230, 250, 270],
+                        borderColor: '#10b981',
+                        backgroundColor: '#10b981',
+                        tension: 0.3
                     },
                     {
-                        label: 'Corretivas',
-                        data: [20, 15, 22, 23, 18, 15, 12, 15, 0, 0, 0, 0],
-                        backgroundColor: '#F59E0B',
-                        borderRadius: 6
+                        label: 'Saídas',
+                        data: [100, 130, 160, 140, 190, 170, 200, 210, 180, 210, 230, 250],
+                        borderColor: '#3b82f6',
+                        backgroundColor: '#3b82f6',
+                        tension: 0.3
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' }
-                },
                 scales: {
-                    y: { grid: { color: '#F1F5F9' }, ticks: { color: '#64748B' } },
-                    x: { grid: { display: false }, ticks: { color: '#64748B' } }
+                    x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
+                },
+                plugins: {
+                    legend: { labels: { color: '#94a3b8' } }
                 }
             }
         });
     </script>
+
+    <!-- Script Centralizado e Dinâmico do Supabase Realtime -->
+    <script type="module" src="scripts/realtime.js"></script>
 </body>
 </html>

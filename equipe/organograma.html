@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM | Centro de Gestão Executiva</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+
+    <!-- 1. PAINEL EXECUTIVO (A Melhoria Favorita) -->
+    <header class="bg-slate-900 text-white p-6 shadow-2xl">
+        <div class="max-w-7xl mx-auto">
+            <h1 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fa-solid fa-microchip mr-3 text-blue-500"></i> Centro de Gestão SIGEM
+            </h1>
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-4 text-center">
+                <div class="bg-slate-800 p-3 rounded-xl border border-slate-700"><p class="text-[9px] text-slate-400 uppercase">Equipe</p><p id="meta-equipe" class="text-xl font-bold">8</p></div>
+                <div class="bg-slate-800 p-3 rounded-xl border border-slate-700"><p class="text-[9px] text-slate-400 uppercase">Equipamentos</p><p id="meta-equip" class="text-xl font-bold">4.532</p></div>
+                <div class="bg-slate-800 p-3 rounded-xl border border-slate-700"><p class="text-[9px] text-slate-400 uppercase">Estoque</p><p id="meta-estoque" class="text-xl font-bold">18.452</p></div>
+                <div class="bg-slate-800 p-3 rounded-xl border border-slate-700"><p class="text-[9px] text-slate-400 uppercase">OS Abertas</p><p id="meta-os" class="text-xl font-bold">48</p></div>
+                <div class="bg-rose-900/50 p-3 rounded-xl border border-rose-700/50"><p class="text-[9px] text-rose-200 uppercase">Críticos</p><p id="meta-criticos" class="text-xl font-bold">12</p></div>
+                <div class="bg-slate-800 p-3 rounded-xl border border-slate-700"><p class="text-[9px] text-slate-400 uppercase">Valor Estoque</p><p id="meta-valor" class="text-xl font-bold text-emerald-400">R$348k</p></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-6 space-y-8">
+        
+        <!-- 2. ORGANOGRAMA CLICÁVEL -->
+        <section>
+            <h2 class="text-lg font-bold mb-6">Equipe Técnica & Gestão</h2>
+            <div id="container-equipe" class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                <!-- Cards injetados via JS -->
+            </div>
+        </section>
+
+        <!-- 3. PAINEL DE GRÁFICOS E METAS -->
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-bold mb-4 text-slate-700">Produtividade Técnica (OS)</h3>
+                <canvas id="graficoEquipe"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-bold mb-4 text-slate-700">Metas da Equipe</h3>
+                <div class="space-y-4">
+                    <div><div class="flex justify-between text-xs mb-1"><span>Preventivas</span><span class="font-bold">98%</span></div><div class="h-2 bg-slate-100 rounded-full"><div class="h-2 bg-blue-500 rounded-full" style="width: 98%"></div></div></div>
+                    <div><div class="flex justify-between text-xs mb-1"><span>OS Prazo</span><span class="font-bold">96%</span></div><div class="h-2 bg-slate-100 rounded-full"><div class="h-2 bg-emerald-500 rounded-full" style="width: 96%"></div></div></div>
+                    <div><div class="flex justify-between text-xs mb-1"><span>Disponibilidade</span><span class="font-bold">99,2%</span></div><div class="h-2 bg-slate-100 rounded-full"><div class="h-2 bg-amber-500 rounded-full" style="width: 99%"></div></div></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simulação de Dados de Equipe
+        const equipe = [
+            { nome: 'Francisli', cargo: 'Gerente', img: 'francisli.jpg', status: 'online', email: 'f@sigem.com', ramal: '4022' },
+            { nome: 'Camila', cargo: 'Coordenadora', img: 'camila.jpg', status: 'online', email: 'c@sigem.com', ramal: '4023' },
+            { nome: 'Ivan', cargo: 'Gestor', img: 'ivan.jpg', status: 'reuniao', email: 'i@sigem.com', ramal: '4024' },
+            { nome: 'Kamila', cargo: 'Analista', img: 'kamila.jpg', status: 'online', email: 'k@sigem.com', ramal: '4025' },
+            { nome: 'Lidia', cargo: 'Analista', img: 'lidia.jpg', status: 'online', email: 'l@sigem.com', ramal: '4026' }
+        ];
+
+        const container = document.getElementById('container-equipe');
+        equipe.forEach(m => {
+            const statusColor = m.status === 'online' ? 'bg-green-500' : (m.status === 'reuniao' ? 'bg-amber-500' : 'bg-red-500');
+            container.innerHTML += `
+                <a href="${m.nome.toLowerCase()}.html" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg transition-all group">
+                    <div class="relative w-20 h-20 mx-auto mb-4">
+                        <img src="img/${m.img}" class="rounded-full w-full h-full object-cover border-2 border-slate-100">
+                        <span class="absolute bottom-1 right-1 w-4 h-4 ${statusColor} border-2 border-white rounded-full"></span>
+                    </div>
+                    <h4 class="font-bold text-center group-hover:text-blue-600">${m.nome}</h4>
+                    <p class="text-xs text-slate-500 text-center mb-3">${m.cargo}</p>
+                    <div class="text-[10px] text-slate-400 space-y-1">
+                        <p><i class="fa fa-envelope w-4"></i> ${m.email}</p>
+                        <p><i class="fa fa-phone w-4"></i> Ramal ${m.ramal}</p>
+                    </div>
+                </a>
+            `;
+        });
+
+        // Gráfico de Produtividade
+        new Chart(document.getElementById('graficoEquipe'), {
+            type: 'bar',
+            data: {
+                labels: ['Ramiro', 'Samuel', 'Gabriel'],
+                datasets: [{ label: 'OS Finalizadas', data: [32, 28, 21], backgroundColor: '#3b82f6' }]
+            }
+        });
+    </script>
+</body>
+</html>

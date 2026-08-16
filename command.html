@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM | Command Center Executivo 10/10</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .toast-enter { animation: slideIn 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 font-sans">
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-3 pointer-events-none"></div>
+
+    <!-- 1. TOPO: BOTÕES RÁPIDOS & RESUMO EXECUTIVO -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col lg:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-microchip text-blue-600 dark:text-blue-500"></i> 
+                    SIGEM Command Center
+                </h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Gerência: <strong class="text-slate-700 dark:text-slate-200">Francisli</strong> | Coord: <strong class="text-slate-700 dark:text-slate-200">Camila</strong> | Almoxarifado: <strong class="text-slate-700 dark:text-slate-200">Ivan</strong> | Analistas: <strong class="text-slate-700 dark:text-slate-200">Kamila, Lidia</strong> | Técnicos: <strong class="text-slate-700 dark:text-slate-200">Ramiro, Samuel, Gabriel</strong>
+                </p>
+            </div>
+
+            <!-- Botões Rápidos e Dark Mode -->
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="triggerAction('Nova OS')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-all shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> Nova OS
+                </button>
+                <button onclick="triggerAction('Nova Retirada')" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-all shadow-sm flex items-center gap-1.5 dark:bg-slate-700">
+                    <i class="fa-solid fa-plus"></i> Nova Retirada
+                </button>
+                <button onclick="triggerAction('Entrada Estoque')" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-all shadow-sm flex items-center gap-1.5 dark:bg-slate-700">
+                    <i class="fa-solid fa-plus"></i> Entrada Estoque
+                </button>
+                <button onclick="triggerAction('Novo Equipamento')" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-all shadow-sm flex items-center gap-1.5 dark:bg-slate-700">
+                    <i class="fa-solid fa-plus"></i> Equipamento
+                </button>
+                <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                <button onclick="toggleDarkMode()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 p-2 rounded-lg text-slate-700 dark:text-yellow-400 transition-colors" title="Alternar Tema">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- BARRA DE INDICADORES MACRO -->
+    <section class="bg-slate-900 text-white py-4 px-6 shadow-xl">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-center">
+            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/50">
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Equipe</p>
+                <p class="text-xl font-extrabold mt-1">8</p>
+            </div>
+            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/50">
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Equipamentos</p>
+                <p class="text-xl font-extrabold mt-1">4.532</p>
+            </div>
+            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/50">
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Estoque Total</p>
+                <p class="text-xl font-extrabold mt-1">18.452</p>
+            </div>
+            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/50">
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider">OS Abertas</p>
+                <p class="text-xl font-extrabold mt-1 text-amber-400">48</p>
+            </div>
+            <div class="bg-rose-950/60 p-3 rounded-xl border border-rose-900/50">
+                <p class="text-[10px] text-rose-300 uppercase tracking-wider">Críticos</p>
+                <p class="text-xl font-extrabold mt-1 text-rose-400">12</p>
+            </div>
+            <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/50">
+                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Valor Estoque</p>
+                <p class="text-xl font-extrabold mt-1 text-emerald-400">R$ 348k</p>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto p-6 space-y-6">
+        
+        <!-- SITUAÇÃO GERAL DA OPERAÇÃO (A MELHORIA MAIS PODEROSA) -->
+        <section class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-heart-pulse text-rose-500"></i> Situação Geral da Operação
+            </h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 text-xs font-semibold">
+                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Equipamentos
+                </div>
+                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Estoque
+                </div>
+                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Equipe
+                </div>
+                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Fornecedores
+                </div>
+                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> OS (Atenção)
+                </div>
+                <div class="flex items-center gap-2 bg-rose-50 dark:bg-rose-950/30 p-2.5 rounded-xl border border-rose-100 dark:border-rose-900/40 text-rose-600 dark:text-rose-400">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span> Críticos (12)
+                </div>
+            </div>
+        </section>
+
+        <!-- GRID PRINCIPAL DE CONTEÚDO -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- COLUNA ESQUERDA (8 colunas): Operação, Gráficos, Estoque e Liderança -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- CARDS DE APOIO: PREVISÃO & FINANCEIRO & METAS -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Previsão de Estoque -->
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Estoque Crítico</span>
+                            <h3 class="font-bold text-sm mt-1">Sensor ECG</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Atual: 25 | Consumo: 8/mês</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
+                            <span class="text-slate-500">Ruptura:</span>
+                            <strong class="text-rose-500 font-bold">90 dias</strong>
+                        </div>
+                    </div>
+
+                    <!-- Painel Financeiro -->
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Painel Financeiro</span>
+                            <h3 class="font-bold text-sm mt-1">Custos & Compras</h3>
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs mt-2 text-slate-600 dark:text-slate-300">
+                                <div>Compras: <strong class="text-slate-900 dark:text-white">R$ 12k</strong></div>
+                                <div>Preventiva: <strong class="text-slate-900 dark:text-white">R$ 5k</strong></div>
+                                <div>Corretiva: <strong class="text-slate-900 dark:text-white">R$ 8k</strong></div>
+                                <div>Estoque: <strong class="text-slate-900 dark:text-white">R$ 348k</strong></div>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 flex justify-between">
+                            <span>Tendência Custos:</span> <span class="text-emerald-500 font-bold">↓ 4.2%</span>
+                        </div>
+                    </div>
+
+                    <!-- Metas Corporativas -->
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">Metas SIGEM</span>
+                            <h3 class="font-bold text-sm mt-1">Indicadores SLA</h3>
+                            <div class="space-y-1.5 text-xs mt-2">
+                                <div class="flex justify-between"><span>Preventivas:</span> <strong class="text-emerald-500">98%</strong></div>
+                                <div class="flex justify-between"><span>OS no Prazo:</span> <strong class="text-emerald-500">96%</strong></div>
+                                <div class="flex justify-between"><span>Disponibilidade:</span> <strong class="text-emerald-500">99%</strong></div>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 flex justify-between">
+                            <span>Estoque Crítico:</span> <strong class="text-slate-700 dark:text-slate-200">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAINEL DE GRÁFICOS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-sm">Entradas x Saídas (Mensal)</h3>
+                            <span class="text-xs text-emerald-500 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded">Entradas ↑</span>
+                        </div>
+                        <div class="relative h-48">
+                            <canvas id="graficoEntradaSaida"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-sm">Retiradas por Técnico</h3>
+                            <span class="text-xs text-blue-500 font-semibold bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded">Top 3</span>
+                        </div>
+                        <div class="relative h-48">
+                            <canvas id="graficoRetiradas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RANKINGS EXTRAS: Top 5 Peças & Equipamentos Mais Atendidos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Top 5 Peças Mais Usadas -->
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                        <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-boxes-stacked text-blue-500"></i> Top 5 Peças Mais Usadas
+                        </h3>
+                        <ol class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+                            <li class="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg"><span>1. Sensor ECG</span> <span class="font-bold text-blue-600 dark:text-blue-400">142 un</span></li>
+                            <li class="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg"><span>2. Filtro HEPA</span> <span class="font-bold text-blue-600 dark:text-blue-400">98 un</span></li>
+                            <li class="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg"><span>3. Cabo ECG</span> <span class="font-bold text-blue-600 dark:text-blue-400">84 un</span></li>
+                            <li class="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg"><span>4. Bateria</span> <span class="font-bold text-blue-600 dark:text-blue-400">65 un</span></li>
+                            <li class="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg"><span>5. Fonte</span> <span class="font-bold text-blue-600 dark:text-blue-400">51 un</span></li>
+                        </ol>
+                    </div>
+
+                    <!-- Equipamentos Mais Atendidos -->
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                        <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-stethoscope text-emerald-500"></i> Equipamentos Mais Atendidos
+                        </h3>
+                        <ul class="space-y-2 text-xs text-slate-700 dark:text-slate-300">
+                            <li class="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg"><span>Monitor MX800</span> <span class="font-bold text-emerald-600 dark:text-emerald-400">112 OS</span></li>
+                            <li class="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg"><span>Ventilador Dräger</span> <span class="font-bold text-emerald-600 dark:text-emerald-400">89 OS</span></li>
+                            <li class="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg"><span>Desfibrilador Philips</span> <span class="font-bold text-emerald-600 dark:text-emerald-400">74 OS</span></li>
+                            <li class="flex justify-between items-center p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg"><span>Bomba de Infusão</span> <span class="font-bold text-emerald-600 dark:text-emerald-400">58 OS</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- TIMELINE GLOBAL -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                    <h3 class="font-bold text-sm mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-purple-500"></i> Timeline Global
+                    </h3>
+                    <div class="space-y-4 text-xs border-l-2 border-blue-500 pl-4 ml-1">
+                        <div class="relative">
+                            <span class="font-bold text-slate-900 dark:text-white">14:32</span> 
+                            <span class="text-slate-600 dark:text-slate-300 ml-2">Ramiro retirou Sensor ECG</span>
+                        </div>
+                        <div class="relative">
+                            <span class="font-bold text-slate-900 dark:text-white">14:01</span> 
+                            <span class="text-slate-600 dark:text-slate-300 ml-2">Ivan aprovou retirada</span>
+                        </div>
+                        <div class="relative">
+                            <span class="font-bold text-slate-900 dark:text-white">13:25</span> 
+                            <span class="text-slate-600 dark:text-slate-300 ml-2">Philips entregou material</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUNA DIREITA (4 colunas): Intelligence, Alertas, Compras, NOC & Destaques -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- CENTRAL DE ALERTAS / INCIDENTES -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border-l-4 border-rose-500 border border-slate-200 dark:border-slate-800">
+                    <h3 class="font-bold text-sm text-rose-600 dark:text-rose-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Central de Incidentes
+                    </h3>
+                    <ul class="text-xs space-y-2 text-slate-700 dark:text-slate-300">
+                        <li class="flex items-center gap-2">🔴 <strong class="text-slate-900 dark:text-white">3 OS atrasadas</strong></li>
+                        <li class="flex items-center gap-2">🔴 <strong class="text-slate-900 dark:text-white">5 Materiais críticos</strong></li>
+                        <li class="flex items-center gap-2">🟡 <strong class="text-slate-900 dark:text-white">2 Equipamentos parados</strong></li>
+                        <li class="flex items-center gap-2">🟡 <strong class="text-slate-900 dark:text-white">Fornecedores pendentes</strong></li>
+                    </ul>
+                </div>
+
+                <!-- SIGEM INTELLIGENCE PREMIUM -->
+                <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl border border-slate-800">
+                    <h3 class="font-bold text-sm mb-4 flex items-center gap-2 text-blue-400">
+                        <i class="fa-solid fa-robot"></i> SIGEM Intelligence Premium
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3 text-[11px]">
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                            <p class="text-slate-400">Peça mais utilizada</p>
+                            <p class="font-bold text-white mt-0.5">Sensor ECG</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                            <p class="text-slate-400">Técnico mais ativo</p>
+                            <p class="font-bold text-white mt-0.5">Ramiro</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                            <p class="text-slate-400">Fornecedor dominante</p>
+                            <p class="font-bold text-white mt-0.5">Philips</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                            <p class="text-slate-400">Maior risco operacional</p>
+                            <p class="font-bold text-rose-400 mt-0.5">Cabo ECG</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                            <p class="text-slate-400">Maior custo mensal</p>
+                            <p class="font-bold text-white mt-0.5">Ventiladores</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                            <p class="text-slate-400">Equipamento alvo</p>
+                            <p class="font-bold text-white mt-0.5">Monitor MX800</p>
+                        </div>
+                        <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700 col-span-2">
+                            <p class="text-slate-400">Risco de Ruptura & Fornecedor Estratégico</p>
+                            <p class="font-bold text-amber-400 mt-0.5">Sensor ECG / Philips</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAINEL DE COMPRAS -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                    <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-cart-shopping text-emerald-500"></i> Compras & Pedidos Pendentes
+                    </h3>
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between items-center p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                            <div><strong>Philips</strong><br><span class="text-[10px] text-slate-400">12/08 • Pendente</span></div>
+                            <span class="font-bold text-emerald-600 dark:text-emerald-400">R$ 14.500</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                            <div><strong>GE</strong><br><span class="text-[10px] text-slate-400">10/08 • Trânsito</span></div>
+                            <span class="font-bold text-emerald-600 dark:text-emerald-400">R$ 8.200</span>
+                        </div>
+                        <div class="flex justify-between items-center p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                            <div><strong>Mindray</strong><br><span class="text-[10px] text-slate-400">08/08 • Aprovado</span></div>
+                            <span class="font-bold text-emerald-600 dark:text-emerald-400">R$ 5.100</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PAINEL DA LIDERANÇA -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                    <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-users-gear text-blue-500"></i> Painel da Liderança
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                            <span class="font-bold text-slate-900 dark:text-white">Francisli</span>
+                            <p class="text-[10px] text-slate-500">Equipe: 8</p>
+                        </div>
+                        <div class="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                            <span class="font-bold text-slate-900 dark:text-white">Camila</span>
+                            <p class="text-[10px] text-slate-500">Projetos: 12</p>
+                        </div>
+                        <div class="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                            <span class="font-bold text-slate-900 dark:text-white">Ivan</span>
+                            <p class="text-[10px] text-slate-500">Itens: 18.452</p>
+                        </div>
+                        <div class="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                            <span class="font-bold text-slate-900 dark:text-white">Kamila</span>
+                            <p class="text-[10px] text-slate-500">Relatórios: 25</p>
+                        </div>
+                        <div class="p-2.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl col-span-2">
+                            <span class="font-bold text-slate-900 dark:text-white">Lidia</span>
+                            <p class="text-[10px] text-slate-500">Auditorias: 12</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DESTAQUES DA EMPRESA -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                    <h3 class="font-bold text-sm mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-award text-amber-500"></i> Destaques
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg">👑 <strong>Francisli</strong><br><span class="text-[10px] text-slate-500">Liderança</span></div>
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg">📈 <strong>Camila</strong><br><span class="text-[10px] text-slate-500">Coordenação</span></div>
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg">📦 <strong>Ivan</strong><br><span class="text-[10px] text-slate-500">Almoxarifado</span></div>
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg">🥇 <strong>Ramiro</strong><br><span class="text-[10px] text-slate-500">Produtividade</span></div>
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg">📊 <strong>Kamila</strong><br><span class="text-[10px] text-slate-500">Indicadores</span></div>
+                        <div class="p-2 bg-slate-50 dark:bg-slate-800/40 rounded-lg">✅ <strong>Lidia</strong><br><span class="text-[10px] text-slate-500">Auditoria</span></div>
+                    </div>
+                </div>
+
+                <!-- NOC: MONITOR DE INFRAESTRUTURA -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                    <h3 class="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-server text-emerald-500"></i> Infraestrutura (NOC)
+                    </h3>
+                    <div class="grid grid-cols-2 gap-2 text-[11px] font-medium">
+                        <span class="text-emerald-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> PostgreSQL</span>
+                        <span class="text-emerald-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Supabase</span>
+                        <span class="text-emerald-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Realtime</span>
+                        <span class="text-emerald-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> API</span>
+                        <span class="text-emerald-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Dashboard</span>
+                        <span class="text-emerald-500 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Backup</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SCRIPT DE CONFIGURAÇÃO DE GRÁFICOS E INTERATIVIDADE -->
+    <script>
+        // DARK MODE TOGGLE REAL
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            const icon = document.getElementById('theme-icon');
+            if (isDark) {
+                icon.className = 'fa-solid fa-sun';
+            } else {
+                icon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        // TOAST NOTIFICATION SYSTEM
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-slate-900 text-white border-slate-700';
+            let icon = 'fa-circle-check text-emerald-400';
+            if (type === 'error') {
+                bgClass = 'bg-rose-950 text-white border-rose-800';
+                icon = 'fa-circle-exclamation text-rose-400';
+            }
+
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg text-xs font-medium toast-enter ${bgClass}`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease-in';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function triggerAction(actionName) {
+            if (actionName === 'Nova OS') {
+                showToast('✅ Nova OS criada com sucesso!', 'success');
+            } else if (actionName === 'Nova Retirada') {
+                showToast('✅ Nova retirada aprovada por Ivan', 'success');
+            } else if (actionName === 'Entrada Estoque') {
+                showToast('✅ Philips entregou 50 peças em estoque', 'success');
+            } else {
+                showToast(`➕ Ação registrada: ${actionName}`, 'success');
+            }
+        }
+
+        // DISPARAR ALERTAS AUTOMÁTICOS AO CARREGAR (Simulando o Tempo Real)
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                showToast('🔴 Cabo ECG entrou em estoque crítico', 'error');
+            }, 1500);
+
+            // CHART.JS: ENTRADAS X SAÍDAS
+            const ctxEntrada = document.getElementById('graficoEntradaSaida').getContext('2d');
+            new Chart(ctxEntrada, {
+                type: 'bar',
+                data: {
+                    labels: ['Jun', 'Jul', 'Ago'],
+                    datasets: [
+                        { label: 'Entradas', data: [65, 59, 80], backgroundColor: '#10b981', borderRadius: 4 },
+                        { label: 'Saídas', data: [48, 51, 62], backgroundColor: '#ef4444', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } },
+                    scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(200, 200, 200, 0.1)' } } }
+                }
+            });
+
+            // CHART.JS: RETIRADAS POR TÉCNICO
+            const ctxRetiradas = document.getElementById('graficoRetiradas').getContext('2d');
+            new Chart(ctxRetiradas, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Ramiro', 'Samuel', 'Gabriel'],
+                    datasets: [{
+                        data: [42, 31, 27],
+                        backgroundColor: ['#3b82f6', '#6366f1', '#a855f7'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
