@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Dashboard Executivo e Rastreabilidade</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js para Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header / Barra Superior -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-arrow-left text-lg"></i>
+            </a>
+            <h1 class="text-xl font-bold text-emerald-400 flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie"></i> Painel de Gestão e Rastreabilidade - SIGEM
+            </h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <span id="status-operacao" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                🟢 Operação Normal
+            </span>
+            <div class="text-sm text-slate-400">Engenharia Clínica</div>
+        </div>
+    </header>
+
+    <main class="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
+
+        <!-- 1. Centro de Situação / KPIs Principais -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
+                <p class="text-xs text-slate-400 font-medium">Peças Cadastradas</p>
+                <h3 id="kpi-cadastradas" class="text-2xl font-bold text-white mt-1">...</h3>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
+                <p class="text-xs text-slate-400 font-medium">Estoque Total</p>
+                <h3 id="kpi-total-estoque" class="text-2xl font-bold text-emerald-400 mt-1">...</h3>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
+                <p class="text-xs text-slate-400 font-medium">Valor em Estoque</p>
+                <h3 id="kpi-valor-estoque" class="text-2xl font-bold text-blue-400 mt-1">...</h3>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
+                <p class="text-xs text-slate-400 font-medium">Itens Críticos</p>
+                <h3 id="kpi-criticas" class="text-2xl font-bold text-rose-500 mt-1">...</h3>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
+                <p class="text-xs text-slate-400 font-medium">Entradas Hoje</p>
+                <h3 id="kpi-entradas-hoje" class="text-2xl font-bold text-amber-400 mt-1">...</h3>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
+                <p class="text-xs text-slate-400 font-medium">Saídas Hoje</p>
+                <h3 id="kpi-saidas-hoje" class="text-2xl font-bold text-purple-400 mt-1">...</h3>
+            </div>
+        </section>
+
+        <!-- 2. ⭐ O MELHOR RECURSO: Centro de Rastreabilidade em Tempo Real -->
+        <section class="bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/40 border border-emerald-500/30 p-6 rounded-2xl shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> Centro de Rastreabilidade em Tempo Real
+                </h2>
+                <span class="text-xs text-slate-400 bg-slate-950 px-3 py-1 rounded-lg border border-slate-800">Última Baixa Registrada</span>
+            </div>
+            <div id="painel-rastreabilidade" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80">
+                <p class="text-sm text-slate-400 col-span-full">Carregando rastreabilidade...</p>
+            </div>
+        </section>
+
+        <!-- 3. Gráficos e Indicadores de Consumo -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Gráfico por Categoria -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col justify-between">
+                <h2 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-bar text-emerald-400"></i> Estoque por Categoria
+                </h2>
+                <div class="relative h-64 flex items-center justify-center">
+                    <canvas id="graficoCategorias"></canvas>
+                </div>
+            </div>
+
+            <!-- Ranking de Técnicos -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col justify-between">
+                <h2 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-blue-400"></i> Ranking de Técnicos (Retiradas)
+                </h2>
+                <div id="ranking-tecnicos" class="space-y-3 flex-1 flex flex-col justify-center">
+                    <p class="text-sm text-slate-400">Carregando ranking...</p>
+                </div>
+            </div>
+
+            <!-- Painel de Ruptura / Estoque Crítico -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col justify-between">
+                <h2 class="text-base font-bold text-rose-500 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Alerta de Ruptura Crítica
+                </h2>
+                <div id="lista-ruptura" class="space-y-3 overflow-y-auto max-h-64">
+                    <p class="text-sm text-slate-400">Verificando níveis críticos...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Tabelas de Auditoria e Movimentações Recentes -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Centro de Auditoria -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                <h2 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check text-amber-400"></i> Centro de Auditoria Operacional
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block mb-1">Sem OS</span>
+                        <span id="auditoria-sem-os" class="text-xl font-bold text-emerald-400">0</span>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block mb-1">Sem Leito</span>
+                        <span id="auditoria-sem-leito" class="text-xl font-bold text-emerald-400">0</span>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block mb-1">Sem Equipamento</span>
+                        <span id="auditoria-sem-equip" class="text-xl font-bold text-emerald-400">0</span>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <span class="text-xs text-slate-400 block mb-1">Sem Responsável</span>
+                        <span id="auditoria-sem-resp" class="text-xl font-bold text-emerald-400">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Movimentações Recentes em Tempo Real -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+                <h2 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-purple-400"></i> Movimentações Recentes
+                </h2>
+                <div id="lista-movimentacoes-reais" class="space-y-3 max-h-48 overflow-y-auto">
+                    <p class="text-sm text-slate-400">Carregando movimentações...</p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // Configuração do Supabase (Insira suas chaves reais)
+        const SUPABASE_URL = 'SUA_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'SUA_SUPABASE_ANON_KEY';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        window.onload = async function() {
+            await carregarDashboard();
+        };
+
+        async function carregarDashboard() {
+            // Buscar dados de peças e movimentações do Supabase
+            const { data: pecas, error: errPecas } = await supabase.from('pecas').select('*');
+            const { data: movimentacoes, error: errMov } = await supabase.from('movimentacoes').select('*').order('data_movimentacao', { ascending: false });
+
+            if (errPecas || errMov) {
+                console.error("Erro ao carregar dados do Supabase:", errPecas || errMov);
+                return;
+            }
+
+            // 1. KPIs
+            let totalCadastradas = pecas.length;
+            let totalEstoque = 0;
+            let valorEstoque = 0;
+            let criticasCount = 0;
+
+            pecas.forEach(p => {
+                const atual = p.estoque_atual || 0;
+                const min = p.estoque_minimo || 0;
+                const valor = p.valor_unitario || 0;
+
+                totalEstoque += atual;
+                valorEstoque += (atual * valor);
+                if (atual <= min) criticasCount++;
+            });
+
+            // Entradas e Saídas de Hoje
+            const hojeInicio = new Date();
+            hojeInicio.setHours(0,0,0,0);
+
+            let entradasHoje = 0;
+            let saidasHoje = 0;
+            let semOs = 0, semLeito = 0, semEquip = 0, semResp = 0;
+
+            movimentacoes.forEach(m => {
+                const dataMov = new Date(m.data_movimentacao);
+                if (dataMov >= hojeInicio) {
+                    if (m.tipo_movimentacao === 'ENTRADA') entradasHoje += (m.quantidade || 0);
+                    if (m.tipo_movimentacao === 'SAIDA') saidasHoje += (m.quantidade || 0);
+                }
+                if (m.tipo_movimentacao === 'SAIDA') {
+                    if (!m.os) semOs++;
+                    if (!m.leito) semLeito++;
+                    if (!m.equipamento) semEquip++;
+                    if (!m.tecnico) semResp++;
+                }
+            });
+
+            document.getElementById('kpi-cadastradas').innerText = totalCadastradas.toLocaleString();
+            document.getElementById('kpi-total-estoque').innerText = totalEstoque.toLocaleString();
+            document.getElementById('kpi-valor-estoque').innerText = valorEstoque.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('kpi-criticas').innerText = criticasCount;
+            document.getElementById('kpi-entradas-hoje').innerText = entradasHoje.toLocaleString();
+            document.getElementById('kpi-saidas-hoje').innerText = saidasHoje.toLocaleString();
+
+            // Auditoria
+            document.getElementById('auditoria-sem-os').innerText = semOs;
+            document.getElementById('auditoria-sem-leito').innerText = semLeito;
+            document.getElementById('auditoria-sem-equip').innerText = semEquip;
+            document.getElementById('auditoria-sem-resp').innerText = semResp;
+
+            // 2. Centro de Rastreabilidade (Última movimentação de saída)
+            const ultimaSaida = movimentacoes.find(m => m.tipo_movimentacao === 'SAIDA') || movimentacoes[0];
+            const containerRast = document.getElementById('painel-rastreabilidade');
+            if (ultimaSaida) {
+                const dataFmt = new Date(ultimaSaida.data_movimentacao).toLocaleDateString('pt-BR');
+                const horaFmt = new Date(ultimaSaida.data_movimentacao).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                containerRast.innerHTML = `
+                    <div><span class="text-xs text-slate-400 block">Peça</span><strong class="text-white text-sm">${ultimaSaida.nome_peca || 'N/A'}</strong></div>
+                    <div><span class="text-xs text-slate-400 block">Qtd / Tipo</span><strong class="text-emerald-400 text-sm">${ultimaSaida.quantidade || 1} un (${ultimaSaida.tipo_movimentacao})</strong></div>
+                    <div><span class="text-xs text-slate-400 block">Quem Retirou</span><strong class="text-blue-400 text-sm">${ultimaSaida.tecnico || 'N/A'}</strong></div>
+                    <div><span class="text-xs text-slate-400 block">Ordem de Serviço</span><strong class="text-amber-400 text-sm">${ultimaSaida.os || 'N/A'}</strong></div>
+                    <div><span class="text-xs text-slate-400 block">Equipamento</span><strong class="text-white text-sm">${ultimaSaida.equipamento || 'N/A'}</strong></div>
+                    <div><span class="text-xs text-slate-400 block">Leito / Setor</span><strong class="text-white text-sm">${ultimaSaida.leito || 'N/A'}</strong></div>
+                    <div><span class="text-xs text-slate-400 block">Data / Hora</span><strong class="text-purple-400 text-sm">${dataFmt} ${horaFmt}</strong></div>
+                `;
+            } else {
+                containerRast.innerHTML = `<p class="text-sm text-slate-400 col-span-full">Nenhuma movimentação registrada para rastreio.</p>`;
+            }
+
+            // 3. Alerta de Ruptura / Críticos
+            const containerRuptura = document.getElementById('lista-ruptura');
+            containerRuptura.innerHTML = '';
+            const criticos = pecas.filter(p => (p.estoque_atual || 0) <= (p.estoque_minimo || 0));
+            if (criticos.length === 0) {
+                containerRuptura.innerHTML = `<p class="text-sm text-emerald-400">✅ Nenhum item em risco de ruptura.</p>`;
+            } else {
+                criticos.forEach(p => {
+                    containerRuptura.innerHTML += `
+                        <div class="bg-slate-950/60 border border-rose-500/20 p-3 rounded-xl flex justify-between items-center">
+                            <div>
+                                <span class="font-semibold text-white text-sm">${p.nome}</span>
+                                <p class="text-xs text-slate-400">Código: ${p.codigo}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs px-2 py-1 bg-rose-500/20 text-rose-400 font-bold rounded-lg">Atual: ${p.estoque_atual}</span>
+                                <p class="text-xs text-slate-500 mt-1">Mín: ${p.estoque_minimo}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // 4. Ranking de Técnicos baseado nas movimentações de saída
+            const rankingMap = {};
+            movimentacoes.filter(m => m.tipo_movimentacao === 'SAIDA' && m.tecnico).forEach(m => {
+                rankingMap[m.tecnico] = (rankingMap[m.tecnico] || 0) + 1;
+            });
+            const rankingArr = Object.entries(rankingMap).sort((a,b) => b[1] - a[1]).slice(0, 3);
+            const containerRanking = document.getElementById('ranking-tecnicos');
+            containerRanking.innerHTML = '';
+            if (rankingArr.length === 0) {
+                containerRanking.innerHTML = `<p class="text-sm text-slate-400">Nenhum técnico registrado nas saídas.</p>`;
+            } else {
+                const medalhas = ['🥇', '🥈', '🥉'];
+                rankingArr.forEach(([tec, qtd], index) => {
+                    containerRanking.innerHTML += `
+                        <div class="flex justify-between items-center bg-slate-950/40 p-3 rounded-xl border border-slate-800">
+                            <span class="text-sm font-medium text-white">${medalhas[index] || ''} ${tec}</span>
+                            <span class="text-xs px-2.5 py-1 bg-blue-500/20 text-blue-400 font-bold rounded-lg">${qtd} retiradas</span>
+                        </div>
+                    `;
+                });
+            }
+
+            // 5. Movimentações Recentes Lista
+            const containerMovs = document.getElementById('lista-movimentacoes-reais');
+            containerMovs.innerHTML = '';
+            movimentacoes.slice(0, 4).forEach(m => {
+                const hora = new Date(m.data_movimentacao).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                containerMovs.innerHTML += `
+                    <div class="bg-slate-950/50 border border-slate-800 p-2.5 rounded-xl flex justify-between items-center text-xs">
+                        <div>
+                            <span class="text-slate-400 font-mono">${hora}</span> - <strong class="text-white">${m.tecnico || 'Sistema'}</strong> ${m.tipo_movimentacao.toLowerCase()} <span class="text-emerald-400">${m.quantidade}x ${m.nome_peca}</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-bold">${m.os || 'Sem OS'}</span>
+                    </div>
+                `;
+            });
+
+            // 6. Gráfico de Categorias via Chart.js
+            const catMap = {};
+            pecas.forEach(p => {
+                const cat = p.categoria || 'Geral';
+                catMap[cat] = (catMap[cat] || 0) + (p.estoque_atual || 0);
+            });
+
+            const ctx = document.getElementById('graficoCategorias').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(catMap),
+                    datasets: [{
+                        data: Object.values(catMap),
+                        backgroundColor: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#64748b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { size: 11 } } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

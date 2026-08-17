@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Estoque Crítico</title>
+    <!-- Substitua pelos seus arquivos de CSS/Bootstrap/Tailwind padrão -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+
+    <div class="container py-4">
+        <!-- Cabeçalho -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i> Estoque Crítico</h2>
+                <p class="text-muted mb-0">Itens abaixo da quantidade mínima de segurança que exigem reposição imediata.</p>
+            </div>
+            <div>
+                <a href="../pecas.html" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left me-1"></i> Voltar para Peças</a>
+            </div>
+        </div>
+
+        <!-- Tabela de Alerta -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Item / Descrição</th>
+                                <th>Categoria</th>
+                                <th>Estoque Atual</th>
+                                <th>Mínimo Exigido</th>
+                                <th>Status</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-semibold">Sensor ECG</td>
+                                <td>Acessórios / Monitorização</td>
+                                <td><span class="badge bg-danger">2 unidades</span></td>
+                                <td>5 unidades</td>
+                                <td><span class="text-danger fw-bold">Crítico</span></td>
+                                <td class="text-end">
+                                    <a href="compras.html?item=sensor-ecg" class="btn btn-sm btn-primary"><i class="fa-solid fa-cart-shopping me-1"></i> Comprar</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Bateria DEA</td>
+                                <td>Suportes Vitais / Emergência</td>
+                                <td><span class="badge bg-warning text-dark">3 unidades</span></td>
+                                <td>5 unidades</td>
+                                <td><span class="text-warning fw-bold">Atenção</span></td>
+                                <td class="text-end">
+                                    <a href="compras.html?item=bateria-dea" class="btn btn-sm btn-primary"><i class="fa-solid fa-cart-shopping me-1"></i> Comprar</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Cabo ECG</td>
+                                <td>Acessórios / Monitorização</td>
+                                <td><span class="badge bg-danger">1 unidade</span></td>
+                                <td>4 unidades</td>
+                                <td><span class="text-danger fw-bold">Crítico</span></td>
+                                <td class="text-end">
+                                    <a href="compras.html?item=cabo-ecg" class="btn btn-sm btn-primary"><i class="fa-solid fa-cart-shopping me-1"></i> Comprar</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

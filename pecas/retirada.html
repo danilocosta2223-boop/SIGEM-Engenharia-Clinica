@@ -3,231 +3,362 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM - Baixa Inteligente de Peças</title>
+    <title>SIGEM - Baixa e Rastreabilidade de Peças</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-    <div class="w-full max-w-xl bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl">
-        <h1 class="text-2xl font-bold mb-6 text-emerald-400 flex items-center gap-2">
-            📦 Registrar Retirada (Rastreabilidade Total)
-        </h1>
-
-        <!-- Preview da Peça (Foto e Localização carregadas via QR Code) -->
-        <div id="info-peca" class="hidden bg-slate-800/60 border border-slate-700/60 p-4 rounded-xl mb-6 flex items-center gap-4">
-            <img id="foto_peca" class="w-20 h-20 rounded-xl object-cover border border-slate-700" src="" alt="Peça">
+    <!-- Header / Identidade Corporativa -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-arrow-left text-lg"></i>
+            </a>
             <div>
-                <h2 id="view_nome_peca" class="text-lg font-semibold text-white">---</h2>
-                <p class="text-sm text-slate-400">Código: <span id="view_codigo" class="text-emerald-400">---</span></p>
-                <p class="text-sm text-slate-400">Local: <span id="view_localizacao" class="text-slate-200">---</span></p>
-                <p class="text-sm text-slate-400">Estoque Atual: <span id="view_estoque" class="font-bold text-white">---</span></p>
+                <h1 class="text-xl font-bold text-rose-400 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> SIGEM - Sistema Integrado de Gestão da Engenharia Clínica
+                </h1>
+                <p class="text-xs text-slate-400">Grupo Fleury • Almoxarifado Hospitalar</p>
             </div>
         </div>
-
-        <form id="form-retirada" class="space-y-4">
-            
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1">Código / QR Code *</label>
-                    <input type="text" id="codigo_peca" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Ex: ECG001 ou escaneie" onblur="buscarPeca(this.value)">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1">Quantidade *</label>
-                    <input type="number" id="quantidade" min="1" value="1" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1">Nº da OS *</label>
-                    <input type="text" id="os" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Ex: 2547">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1">Motivo da Retirada *</label>
-                    <select id="motivo" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none">
-                        <option value="Troca">Troca</option>
-                        <option value="Defeito">Defeito</option>
-                        <option value="Preventiva">Preventiva</option>
-                        <option value="Instalação">Instalação</option>
-                        <option value="Corretiva">Corretiva</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1">Equipamento *</label>
-                    <input type="text" id="equipamento" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Ex: Monitor MX800">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1">Leito *</label>
-                    <input type="text" id="leito" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Ex: UTI 15">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1">Responsável (Técnico) *</label>
-                    <input type="text" id="tecnico" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Ex: Ramiro">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-400 mb-1">Aprovador (Liderança) *</label>
-                    <input type="text" id="aprovador" value="Ivan" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none">
-                </div>
-            </div>
-
+        
+        <!-- Card de Contexto da Unidade e Sessão -->
+        <div class="flex items-center gap-4 bg-slate-950/60 border border-slate-800 px-4 py-2 rounded-xl text-xs">
             <div>
-                <label class="block text-sm font-medium text-slate-400 mb-1">Observações</label>
-                <textarea id="observacao" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white focus:border-emerald-500 focus:outline-none" placeholder="Detalhes adicionais do atendimento..."></textarea>
+                <span class="text-slate-500 block">Unidade:</span>
+                <strong class="text-slate-200">Penha</strong>
+            </div>
+            <div class="border-l border-slate-800 pl-4">
+                <span class="text-slate-500 block">Responsável:</span>
+                <strong class="text-slate-200" id="user-responsavel">Ivan</strong>
+            </div>
+            <div class="border-l border-slate-800 pl-4">
+                <span class="text-slate-500 block">Data/Hora:</span>
+                <strong class="text-rose-400" id="current-datetime">--/--/---- --:--</strong>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 p-6 max-w-5xl mx-auto w-full space-y-6">
+        
+        <form id="form-retirada" onsubmit="realizarRetirada(event)" class="space-y-6">
+
+            <!-- SEÇÃO 1: Seleção e Painel da Peça -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                <h2 class="text-sm font-bold uppercase tracking-wider text-rose-400 flex items-center gap-2 pb-2 border-b border-slate-800">
+                    <i class="fa-solid fa-box"></i> 1. Seleção da Peça e Painel do Item
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Selecione a Peça / Código QR *</label>
+                        <select id="select-peca" required onchange="carregarPainelPeca()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none transition">
+                            <option value="">Carregando peças do estoque...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Quantidade a Retirar *</label>
+                        <input type="number" id="quantidade" required min="1" value="1" oninput="calcularResumo()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Painel da Peça (Card Dinâmico) -->
+                <div id="painel-peca" class="hidden grid grid-cols-2 md:grid-cols-5 gap-4 bg-slate-950/80 p-4 border border-slate-800 rounded-xl text-xs">
+                    <div>
+                        <span class="text-slate-500 block">Fabricante:</span>
+                        <strong id="painel-fabricante" class="text-slate-200">-</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Categoria:</span>
+                        <strong id="painel-categoria" class="text-slate-200">-</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Localização:</span>
+                        <strong id="painel-localizacao" class="text-slate-200">-</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Estoque Atual:</span>
+                        <strong id="painel-estoque" class="text-rose-400 text-sm">-</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Status:</span>
+                        <span id="painel-status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold">-</span>
+                    </div>
+                </div>
             </div>
 
-            <button type="button" onclick="confirmarRetirada()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold p-3.5 rounded-lg transition duration-200 shadow-lg mt-2">
-                Confirmar Baixa e Rastreabilidade
-            </button>
-        </form>
-    </div>
+            <!-- SEÇÃO 2: Dados da OS e Atendimento -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                <h2 class="text-sm font-bold uppercase tracking-wider text-rose-400 flex items-center gap-2 pb-2 border-b border-slate-800">
+                    <i class="fa-solid fa-file-waveform"></i> 2. Ordem de Serviço e Destino Clínico
+                </h2>
 
-    <!-- Toast de Notificação -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl opacity-0 transition-opacity duration-300 pointer-events-none font-medium">
-        ✅ Baixa registrada com sucesso
-    </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Número da OS *</label>
+                        <input type="text" id="os" required placeholder="Ex: 2547" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Patrimônio do Equipamento *</label>
+                        <input type="text" id="patrimonio" required placeholder="Ex: EQ002145" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Equipamento Vinculado *</label>
+                        <input type="text" id="equipamento" required placeholder="Ex: Monitor MX800" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Setor *</label>
+                        <select id="setor" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none transition">
+                            <option value="">Selecione o Setor...</option>
+                            <option value="UTI Adulto">UTI Adulto</option>
+                            <option value="Centro Cirúrgico">Centro Cirúrgico</option>
+                            <option value="Pronto Atendimento (PA)">Pronto Atendimento (PA)</option>
+                            <option value="Diagnóstico por Imagem">Diagnóstico por Imagem</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Leito / Sala *</label>
+                        <input type="text" id="leito" required placeholder="Ex: Leito 15" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Motivo da Baixa *</label>
+                        <select id="motivo" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none transition">
+                            <option value="Corretiva">Corretiva</option>
+                            <option value="Preventiva">Preventiva</option>
+                            <option value="Troca de Componente">Troca de Componente</option>
+                            <option value="Instalação">Instalação</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Técnico Solicitante *</label>
+                        <select id="tecnico" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none transition">
+                            <option value="">Selecione o Técnico...</option>
+                            <option value="Ramiro">Ramiro</option>
+                            <option value="Samuel">Samuel</option>
+                            <option value="Gabriel">Gabriel</option>
+                            <option value="Ivan">Ivan</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 3: Aprovação e Evidência -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                <h2 class="text-sm font-bold uppercase tracking-wider text-rose-400 flex items-center gap-2 pb-2 border-b border-slate-800">
+                    <i class="fa-solid fa-signature"></i> 3. Aprovação Gerencial e Evidência
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Gestor / Aprovador Responsável *</label>
+                        <select id="aprovador" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-rose-500 focus:outline-none transition">
+                            <option value="">Selecione o Aprovador...</option>
+                            <option value="Ivan">Ivan</option>
+                            <option value="Camila">Camila</option>
+                            <option value="Francisli">Francisli</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Anexar Evidência (Foto OS / Equipamento)</label>
+                        <input type="file" id="fotoEvidencia" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-slate-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-rose-500 file:text-slate-950 hover:file:bg-rose-600 cursor-pointer">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 4: Resumo Operacional e Impacto Financeiro -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                <h2 class="text-sm font-bold uppercase tracking-wider text-rose-400 flex items-center gap-2 pb-2 border-b border-slate-800">
+                    <i class="fa-solid fa-calculator"></i> 4. Resumo da Operação e Impacto Financeiro
+                </h2>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-950 p-4 border border-slate-800 rounded-xl text-sm">
+                    <div>
+                        <span class="text-slate-500 block text-xs">Estoque Atual:</span>
+                        <strong id="resumo-estoque-atual" class="text-white">-</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block text-xs">Saldo Final Previsto:</span>
+                        <strong id="resumo-saldo-final" class="text-rose-400">-</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block text-xs">Valor Unitário:</span>
+                        <strong id="resumo-val-unit" class="text-white">R$ 0,00</strong>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block text-xs">Valor Total da Baixa:</span>
+                        <strong id="resumo-val-total" class="text-emerald-400">R$ 0,00</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="flex justify-end gap-4 pt-2">
+                <a href="index.html" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium transition text-sm">
+                    Cancelar
+                </a>
+                <button type="submit" id="btn-retirar" class="px-8 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-slate-950 font-bold transition text-sm flex items-center gap-2 shadow-lg shadow-rose-500/20">
+                    <i class="fa-solid fa-check-double"></i> Confirmar Baixa e Gerar Trilha de Auditoria
+                </button>
+            </div>
+
+        </form>
+
+    </main>
 
     <script>
+        // Configuração do Supabase (Insira suas chaves reais)
         const SUPABASE_URL = 'SUA_SUPABASE_URL';
         const SUPABASE_ANON_KEY = 'SUA_SUPABASE_ANON_KEY';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let pecaCarregada = null;
-
-        // Auto-carregar se vier parâmetro na URL (Ex: qrcode.html?codigo=ECG001)
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const codigo = urlParams.get('codigo');
-            if (codigo) {
-                document.getElementById('codigo_peca').value = codigo;
-                buscarPeca(codigo);
-            }
+        window.onload = async function() {
+            atualizarDataHora();
+            setInterval(atualizarDataHora, 1000);
+            await carregarPecasSelect();
         };
 
-        async function buscarPeca(codigo) {
-            if (!codigo) return;
-            const { data, error } = await supabase
-                .from('pecas')
-                .select('*')
-                .eq('codigo', codigo)
-                .single();
-
-            if (data) {
-                pecaCarregada = data;
-                document.getElementById('view_codigo').innerText = data.codigo;
-                document.getElementById('view_nome_peca').innerText = data.nome;
-                document.getElementById('view_localizacao').innerText = data.localizacao || 'Não informada';
-                document.getElementById('view_estoque').innerText = data.estoque_atual;
-                document.getElementById('foto_peca').src = data.foto || 'https://via.placeholder.com/150';
-                document.getElementById('info-peca').classList.remove('hidden');
-            } else {
-                document.getElementById('info-peca').classList.add('hidden');
-                pecaCarregada = null;
-            }
+        function atualizarDataHora() {
+            const agora = new Date();
+            const dataStr = agora.toLocaleDateString('pt-BR');
+            const horaStr = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('current-datetime').innerText = `${dataStr} ${horaStr}`;
         }
 
-        function showToast(mensagem) {
-            const toast = document.getElementById('toast');
-            toast.innerText = mensagem;
-            toast.classList.remove('opacity-0');
-            setTimeout(() => {
-                toast.classList.add('opacity-0');
-            }, 3500);
+        let pecaSelecionadaCache = null;
+
+        async function carregarPecasSelect() {
+            const select = document.getElementById('select-peca');
+            const { data: pecas, error } = await supabase.from('pecas').select('*');
+
+            if (error) {
+                select.innerHTML = '<option value="">Erro ao carregar peças</option>';
+                return;
+            }
+
+            select.innerHTML = '<option value="">Selecione a peça no estoque...</option>';
+            pecas.forEach(p => {
+                select.innerHTML += `<option value="${p.id}" data-json='${JSON.stringify(p)}'>[${p.codigo}] ${p.nome} (Estoque: ${p.estoque_atual})</option>`;
+            });
         }
 
-        async function confirmarRetirada() {
-            const codigoPeca = document.getElementById('codigo_peca').value.trim();
-            const quantidade = parseInt(document.getElementById('quantidade').value);
-            const os = document.getElementById('os').value.trim();
-            const motivo = document.getElementById('motivo').value;
-            const equipamento = document.getElementById('equipamento').value.trim();
-            const leito = document.getElementById('leito').value.trim();
-            const tecnico = document.getElementById('tecnico').value.trim();
-            const aprovador = document.getElementById('aprovador').value.trim();
-            const observacao = document.getElementById('observacao').value.trim();
-
-            if (!pecaCarregada) {
-                alert("❌ Peça não identificada ou código inválido.");
+        function carregarPainelPeca() {
+            const select = document.getElementById('select-peca');
+            const painel = document.getElementById('painel-peca');
+            
+            if (!select.value) {
+                painel.classList.add('hidden');
+                pecaSelecionadaCache = null;
                 return;
             }
 
-            if (isNaN(quantidade) || quantidade <= 0) {
-                alert("❌ Quantidade inválida. Informe um valor maior que zero.");
-                return;
-            }
+            const option = select.options[select.selectedIndex];
+            const p = JSON.parse(option.getAttribute('data-json'));
+            pecaSelecionadaCache = p;
 
-            if (!os || !equipamento || !leito || !tecnico || !aprovador) {
-                alert("❌ Retirada bloqueada: Preencha OS, Equipamento, Leito, Responsável e Aprovador.");
-                return;
-            }
+            // Preenche painel visual
+            document.getElementById('painel-fabricante').innerText = p.fabricante || 'Genérico';
+            document.getElementById('painel-categoria').innerText = p.categoria || 'Geral';
+            document.getElementById('painel-localizacao').innerText = `${p.unidade || 'Central'} / ${p.corredor || 'A'} / Prateleira ${p.prateleira || '01'}`;
+            document.getElementById('painel-estoque').innerText = p.estoque_atual;
 
-            // Validação de Estoque Suficiente
-            if (quantidade > pecaCarregada.estoque_atual) {
-                alert(`❌ Estoque insuficiente! Disponível no momento: ${pecaCarregada.estoque_atual} unidades.`);
-                return;
-            }
-
-            if (!confirm(`Confirmar retirada de ${quantidade}x ${pecaCarregada.nome} para a OS ${os}?`)) {
-                return;
-            }
-
-            // 1. Inserir na tabela de movimentações (Trilha de Auditoria)
-            const { error: erroMov } = await supabase
-                .from('movimentacoes')
-                .insert([{
-                    data_movimentacao: new Date().toISOString(),
-                    tipo_movimentacao: 'SAIDA',
-                    codigo_peca: pecaCarregada.codigo,
-                    nome_peca: pecaCarregada.nome,
-                    quantidade: quantidade,
-                    tecnico: tecnico,
-                    aprovador: aprovador,
-                    os: os,
-                    equipamento: equipamento,
-                    leito: leito,
-                    unidade: 'Penha',
-                    motivo: motivo,
-                    observacao: observacao,
-                    origem: 'QR_CODE'
-                }]);
-
-            if (erroMov) {
-                console.error("Erro ao registrar movimentação:", erroMov);
-                alert("❌ Erro ao salvar registro de baixa.");
-                return;
-            }
-
-            // 2. Calcular novo estoque e atualizar
-            const novoEstoque = pecaCarregada.estoque_atual - quantidade;
-            const { error: erroEstoque } = await supabase
-                .from('pecas')
-                .update({ 
-                    estoque_atual: novoEstoque,
-                    ultima_movimentacao: new Date().toISOString()
-                })
-                .eq('codigo', pecaCarregada.codigo);
-
-            if (erroEstoque) {
-                console.error("Erro ao atualizar estoque:", erroEstoque);
-            }
-
-            // 3. Alerta inteligente se atingir estoque crítico ou mínimo
-            if (novoEstoque <= pecaCarregada.estoque_minimo) {
-                showToast(`🚨 Alerta: Estoque crítico atingido (${novoEstoque} restantes)!`);
+            const badge = document.getElementById('painel-status-badge');
+            const min = p.estoque_minimo || 5;
+            if (p.estoque_atual <= min) {
+                badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                badge.innerText = "🔴 Crítico";
+            } else if (p.estoque_atual <= min * 1.5) {
+                badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                badge.innerText = "🟡 Atenção";
             } else {
-                showToast('✅ Baixa registrada com sucesso');
+                badge.className = "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                badge.innerText = "🟢 Normal";
             }
 
-            // Limpar formulário
-            document.getElementById('form-retirada').reset();
-            document.getElementById('info-peca').classList.add('hidden');
-            pecaCarregada = null;
+            painel.classList.remove('hidden');
+            calcularResumo();
+        }
+
+        function calcularResumo() {
+            if (!pecaSelecionadaCache) return;
+            const qtdRetirada = parseInt(document.getElementById('quantidade').value) || 0;
+            const estoqueAtual = pecaSelecionadaCache.estoque_atual;
+            const saldoFinal = estoqueAtual - qtdRetirada;
+            const valorUnit = pecaSelecionadaCache.valor_unitario || 0;
+            const valorTotal = valorUnit * qtdRetirada;
+
+            document.getElementById('resumo-estoque-atual').innerText = estoqueAtual;
+            const elSaldo = document.getElementById('resumo-saldo-final');
+            elSaldo.innerText = saldoFinal;
+
+            if (saldoFinal < 0) {
+                elSaldo.className = "text-rose-500 font-bold";
+                elSaldo.innerText += " (⚠️ Insuficiente)";
+            } else {
+                elSaldo.className = "text-rose-400 font-bold";
+            }
+
+            document.getElementById('resumo-val-unit').innerText = `R$ ${valorUnit.toFixed(2)}`;
+            document.getElementById('resumo-val-total').innerText = `R$ ${valorTotal.toFixed(2)}`;
+        }
+
+        async function realizarRetirada(event) {
+            event.preventDefault();
+
+            if (!pecaSelecionadaCache) return;
+            const qtdRetirada = parseInt(document.getElementById('quantidade').value);
+            
+            if (qtdRetirada > pecaSelecionadaCache.estoque_atual) {
+                alert("⚠️ Erro: Quantidade solicitada é maior que o estoque atual disponível!");
+                return;
+            }
+
+            const btn = document.getElementById('btn-retirar');
+            btn.disabled = true;
+            btn.innerText = "Registrando Trilha de Auditoria...";
+
+            const novoEstoque = pecaSelecionadaCache.estoque_atual - qtdRetirada;
+
+            // 1. Atualiza estoque na tabela pecas
+            await supabase.from('pecas').update({ estoque_atual: novoEstoque }).eq('id', pecaSelecionadaCache.id);
+
+            // 2. Registra na tabela de auditoria / movimentacoes completa
+            const dadosAuditoria = {
+                pecas_id: pecaSelecionadaCache.id,
+                nome_peca: pecaSelecionadaCache.nome,
+                codigo_peca: pecaSelecionadaCache.codigo,
+                tipo_movimentacao: 'SAIDA',
+                quantidade: qtdRetirada,
+                os: document.getElementById('os').value,
+                patrimonio: document.getElementById('patrimonio').value,
+                equipamento: document.getElementById('equipamento').value,
+                setor: document.getElementById('setor').value,
+                leito: document.getElementById('leito').value,
+                motivo: document.getElementById('motivo').value,
+                tecnico: document.getElementById('tecnico').value,
+                aprovador: document.getElementById('aprovador').value,
+                usuario_sistema: 'Ivan',
+                unidade: 'Penha',
+                data_movimentacao: new Date().toISOString()
+            };
+
+            const { error: errMov } = await supabase.from('movimentacoes').insert([dadosAuditoria]);
+
+            if (errMov) {
+                alert("Erro ao salvar histórico de auditoria: " + errMov.message);
+                btn.disabled = false;
+                btn.innerText = "Confirmar Baixa e Gerar Trilha de Auditoria";
+            } else {
+                alert("✅ Baixa realizada com sucesso! Trilha de auditoria gerada e registrada para o Grupo Fleury.");
+                window.location.href = "index.html";
+            }
         }
     </script>
 </body>

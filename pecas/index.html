@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Cadastro Avançado de Peças</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-arrow-left text-lg"></i>
+            </a>
+            <h1 class="text-xl font-bold text-emerald-400 flex items-center gap-2">
+                <i class="fa-solid fa-boxes-stacked"></i> Cadastro Hospitalar de Peça - SIGEM
+            </h1>
+        </div>
+        <div class="text-sm text-slate-400">
+            Engenharia Clínica & Almoxarifado
+        </div>
+    </header>
+
+    <main class="flex-1 p-6 max-w-5xl mx-auto w-full">
+        
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-xl">
+            <h2 class="text-lg font-bold text-white mb-6 pb-3 border-b border-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-emerald-400"></i> Ficha Técnica e Controle de Insumos
+            </h2>
+
+            <form id="form-cadastro-peca" onsubmit="cadastrarPeca(event)" class="space-y-6">
+                
+                <!-- Bloco 1: Identificação Básica & SAP -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Código / SKU *</label>
+                        <input type="text" id="codigo" required placeholder="Ex: ECG001" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Número SAP</label>
+                        <input type="text" id="codigo_sap" placeholder="Ex: 9050000129" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Nome da Peça / Insumo *</label>
+                        <input type="text" id="nome" required placeholder="Ex: Sensor ECG Reutilizável" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Bloco 2: Classificação, Criticidade e Unidade -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Categoria</label>
+                        <input type="text" id="categoria" placeholder="Ex: Acessórios" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Criticidade *</label>
+                        <select id="criticidade" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                            <option value="Baixa">Baixa</option>
+                            <option value="Média">Média</option>
+                            <option value="Alta" selected>Alta</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Unidade de Medida</label>
+                        <select id="unidade_medida" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                            <option value="Unidade">Unidade</option>
+                            <option value="Caixa">Caixa</option>
+                            <option value="Kit">Kit</option>
+                            <option value="Metro">Metro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Responsável pela Peça</label>
+                        <input type="text" id="responsavel_peca" placeholder="Ex: Ivan / Camila" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Bloco 3: Fornecedores e Prazos -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Fornecedor Principal</label>
+                        <input type="text" id="fornecedor" placeholder="Ex: Philips do Brasil" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Fornecedor Secundário (Alternativo)</label>
+                        <input type="text" id="fornecedor_secundario" placeholder="Ex: HT Medical" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Prazo de Reposição (Dias)</label>
+                        <input type="number" id="prazo_reposicao" placeholder="Ex: 15" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Bloco 4: Estoques e Valores -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Estoque Inicial *</label>
+                        <input type="number" id="estoque_atual" required value="0" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Estoque Mínimo *</label>
+                        <input type="number" id="estoque_minimo" required value="5" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Estoque Máximo</label>
+                        <input type="number" id="estoque_maximo" value="50" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Valor Unitário (R$)</label>
+                        <input type="number" step="0.01" id="valor_unitario" placeholder="0.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Nível de Aprovação</label>
+                        <select id="nivel_aprovacao" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                            <option value="Livre">Livre</option>
+                            <option value="Supervisor">Supervisor</option>
+                            <option value="Gestor">Gestor</option>
+                            <option value="Gerência">Gerência</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Bloco 5: Lote, Validade e Rastreio -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950/40 p-4 border border-slate-800 rounded-xl">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Número do Lote</label>
+                        <input type="text" id="lote" placeholder="Ex: LOT98234" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Data de Validade</label>
+                        <input type="date" id="validade" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Última Compra (Data)</label>
+                        <input type="date" id="ultima_compra" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Último Valor de Compra</label>
+                        <input type="number" step="0.01" id="ultimo_valor_compra" placeholder="0.00" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
+                    </div>
+                </div>
+
+                <!-- Bloco 6: Localização Física Estruturada -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950/40 p-4 border border-slate-800 rounded-xl">
+                    <div class="md:col-span-4 font-medium text-sm text-emerald-400 flex items-center gap-2">
+                        <i class="fa-solid fa-location-dot"></i> Localização no Almoxarifado
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Unidade</label>
+                        <input type="text" id="loc_unidade" placeholder="Ex: Central" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Corredor</label>
+                        <input type="text" id="loc_corredor" placeholder="Ex: Corredor A" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Prateleira</label>
+                        <input type="text" id="loc_prateleira" placeholder="Ex: Prateleira 03" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Caixa / Gaveta</label>
+                        <input type="text" id="loc_caixa" placeholder="Ex: Caixa 12" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white">
+                    </div>
+                </div>
+
+                <!-- Bloco 7: Compatibilidade e Motivo Crítico -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Equipamentos Compatíveis</label>
+                        <input type="text" id="compatibilidade" placeholder="Ex: Monitor MX800, MP40, MP70" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-2">Motivo de Criticidade (Se aplicável)</label>
+                        <input type="text" id="motivo_critico" placeholder="Ex: Uso em UTI e Centro Cirúrgico" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:border-emerald-500 focus:outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="flex justify-end gap-4 pt-4 border-t border-slate-800">
+                    <a href="index.html" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium transition text-sm">
+                        Cancelar
+                    </a>
+                    <button type="submit" id="btn-salvar" class="px-8 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold transition text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-qrcode"></i> Salvar e Gerar QR Code Automático
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </main>
+
+    <script>
+        // Configuração do Supabase (Substitua pelas chaves reais do seu projeto)
+        const SUPABASE_URL = 'SUA_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'SUA_SUPABASE_ANON_KEY';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function cadastrarPeca(event) {
+            event.preventDefault();
+            
+            const btn = document.getElementById('btn-salvar');
+            btn.disabled = true;
+            btn.innerText = "Salvando no Supabase...";
+
+            const dadosPeca = {
+                codigo: document.getElementById('codigo').value,
+                codigo_sap: document.getElementById('codigo_sap').value,
+                nome: document.getElementById('nome').value,
+                categoria: document.getElementById('categoria').value,
+                criticidade: document.getElementById('criticidade').value,
+                unidade_medida: document.getElementById('unidade_medida').value,
+                responsavel_peca: document.getElementById('responsavel_peca').value,
+                fornecedor: document.getElementById('fornecedor').value,
+                fornecedor_secundario: document.getElementById('fornecedor_secundario').value,
+                prazo_reposicao: parseInt(document.getElementById('prazo_reposicao').value) || 0,
+                estoque_atual: parseInt(document.getElementById('estoque_atual').value) || 0,
+                estoque_minimo: parseInt(document.getElementById('estoque_minimo').value) || 0,
+                estoque_maximo: parseInt(document.getElementById('estoque_maximo').value) || 50,
+                valor_unitario: parseFloat(document.getElementById('valor_unitario').value) || 0,
+                nivel_aprovacao: document.getElementById('nivel_aprovacao').value,
+                lote: document.getElementById('lote').value,
+                validade: document.getElementById('validade').value || null,
+                ultima_compra: document.getElementById('ultima_compra').value || null,
+                ultimo_valor_compra: parseFloat(document.getElementById('ultimo_valor_compra').value) || 0,
+                localizacao: `${document.getElementById('loc_unidade').value} | Corredor: ${document.getElementById('loc_corredor').value} | Prat: ${document.getElementById('loc_prateleira').value} | Cx: ${document.getElementById('loc_caixa').value}`,
+                compatibilidade: document.getElementById('compatibilidade').value,
+                motivo_critico: document.getElementById('motivo_critico').value,
+                qr_code: document.getElementById('codigo').value
+            };
+
+            const { error } = await supabase.from('pecas').insert([dadosPeca]);
+
+            if (error) {
+                alert("Erro ao cadastrar peça: " + error.message);
+                btn.disabled = false;
+                btn.innerText = "Salvar e Gerar QR Code Automático";
+                console.error(error);
+                return;
+            }
+
+            alert("✅ Peça cadastrada com sucesso e QR Code gerado!");
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

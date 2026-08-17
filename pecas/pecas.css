@@ -1,0 +1,276 @@
+/* ==========================================================================
+   SIGEM - Sistema de Gestão de Engenharia Clínica e Almoxarifado
+   Identidade Visual Corporativa & Padrão de Estilos Avançado
+   ========================================================================== */
+
+:root {
+    --sigem-primary: #ef4444;
+    --sigem-secondary: #0f172a;
+    --sigem-success: #22c55e;
+    --sigem-warning: #f59e0b;
+    --sigem-danger: #dc2626;
+    --sigem-info: #3b82f6;
+    --sigem-bg-dark: #111827;
+    --sigem-border: #1f2937;
+}
+
+/* Base & Reset */
+body {
+    background-color: #0b0f19;
+    color: #cbd5e1;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* 🏥 Visual Fleury / Cabeçalhos */
+.header-fleury {
+    background: var(--sigem-secondary);
+    border-bottom: 2px solid var(--sigem-primary);
+}
+
+.logo-fleury {
+    border-left: 4px solid var(--sigem-primary);
+    padding-left: 10px;
+}
+
+/* 🗼 Torre de Controle / Centro de Operações */
+.torre-controle {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border: 1px solid #334155;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* 🤖 SIGEM AI (Inteligência Preditiva) */
+.sigem-ai {
+    background: linear-gradient(135deg, #111827, #1e1b4b);
+    border: 1px solid #4f46e5;
+    border-radius: 20px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
+}
+
+/* 🚨 Emergência e Central de Crise */
+.emergencia {
+    background: rgba(220, 38, 38, 0.15);
+    border-left: 6px solid #dc2626;
+    border-radius: 12px;
+    padding: 16px;
+}
+
+/* 💰 Financeiro Premium */
+.financeiro {
+    background: linear-gradient(135deg, #064e3b, #022c22);
+    border: 1px solid #059669;
+    border-radius: 20px;
+    padding: 20px;
+    color: white;
+}
+
+/* 📊 Dashboard Executivo Grid */
+.dashboard-executivo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* 📦 Cards e KPIs Premium */
+.card-sigem {
+    background: var(--sigem-bg-dark);
+    border: 1px solid var(--sigem-border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    transition: all 0.25s ease;
+}
+
+.card-sigem:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.kpi-card {
+    background: var(--sigem-bg-dark);
+    border-radius: 18px;
+    padding: 20px;
+    border: 1px solid var(--sigem-border);
+}
+
+.kpi-valor {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* 🟢 🟡 🔴 Status e Indicadores */
+.status-normal { color: var(--sigem-success); font-weight: bold; }
+.status-atencao { color: var(--sigem-warning); font-weight: bold; }
+.status-critico { color: var(--sigem-primary); font-weight: bold; animation: pulse 1.5s infinite; }
+.status-zerado { color: var(--sigem-danger); font-weight: bold; }
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* 📊 Curva ABC */
+.curva-a { color: #ef4444; font-weight: bold; }
+.curva-b { color: #f59e0b; font-weight: bold; }
+.curva-c { color: #22c55e; font-weight: bold; }
+
+/* ⏳ Ruptura Preditiva */
+.ruptura-curta { color: #ef4444; font-weight: bold; }
+.ruptura-media { color: #f59e0b; font-weight: bold; }
+.ruptura-longa { color: #22c55e; font-weight: bold; }
+
+/* 🏥 Setores */
+.setor-tag {
+    background: #172554;
+    color: #93c5fd;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+/* 📍 Localização Premium */
+.endereco-estoque {
+    background: #0f172a;
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #1e293b;
+    font-size: 0.85rem;
+}
+
+/* 🏆 Ranking de Pódio */
+.top1 { border-left: 5px solid gold; background: rgba(255, 215, 0, 0.05); }
+.top2 { border-left: 5px solid silver; background: rgba(192, 192, 192, 0.05); }
+.top3 { border-left: 5px solid #cd7f32; background: rgba(205, 127, 50, 0.05); }
+
+/* 🔔 Notificações Flutuantes */
+.notificacao {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* ⭐ O Maior Diferencial: Central de Rastreabilidade */
+.rastreabilidade-central {
+    background: var(--sigem-secondary);
+    border: 1px solid #334155;
+    border-radius: 20px;
+    padding: 24px;
+    color: #f8fafc;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.rastreabilidade-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.rastreabilidade-item {
+    background: #1e293b;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+}
+
+.rastreabilidade-item label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #94a3b8;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.rastreabilidade-item span {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* 📋 Tabela Padrão SIGEM */
+.tabela-sigem {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-sigem th {
+    background: var(--sigem-bg-dark);
+    color: #94a3b8;
+    padding: 14px;
+    text-align: left;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.tabela-sigem td {
+    padding: 14px;
+    border-bottom: 1px solid var(--sigem-border);
+}
+
+/* 🔳 QR Code & Caixa de Visualização */
+.btn-qr {
+    background: var(--sigem-info);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s;
+}
+
+.btn-qr:hover { background: #2563eb; }
+
+.qrcode-box {
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    display: inline-block;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* 📱 Responsivo para Celular */
+@media (max-width: 768px) {
+    .tabela-sigem {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .kpi-valor {
+        font-size: 1.5rem;
+    }
+}
+
+/* 🖨️ Regras de Impressão */
+@media print {
+    .nao-imprimir, button, .nav-bar, .notificacao {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+
+    .card-sigem, .torre-controle, .sigem-ai, .rastreabilidade-central {
+        border: 1px solid #ccc;
+        box-shadow: none;
+        background: white;
+        color: black;
+    }
+}
