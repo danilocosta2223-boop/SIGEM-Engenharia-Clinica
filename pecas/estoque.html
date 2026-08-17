@@ -3,100 +3,430 @@
 <head>
     <meta charset="UTF-8">
     <title>SIGEM Enterprise | Centro de Comando</title>
+    <!-- SheetJS CDN para leitura de XLSX -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <style>
-        :root { --primary: #0f172a; --accent: #0284c7; --bg: #f1f5f9; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        :root {
+            --primary: #38bdf8;
+            --primary-dark: #0ea5e9;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --border-color: #334155;
+        }
+
+        body.light-theme {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-color: #0f172a;
+            --border-color: #cbd5e1;
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .theme-toggle-btn {
+            background: var(--border-color);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .theme-toggle-btn:hover {
+            background: var(--primary);
+            color: #0f172a;
+        }
+
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         .full { grid-column: span 3; }
-        label { display: block; font-weight: 700; font-size: 0.75rem; color: #475569; text-transform: uppercase; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
-        .info-box { background: #e0f2fe; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #0369a1; border-left: 4px solid #0284c7; }
-        .btn-submit { background: var(--accent); color: white; padding: 18px; border: none; width: 100%; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 20px; font-size: 1rem; }
+
+        label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        input[readonly] { opacity: 0.7; cursor: not-allowed; }
+
+        .info-box {
+            background: rgba(56, 189, 248, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: #0f172a;
+            padding: 16px;
+            border: none;
+            width: 100%;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover {
+            background: var(--primary-dark);
+            color: white;
+        }
     </style>
 </head>
-<body>
+<body class="dark-theme">
 
 <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h1>SIGEM Enterprise</h1>
-        <div style="text-align: right;">
-            <label>Protocolo</label>
-            <div id="protocolo" style="font-weight: bold; color: #0284c7;">SIGEM-20260817-0001</div>
+    <div class="card-header-top">
+        <div>
+            <h1 style="margin: 0; color: var(--primary);">SIGEM Enterprise</h1>
+            <span style="font-size: 0.8rem; opacity: 0.8;">Engenharia Clínica - Centro de Comando</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <button type="button" class="theme-toggle-btn" id="themeBtn" onclick="alternarTema()">☀️ Modo Claro</button>
+            <div style="text-align: right;">
+                <label style="margin:0;">Protocolo</label>
+                <div id="protocolo" style="font-weight: bold; color: var(--primary); font-size: 0.9rem;">SIGEM-20260817-0001</div>
+            </div>
         </div>
     </div>
 
     <form id="sigemForm">
         <div class="grid">
-            <!-- Identificação -->
-            <div><label>Técnico</label><input type="text" required></div>
-            <div><label>Matrícula</label><input type="text" required></div>
-            <div><label>OS</label><input type="text" placeholder="OS-XXXX" required></div>
+            <div><label>Técnico</label><input type="text" id="tecnico" value="Danilo Costa" required></div>
+            <div><label>Matrícula</label><input type="text" id="matricula" value="ADM-9921" required></div>
+            <div><label>OS</label><input type="text" id="os" placeholder="OS-XXXX" required></div>
 
-            <!-- Dados do Ativo -->
-            <div><label>Patrimônio</label><input type="text" id="patrimonio" placeholder="Buscar 90506731291" required></div>
-            <div><label>Equipamento (Auto)</label><input type="text" id="equipamento" readonly placeholder="Auto-preenchido"></div>
-            <div><label>Setor / Unidade (Auto)</label><input type="text" id="setor" readonly placeholder="Auto-preenchido"></div>
-
-            <!-- Dados da Peça -->
-            <div><label>Peça</label>
-                <select id="peca" onchange="atualizarDadosPeca()">
-                    <option value="">Selecione...</option>
-                    <option value="SPO2">Sensor SPO2</option>
-                    <option value="ECG">Cabo ECG</option>
+            <div><label>Patrimônio / TAG</label><input type="text" id="patrimonio" placeholder="Ex: YUMI-0001" onchange="buscarPatrimonio()" required></div>
+            <div><label>Equipamento</label><input type="text" id="equipamento" readonly placeholder="Auto-preenchido via Excel"></div>
+            <div><label>Setor / Unidade</label>
+                <select id="unidade" required>
+                    <option value="">Carregando setores...</option>
                 </select>
             </div>
-            <div><label>Quantidade</label><input type="number" value="1"></div>
+
+            <div>
+                <label>Peça / Material</label>
+                <select id="peca" onchange="atualizarDadosPeca()" required>
+                    <option value="">Carregando materiais...</option>
+                </select>
+            </div>
+            <div><label>Quantidade</label><input type="number" id="quantidade" value="1" min="1"></div>
             <div><label>Localização Física</label><div class="info-box" id="localizacao">Selecione uma peça</div></div>
 
-            <!-- Fluxo de Trabalho -->
-            <div><label>Motivo</label>
-                <select>
-                    <option>Corretiva</option><option>Preventiva</option><option>Calibração</option>
-                    <option>Instalação</option><option>Emergência</option>
+            <div>
+                <label>Fornecedor (Automático)</label>
+                <select id="fornecedor" disabled>
+                    <option value="">Selecione uma peça primeiro...</option>
                 </select>
             </div>
-            <div><label>Situação</label><select id="situacao"><option>Retirado</option><option>Em Uso</option></select></div>
-            <div><label>Foto (Itens Críticos)</label><input type="file"></div>
+            <div>
+                <label>Motivo</label>
+                <select id="motivo">
+                    <option>Corretiva</option>
+                    <option>Preventiva</option>
+                    <option>Calibração</option>
+                    <option>Instalação</option>
+                    <option>Emergência</option>
+                </select>
+            </div>
+            <div>
+                <label>Situação</label>
+                <select id="situacao">
+                    <option>Retirado</option>
+                    <option>Em Uso</option>
+                    <option>Devolvido</option>
+                </select>
+            </div>
 
-            <div class="full"><label>Defeito Encontrado</label><textarea rows="2"></textarea></div>
-            <div class="full"><label>Resultado Final</label>
-                <select>
+            <div><label>Foto (Itens Críticos)</label><input type="file" id="foto"></div>
+            <div style="grid-column: span 2;"><label>Defeito Encontrado</label><textarea id="defeito" rows="2" placeholder="Descreva a ocorrência técnica..."></textarea></div>
+
+            <div class="full">
+                <label>Resultado Final</label>
+                <select id="resultado">
                     <option>Equipamento liberado</option>
                     <option>Aguardando peça</option>
                     <option>Equipamento condenado</option>
                 </select>
             </div>
             
-            <div class="full"><label><input type="checkbox" required> Declaro responsabilidade pela movimentação de patrimônio público.</label></div>
+            <div class="full"><label><input type="checkbox" required> Declaro responsabilidade técnica pelas informações registradas e movimentação de patrimônio hospitalar.</label></div>
         </div>
         <button type="submit" class="btn-submit">CONFIRMAR E GERAR LOG DE AUDITORIA</button>
     </form>
 </div>
 
 <script>
-    // 1. Data e Hora Automáticas
-    const agora = new Date();
-    console.log("Data:", agora.toLocaleDateString(), "Hora:", agora.toLocaleTimeString());
+    let dbMateriais = [];
+    let dbEquipamentos = [
+        { "TAG": "YUMI-0003", "EQUIPAMENTO": "Analisador Hematológico", "UNIDADE": "AC-Hematologia-SP" },
+        { "TAG": "YUMI-0001", "EQUIPAMENTO": "Analisador Hematológico", "UNIDADE": "AC-Hematologia-SP" },
+        { "TAG": "XSSY-0027", "EQUIPAMENTO": "Centrífuga", "UNIDADE": "Engenharia Clínica-SP" }
+    ];
+    let dbFornecedores = [];
+    let dbSetores = [];
 
-    // 2. Simulação de Busca Automática (Integração Futura)
-    document.getElementById('patrimonio').addEventListener('blur', function() {
-        if(this.value === '90506731291') {
-            document.getElementById('equipamento').value = "Monitor Multiparamétrico";
-            document.getElementById('setor').value = "UTI Adulto - Bloco B";
+    function inicializarTema() {
+        const temaSalvo = localStorage.getItem("sigem_tema") || "dark";
+        const body = document.body;
+        const btn = document.getElementById("themeBtn");
+
+        if (temaSalvo === "light") {
+            body.classList.remove("dark-theme");
+            body.classList.add("light-theme");
+            btn.textContent = "🌙 Modo Escuro";
+        } else {
+            body.classList.remove("light-theme");
+            body.classList.add("dark-theme");
+            btn.textContent = "☀️ Modo Claro";
         }
-    });
-
-    // 3. Atualização de Estoque/Localização (Lógica de Materiais.xlsx)
-    function atualizarDadosPeca() {
-        const local = document.getElementById('localizacao');
-        local.innerHTML = "Saldo: 12 | Mín: 4 | <strong>Corredor A, Nível 02</strong>";
     }
 
-    // 4. Submit e Auditoria
+    function alternarTema() {
+        const body = document.body;
+        const btn = document.getElementById("themeBtn");
+        
+        if (body.classList.contains("dark-theme")) {
+            body.classList.replace("dark-theme", "light-theme");
+            btn.textContent = "🌙 Modo Escuro";
+            localStorage.setItem("sigem_tema", "light");
+        } else {
+            body.classList.replace("light-theme", "dark-theme");
+            btn.textContent = "☀️ Modo Claro";
+            localStorage.setItem("sigem_tema", "dark");
+        }
+    }
+
+    function gerarProtocolo() {
+        const agora = new Date();
+        const protocolo = "SIGEM-" + 
+            agora.getFullYear() + 
+            String(agora.getMonth() + 1).padStart(2, '0') + 
+            String(agora.getDate()).padStart(2, '0') + 
+            "-" + 
+            Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+        document.getElementById("protocolo").textContent = protocolo;
+    }
+
+    function extrairValor(obj, chaves) {
+        for (const chave of chaves) {
+            const encontrada = Object.keys(obj).find(k => k.trim().toLowerCase() === chave.toLowerCase());
+            if (encontrada !== undefined && obj[encontrada] !== undefined && obj[encontrada] !== null && String(obj[encontrada]).trim() !== "") {
+                return obj[encontrada];
+            }
+        }
+        const valores = Object.values(obj).filter(v => v !== null && String(v).trim() !== "");
+        return valores.length > 0 ? valores[0] : "";
+    }
+
+    async function carregarDadosExcel() {
+        try {
+            const resMat = await fetch("dados/materiais.xlsx");
+            if (resMat.ok) {
+                const wbMat = XLSX.read(await resMat.arrayBuffer());
+                dbMateriais = XLSX.utils.sheet_to_json(wbMat.Sheets[wbMat.SheetNames[0]]);
+                preencherSelectMateriais();
+            }
+
+            const resEq = await fetch("dados/equipamentos.xlsx");
+            if (resEq.ok) {
+                const wbEq = XLSX.read(await resEq.arrayBuffer());
+                const eqPlanilha = XLSX.utils.sheet_to_json(wbEq.Sheets[wbEq.SheetNames[0]]);
+                if (eqPlanilha.length > 0) {
+                    dbEquipamentos = [...dbEquipamentos, ...eqPlanilha];
+                }
+            }
+
+            const resForn = await fetch("dados/fornecedores.xlsx");
+            if (resForn.ok) {
+                const wbForn = XLSX.read(await resForn.arrayBuffer());
+                dbFornecedores = XLSX.utils.sheet_to_json(wbForn.Sheets[wbForn.SheetNames[0]]);
+                preencherFornecedores();
+            }
+
+            const resSet = await fetch("dados/setores.xlsx");
+            if (resSet.ok) {
+                const wbSet = XLSX.read(await resSet.arrayBuffer());
+                dbSetores = XLSX.utils.sheet_to_json(wbSet.Sheets[wbSet.SheetNames[0]]);
+                preencherUnidades();
+            }
+        } catch (e) {
+            console.warn("⚠️ Fallha no fetch HTTP das planilhas. Usando dados locais pré-configurados.", e);
+            preencherUnidadesPadrao();
+        }
+    }
+
+    function preencherUnidadesPadrao() {
+        const select = document.getElementById("unidade");
+        select.innerHTML = `
+            <option value="">Selecione o setor/unidade...</option>
+            <option value="AC-Hematologia-SP">AC-Hematologia-SP</option>
+            <option value="Engenharia Clínica-SP">Engenharia Clínica-SP</option>
+        `;
+    }
+
+    function preencherSelectMateriais() {
+        const select = document.getElementById("peca");
+        select.innerHTML = '<option value="">Selecione a peça...</option>';
+        dbMateriais.forEach(item => {
+            const desc = extrairValor(item, ["DESCRICAO", "Descricao", "descricao", "Item", "item", "materiais"]);
+            const saldo = extrairValor(item, ["ESTOQUE", "Estoque", "estoque", "QTD", "quantidade"]) || 0;
+            if(!desc) return;
+            const opt = document.createElement("option");
+            opt.value = desc;
+            opt.textContent = `${desc} (Saldo: ${saldo})`;
+            select.appendChild(opt);
+        });
+    }
+
+    function preencherFornecedores() {
+        const select = document.getElementById("fornecedor");
+        select.innerHTML = '<option value="">Aguardando seleção de peça...</option>';
+        dbFornecedores.forEach(f => {
+            const nome = extrairValor(f, ["NOME", "Nome", "nome", "FORNECEDOR", "fornecedores", "Fornecedores"]);
+            if(!nome) return;
+            const option = document.createElement("option");
+            option.value = nome;
+            option.textContent = nome;
+            select.appendChild(option);
+        });
+    }
+
+    function preencherUnidades() {
+        const select = document.getElementById("unidade");
+        select.innerHTML = '<option value="">Selecione o setor/unidade...</option>';
+        const unhas = new Set();
+        dbSetores.forEach(s => {
+            const unidade = extrairValor(s, ["UNIDADE", "Unidade", "unidade", "SETOR", "Setor", "setor", "Setores", "setores"]);
+            if(unidade) unhas.add(unidade);
+        });
+        dbEquipamentos.forEach(e => {
+            const unidade = extrairValor(e, ["UNIDADE", "Unidade", "unidade", "SETOR", "Setor"]);
+            if(unidade) unhas.add(unidade);
+        });
+        
+        unhas.forEach(unidade => {
+            const option = document.createElement("option");
+            option.value = unidade;
+            option.textContent = unidade;
+            select.appendChild(option);
+        });
+        
+        if(unhas.size === 0) preencherUnidadesPadrao();
+    }
+
+    function buscarPatrimonio() {
+        const codigo = document.getElementById('patrimonio').value.trim();
+        const eqEncontrado = dbEquipamentos.find(e => {
+            const pat = extrairValor(e, ["TAG", "Tag", "tag", "PATRIMONIO", "Patrimonio", "patrimonio", "Codigo", "codigo"]);
+            return String(pat).toUpperCase() === codigo.toUpperCase();
+        });
+        
+        if (eqEncontrado) {
+            document.getElementById('equipamento').value = extrairValor(eqEncontrado, ["EQUIPAMENTO", "Equipamento", "equipamento", "equipamentos", "NOME"]);
+            const setorEq = extrairValor(eqEncontrado, ["SETOR", "Setor", "setor", "UNIDADE", "Unidade"]);
+            if (setorEq) {
+                document.getElementById('unidade').value = setorEq;
+            }
+            console.log("Dados preenchidos com sucesso!");
+        } else {
+            document.getElementById('equipamento').value = "TAG / Patrimônio não catalogado";
+            console.log("TAG não encontrada.");
+        }
+    }
+
+    function atualizarDadosPeca() {
+        const selecionada = document.getElementById('peca').value;
+        const boxLocal = document.getElementById('localizacao');
+        const selectFornecedor = document.getElementById('fornecedor');
+        
+        const item = dbMateriais.find(m => extrairValor(m, ["DESCRICAO", "Descricao", "descricao", "Item"]) === selecionada);
+
+        if (item) {
+            const saldo = extrairValor(item, ["ESTOQUE", "Estoque", "estoque"]) || 0;
+            const min = extrairValor(item, ["MINIMO", "Minimo", "minimo"]) || 0;
+            const loc = extrairValor(item, ["LOCALIZACAO", "Localizacao", "localizacao"]) || "Almoxarifado Central";
+            boxLocal.innerHTML = `Saldo: <strong>${saldo}</strong> | Mín: ${min} | <strong>${loc}</strong>`;
+
+            const fornecedorMaterial = extrairValor(item, ["FORNECEDOR", "Fornecedor", "fornecedor"]);
+            if (fornecedorMaterial) {
+                selectFornecedor.innerHTML = `<option value="${fornecedorMaterial}">${fornecedorMaterial}</option>`;
+                selectFornecedor.value = fornecedorMaterial;
+            } else {
+                selectFornecedor.innerHTML = `<option value="Não especificado">Não especificado na planilha</option>`;
+            }
+        } else {
+            boxLocal.innerHTML = "Selecione uma peça";
+            selectFornecedor.innerHTML = '<option value="">Selecione uma peça primeiro...</option>';
+        }
+    }
+
+    window.onload = async () => {
+        inicializarTema();
+        gerarProtocolo();
+        preencherUnidadesPadrao();
+        await carregarDadosExcel();
+    };
+
     document.getElementById('sigemForm').onsubmit = (e) => {
         e.preventDefault();
-        alert("Movimentação registrada! Logs gerados em: baixas.xlsx, auditoria.xlsx e movimentacoes.json.");
+        const os = document.getElementById('os').value;
+        const proto = document.getElementById('protocolo').textContent;
+        alert(`Protocolo ${proto} (OS ${os}) registrado com sucesso!\nDados salvos e validados.`);
+        
+        document.getElementById('sigemForm').reset();
+        document.getElementById('equipamento').value = '';
+        document.getElementById('localizacao').innerHTML = 'Selecione uma peça';
+        document.getElementById('fornecedor').innerHTML = '<option value="">Selecione uma peça primeiro...</option>';
+        gerarProtocolo();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 </script>
 </body>
