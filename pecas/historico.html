@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGEM - Sistema de Gestão de Materiais e Engenharia Clínica</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --danger: #dc2626;
+            --danger-bg: #fef2f2;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-dark);
+        }
+
+        /* Abas de Navegação */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            background: #e2e8f0;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .tabs button {
+            padding: 10px 16px;
+            border: none;
+            cursor: pointer;
+            background: var(--card-bg);
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .tabs button:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Container de Conteúdo */
+        .container {
+            background: var(--card-bg);
+            padding: 24px;
+            margin-top: 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            min-height: 480px;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .card.alert {
+            border-left-color: var(--danger);
+            background: var(--danger-bg);
+        }
+
+        .card h4 {
+            margin: 0 0 8px 0;
+            font-size: 13px;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .card .value {
+            font-size: 26px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        /* Filtros do Histórico */
+        .filter-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .filter-bar input, .filter-bar select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        /* Timeline Moderna */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .timeline-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .badge-tipo {
+            background: #e0f2fe;
+            color: var(--primary-dark);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Listas e Tabelas */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        li:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .card-box.wide {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 768px) {
+            .card-box.wide { grid-column: span 1; }
+        }
+
+        .card-box h3 {
+            margin-top: 0;
+            font-size: 15px;
+            color: var(--text-color);
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        /* Ações e Botões */
+        .action-bar {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .btn:hover { background: var(--primary-dark); }
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SIGEM - Sistema de Gestão de Materiais</h1>
+        <span id="status-sistema" style="font-size: 13px; color: #64748b;">🟢 Inteligência Operacional Ativa</span>
+    </header>
+
+    <nav class="tabs">
+        <button onclick="showTab('visao')">Visão Geral</button>
+        <button onclick="showTab('estoque')">Estoque & Custos</button>
+        <button onclick="showTab('historico')">Histórico & Timeline</button>
+        <button onclick="showTab('graficos')">Gráficos Analíticos</button>
+        <button onclick="showTab('aud')">Auditoria</button>
+        <button onclick="showTab('pendencias')">Pendências</button>
+        <button onclick="showTab('dashboard')">Dashboard Executiva</button>
+    </nav>
+
+    <div id="tab-content" class="container">
+        <!-- Conteúdo dinâmico -->
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. BANCO DE DADOS SIGEM & REGRAS DE NEGÓCIO
+        // ==========================================
+        const SIGEM_DB = {
+            materiais: [
+                { id: 1, nome: 'Sensor SpO2', estoque: 10, valor: 350.00, fornecedor: 'MedTech SP' },
+                { id: 2, nome: 'Cabo ECG', estoque: 2, valor: 180.00, fornecedor: 'Biosul Equipamentos' },
+                { id: 3, nome: 'Módulo de Pressão', estoque: 1, valor: 1200.00, fornecedor: 'MedTech SP' },
+                { id: 4, nome: 'Bateria Desfibrilador', estoque: 4, valor: 850.00, fornecedor: 'LifeCare Brasil' },
+                { id: 5, nome: 'Eletrodo Descartável (Cx)', estoque: 15, valor: 65.00, fornecedor: 'Biosul Equipamentos' }
+            ],
+            movimentacoes: [
+                { id: 101, os: 'OS-4091', tecnico: 'Danilo', patrimonio: 'PAT-8812', item: 'Sensor SpO2', quantidade: 1, tipo: 'SAÍDA', fornecedor: 'MedTech SP', data: '17/08/2026 10:00' },
+                { id: 102, os: 'OS-4088', tecnico: 'Ramiro', patrimonio: 'PAT-7721', item: 'Cabo ECG', quantidade: 2, tipo: 'DEVOLUÇÃO', fornecedor: 'Biosul Equipamentos', data: '17/08/2026 09:45' },
+                { id: 103, os: 'OS-4085', tecnico: 'Samuel', patrimonio: 'PAT-5543', item: 'Bateria Desfibrilador', quantidade: 1, tipo: 'RESERVA', fornecedor: 'LifeCare Brasil', data: '17/08/2026 09:30' }
+            ],
+            auditoria: [
+                { data: '17/08/2026 10:00', usuario: 'Danilo', acao: 'SAÍDA', item: 'Sensor SpO2 (1 un)' }
+            ],
+            pendencias: [
+                { os: 'OS-4091', tecnico: 'Danilo', item: 'Sensor SpO2', data: '17/08/2026 10:00', status: 'PENDENTE' }
+            ],
+
+            // --- Cálculos e Indicadores ---
+            getTotalEstoque() {
+                return this.materiais.reduce((total, item) => total + item.estoque, 0);
+            },
+
+            getValorEstoque() {
+                return this.materiais.reduce((total, item) => total + (item.estoque * item.valor), 0);
+            },
+
+            getItensCriticosList() {
+                return this.materiais.filter(item => item.estoque <= 3);
+            },
+
+            getTopPecas() {
+                const ranking = {};
+                this.movimentacoes.forEach(m => {
+                    ranking[m.item] = (ranking[m.item] || 0) + m.quantidade;
+                });
+                return ranking;
+            },
+
+            getTopTecnicos() {
+                const ranking = {};
+                this.movimentacoes.forEach(m => {
+                    if(m.tecnico) ranking[m.tecnico] = (ranking[m.tecnico] || 0) + m.quantidade;
+                });
+                return ranking;
+            },
+
+            getTopFornecedores() {
+                const ranking = {};
+                this.movimentacoes.forEach(m => {
+                    if(m.fornecedor) ranking[m.fornecedor] = (ranking[m.fornecedor] || 0) + m.quantidade;
+                });
+                return ranking;
+            },
+
+            getRetiradasHoje() {
+                const hoje = new Date().toLocaleDateString("pt-BR");
+                return this.movimentacoes.filter(m => m.data && m.data.includes(hoje)).length;
+            },
+
+            getTopItemName() {
+                const top = Object.entries(this.getTopPecas()).sort((a,b) => b[1] - a[1]);
+                return top.length > 0 ? `${top[0][0]} (${top[0][1]} un)` : 'Nenhum';
+            },
+
+            getTopTecnicoName() {
+                const top = Object.entries(this.getTopTecnicos()).sort((a,b) => b[1] - a[1]);
+                return top.length > 0 ? `${top[0][0]} (${top[0][1]} mov)` : 'Nenhum';
+            },
+
+            getTopFornecedorName() {
+                const top = Object.entries(this.getTopFornecedores()).sort((a,b) => b[1] - a[1]);
+                return top.length > 0 ? `${top[0][0]} (${top[0][1]} un)` : 'Nenhum';
+            },
+
+            registrarMovimentacao(mov) {
+                if (!mov.data) mov.data = new Date().toLocaleString("pt-BR");
+                
+                const itemEstoque = this.materiais.find(m => m.nome === mov.item);
+                if (itemEstoque && mov.tipo === 'SAÍDA') {
+                    itemEstoque.estoque = Math.max(0, itemEstoque.estoque - mov.quantidade);
+                } else if (itemEstoque && mov.tipo === 'DEVOLUÇÃO') {
+                    itemEstoque.estoque += mov.quantidade;
+                }
+
+                this.movimentacoes.unshift(mov); // Adiciona no topo
+
+                this.auditoria.unshift({
+                    data: mov.data,
+                    usuario: mov.tecnico || "Sistema",
+                    acao: mov.tipo,
+                    item: `${mov.item} (${mov.quantidade} un)`
+                });
+
+                this.salvar();
+                this.atualizarInterface();
+            },
+
+            salvar() {
+                localStorage.setItem("sigem_db", JSON.stringify(this));
+            },
+
+            atualizarInterface() {
+                const activeTab = document.body.dataset.activeTab || "visao";
+                showTab(activeTab);
+            }
+        };
+
+        // Carregar do LocalStorage se houver
+        const dadosSalvos = localStorage.getItem("sigem_db");
+        if (dadosSalvos) {
+            try { Object.assign(SIGEM_DB, JSON.parse(dadosSalvos)); } catch (e) {}
+        }
+
+        // ==========================================
+        // 2. CONTROLE DE INTERFACE E ABAS
+        // ==========================================
+        function showTab(tabName) {
+            document.body.dataset.activeTab = tabName;
+            const contentDiv = document.getElementById('tab-content');
+            let html = `<h2>${tabName.toUpperCase()}</h2>`;
+
+            switch(tabName) {
+                case 'visao':
+                    const criticos = SIGEM_DB.getItensCriticosList();
+                    html += `
+                        <div class="cards-grid">
+                            <div class="card">
+                                <h4>Total de Peças em Estoque</h4>
+                                <div class="value">${SIGEM_DB.getTotalEstoque()} unidades</div>
+                            </div>
+                            <div class="card">
+                                <h4>Valor Total do Estoque</h4>
+                                <div class="value">R$ ${SIGEM_DB.getValorEstoque().toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                            </div>
+                            <div class="card alert">
+                                <h4>Itens Críticos (Estoque <= 3)</h4>
+                                <div class="value" style="color: var(--danger);">${criticos.length} itens</div>
+                            </div>
+                            <div class="card">
+                                <h4>Movimentações Hoje</h4>
+                                <div class="value">${SIGEM_DB.getRetiradasHoje()}</div>
+                            </div>
+                        </div>
+
+                        ${criticos.length > 0 ? `
+                            <div style="background: var(--danger-bg); border: 1px solid var(--danger); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                                <h3 style="margin: 0 0 10px 0; color: var(--danger); font-size: 15px;">⚠️ Alerta de Reposição Crítica</h3>
+                                <ul>
+                                    ${criticos.map(c => `<li style="background: white; border-color: #fca5a5;"><span><strong>${c.nome}</strong> (Fornecedor: ${c.fornecedor})</span> <span style="color: var(--danger); font-weight: bold;">Qtd: ${c.estoque}</span></li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+
+                        <div class="action-bar">
+                            <button class="btn btn-success" onclick="simularRetirada()">⚡ Simular Retirada Rápida (Sensor SpO2)</button>
+                            <button class="btn" onclick="exportarRelatorio('Excel')">📊 Exportar Excel</button>
+                            <button class="btn" onclick="exportarRelatorio('PDF')">📄 Exportar PDF</button>
+                        </div>
+                    `;
+                    break;
+
+                case 'estoque':
+                    html += `
+                        <div style="margin-bottom: 15px; font-weight: bold; color: #64748b;">
+                            Valor Global Guardado: R$ ${SIGEM_DB.getValorEstoque().toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                        </div>
+                        <ul>` + SIGEM_DB.materiais.map(m => `
+                            <li>
+                                <span><strong>${m.nome}</strong> — Fornecedor: ${m.fornecedor} | Custo Unit.: R$ ${m.valor.toFixed(2)}</span> 
+                                <span>Qtd: <strong style="color: ${m.estoque <= 3 ? 'var(--danger)' : 'inherit'}">${m.estoque}</strong> | Total: <strong>R$ ${(m.estoque * m.valor).toFixed(2)}</strong></span>
+                            </li>
+                        `).join('') + `</ul>
+                    `;
+                    break;
+
+                case 'historico':
+                    html += `
+                        <div class="filter-bar">
+                            <input type="text" id="filtroOS" placeholder="Filtrar OS..." onkeyup="filtrarHistorico()">
+                            <input type="text" id="filtroTecnico" placeholder="Filtrar Técnico..." onkeyup="filtrarHistorico()">
+                            <input type="text" id="filtroPatrimonio" placeholder="Filtrar Patrimônio..." onkeyup="filtrarHistorico()">
+                            <input type="text" id="filtroPeca" placeholder="Filtrar Peça..." onkeyup="filtrarHistorico()">
+                            <input type="date" id="filtroData" onchange="filtrarHistorico()">
+                        </div>
+                        <div id="timeline-container" class="timeline">
+                            ${renderizarTimeline(SIGEM_DB.movimentacoes)}
+                        </div>
+                    `;
+                    break;
+
+                case 'graficos':
+                    html += `
+                        <div class="dashboard-grid">
+                            <div class="card-box">
+                                <h3>Consumo por Peça</h3>
+                                <canvas id="graficoConsumo" style="max-height: 250px;"></canvas>
+                            </div>
+                            <div class="card-box">
+                                <h3>Movimentações por Técnico</h3>
+                                <canvas id="graficoTecnicos" style="max-height: 250px;"></canvas>
+                            </div>
+                            <div class="card-box wide">
+                                <h3>Consumo por Fornecedor</h3>
+                                <canvas id="graficoFornecedores" style="max-height: 220px;"></canvas>
+                            </div>
+                        </div>
+                    `;
+                    break;
+
+                case 'aud':
+                    html += `<ul>` + SIGEM_DB.auditoria.map(a => `
+                        <li><span>${a.data} | <strong>${a.usuario}</strong> | ${a.acao}</span> <span>${a.item}</span></li>
+                    `).join('') + `</ul>`;
+                    break;
+
+                case 'pendencias':
+                    html += `<ul>` + SIGEM_DB.pendencias.map(p => `
+                        <li><span>OS: <strong>${p.os}</strong> | Técnico: ${p.tecnico} | Item: ${p.item}</span> <span style="color: #d97706; font-weight: bold;">${p.status}</span></li>
+                    `).join('') + `</ul>`;
+                    break;
+
+                case 'dashboard':
+                    html += `
+                        <div class="dashboard-grid">
+                            <div class="card-box">
+                                <h3>⚡ Retiradas Hoje</h3>
+                                <div style="font-size: 32px; font-weight: bold; color: var(--primary); margin-top: 10px;">${SIGEM_DB.getRetiradasHoje()}</div>
+                            </div>
+                            <div class="card-box">
+                                <h3>⚠️ Estoque Crítico</h3>
+                                <div style="font-size: 32px; font-weight: bold; color: var(--danger); margin-top: 10px;">${SIGEM_DB.getItensCriticosList().length} itens</div>
+                            </div>
+                            <div class="card-box">
+                                <h3>🏆 Peça Mais Utilizada</h3>
+                                <div style="font-size: 18px; font-weight: bold; color: var(--text-color); margin-top: 15px;">${SIGEM_DB.getTopItemName()}</div>
+                            </div>
+                            <div class="card-box">
+                                <h3>👷 Técnico Top Movimentações</h3>
+                                <div style="font-size: 18px; font-weight: bold; color: var(--text-color); margin-top: 15px;">${SIGEM_DB.getTopTecnicoName()}</div>
+                            </div>
+                            <div class="card-box wide">
+                                <h3>🏢 Fornecedor Mais Consumido</h3>
+                                <div style="font-size: 18px; font-weight: bold; color: var(--text-color); margin-top: 15px;">${SIGEM_DB.getTopFornecedorName()}</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            contentDiv.innerHTML = html;
+
+            if (tabName === 'graficos') {
+                initGraficosAnaliticos();
+            }
+        }
+
+        // ==========================================
+        // 3. RENDERIZAÇÃO DA TIMELINE E FILTROS
+        // ==========================================
+        function renderizarTimeline(lista) {
+            if (lista.length === 0) return `<p style="color: #64748b; text-align: center;">Nenhuma movimentação encontrada com esses critérios.</p>`;
+            return lista.map(m => `
+                <div class="timeline-item">
+                    <div class="timeline-info">
+                        <span style="font-size: 12px; color: #64748b; font-weight: bold;">${m.data.split(' ')[1] || m.data}</span>
+                        <span class="badge-tipo">${m.tipo}</span>
+                        <div>
+                            <strong>${m.item}</strong> (${m.quantidade} un)<br>
+                            <small style="color: #64748b;">OS: ${m.os || 'N/A'} | Patrimônio: ${m.patrimonio || 'N/A'}</small>
+                        </div>
+                    </div>
+                    <div style="font-weight: 600; color: var(--primary-dark);">
+                        👤 ${m.tecnico}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filtrarHistorico() {
+            const os = document.getElementById('filtroOS').value.toLowerCase();
+            const tecnico = document.getElementById('filtroTecnico').value.toLowerCase();
+            const patrimonio = document.getElementById('filtroPatrimonio').value.toLowerCase();
+            const peca = document.getElementById('filtroPeca').value.toLowerCase();
+            const dataInput = document.getElementById('filtroData').value; // yyyy-mm-dd
+
+            let filtradas = SIGEM_DB.movimentacoes.filter(m => {
+                const matchOS = !os || (m.os && m.os.toLowerCase().includes(os));
+                const matchTec = !tecnico || (m.tecnico && m.tecnico.toLowerCase().includes(tecnico));
+                const matchPat = !patrimonio || (m.patrimonio && m.patrimonio.toLowerCase().includes(patrimonio));
+                const matchPeca = !peca || (m.item && m.item.toLowerCase().includes(peca));
+                
+                let matchData = true;
+                if (dataInput) {
+                    // Converter yyyy-mm-dd para dd/mm/yyyy
+                    const partes = dataInput.split('-');
+                    const dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+                    matchData = m.data && m.data.includes(dataFormatada);
+                }
+
+                return matchOS && matchTec && matchPat && matchPeca && matchData;
+            });
+
+            document.getElementById('timeline-container').innerHTML = renderizarTimeline(filtradas);
+        }
+
+        // ==========================================
+        // 4. GRÁFICOS ANALÍTICOS (CHART.JS)
+        // ==========================================
+        function initGraficosAnaliticos() {
+            // 1. Gráfico Consumo por Peça
+            const ctxPecas = document.getElementById('graficoConsumo');
+            if (ctxPecas) {
+                const topPecas = SIGEM_DB.getTopPecas();
+                new Chart(ctxPecas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(topPecas),
+                        datasets: [{ label: 'Qtd Consumida', data: Object.values(topPecas), backgroundColor: '#0284c7', borderRadius: 4 }]
+                    },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+                });
+            }
+
+            // 2. Gráfico por Técnico
+            const ctxTec = document.getElementById('graficoTecnicos');
+            if (ctxTec) {
+                const topTec = SIGEM_DB.getTopTecnicos();
+                new Chart(ctxTec.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(topTec),
+                        datasets: [{ data: Object.values(topTec), backgroundColor: ['#0284c7', '#10b981', '#f59e0b', '#6366f1', '#ec4899'] }]
+                    },
+                    options: { responsive: true }
+                });
+            }
+
+            // 3. Gráfico por Fornecedor
+            const ctxForn = document.getElementById('graficoFornecedores');
+            if (ctxForn) {
+                const topForn = SIGEM_DB.getTopFornecedores();
+                new Chart(ctxForn.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(topForn),
+                        datasets: [{ label: 'Peças por Fornecedor', data: Object.values(topForn), backgroundColor: '#10b981', borderRadius: 4 }]
+                    },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+                });
+            }
+        }
+
+        // ==========================================
+        // 5. AÇÕES RÁPIDAS E EXPORTAÇÃO
+        // ==========================================
+        function simularRetirada() {
+            SIGEM_DB.registrarMovimentacao({
+                os: 'OS-' + Math.floor(1000 + Math.random() * 9000),
+                tecnico: 'Danilo',
+                patrimonio: 'PAT-' + Math.floor(1000 + Math.random() * 9000),
+                item: 'Sensor SpO2',
+                quantidade: 1,
+                tipo: 'SAÍDA',
+                fornecedor: 'MedTech SP'
+            });
+            alert("Retirada simulada com sucesso! Estoque atualizado, auditoria e timeline alimentadas.");
+        }
+
+        function exportarRelatorio(tipo) {
+            alert(`Relatório em ${tipo} gerado com sucesso! (Simulação de download corporativo SIGEM).`);
+        }
+
+        // Inicialização
+        window.onload = () => {
+            showTab("visao");
+        };
+    </script>
+</body>
+</html>
