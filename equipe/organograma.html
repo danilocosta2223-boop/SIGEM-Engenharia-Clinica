@@ -2,88 +2,166 @@
 <html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organograma & Governança - Engenharia Clínica</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .card-hover { transition: all 0.4s ease; }
-        .card-hover:hover { transform: scale(1.05); border-color: #06b6d4; box-shadow: 0 20px 25px -5px rgba(6, 182, 212, 0.1); }
+        .card-hover:hover { transform: translateY(-4px); border-color: #06b6d4; box-shadow: 0 20px 25px -5px rgba(6, 182, 212, 0.1); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased pb-20">
 
     <!-- Hero Section -->
-    <section class="relative h-80 flex items-center justify-center border-b border-slate-800" style="background-image: url('imagens/banner-hospital.jpg'); background-size: cover; background-position: center;">
-        <div class="absolute inset-0 bg-slate-950/80"></div>
+    <section class="relative h-72 flex items-center justify-center border-b border-slate-800" style="background-image: url('../imagens/banner-hospital.jpg'); background-size: cover; background-position: center;">
+        <div class="absolute inset-0 bg-slate-950/85"></div>
         <div class="relative text-center px-4">
-            <h1 class="text-4xl font-bold text-white mb-2">CENTRO DE EXCELÊNCIA<br>EM ENGENHARIA CLÍNICA</h1>
-            <p class="text-slate-300 font-medium tracking-widest text-sm uppercase">Disponibilidade • Segurança • Inovação • Eficiência</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2 tracking-wide">TIME DE ENGENHARIA CLÍNICA</h1>
+            <p class="text-cyan-400 font-medium tracking-widest text-xs uppercase">Excelência Operacional • Segurança • Inovação • Compromisso</p>
         </div>
     </section>
 
-    <main class="max-w-6xl mx-auto px-6 py-16 space-y-20">
+    <main class="max-w-5xl mx-auto px-6 py-12 space-y-16">
         
-        <!-- Indicadores -->
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 text-center">
-                <p class="text-3xl font-bold text-cyan-400">99,8%</p>
-                <p class="text-xs text-slate-400 uppercase mt-2">Inventário</p>
+        <!-- Missão & Valores -->
+        <section class="grid md:grid-cols-2 gap-6">
+            <!-- Missão -->
+            <div class="bg-slate-900/80 p-8 rounded-2xl border border-slate-800/80 relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute top-0 right-0 p-6 text-cyan-500/10 text-6xl font-bold pointer-events-none">
+                    <i class="fa-solid fa-bullseye"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-cyan-400 uppercase tracking-widest">Nossa Missão</span>
+                    <h2 class="text-lg font-bold text-slate-100 mt-1 mb-3">Propósito Institucional</h2>
+                    <p class="text-sm text-slate-300 leading-relaxed italic">
+                        "Garantir a disponibilidade, a segurança e a eficiência dos recursos tecnológicos e equipamentos, apoiando a qualidade, a segurança assistencial e a continuidade das operações."
+                    </p>
+                </div>
             </div>
-            <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 text-center">
-                <p class="text-3xl font-bold text-cyan-400">100%</p>
-                <p class="text-xs text-slate-400 uppercase mt-2">Rastreabilidade</p>
-            </div>
-            <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 text-center">
-                <p class="text-3xl font-bold text-cyan-400">99%</p>
-                <p class="text-xs text-slate-400 uppercase mt-2">Disponibilidade</p>
-            </div>
-            <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 text-center">
-                <p class="text-3xl font-bold text-cyan-400">96%</p>
-                <p class="text-xs text-slate-400 uppercase mt-2">SLA</p>
-            </div>
-        </section>
 
-        <!-- Liderança -->
-        <section>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-slate-900 p-8 rounded-xl border border-slate-800 flex items-center gap-6">
-                    <img src="imagens/francisli.jpg" class="w-40 h-40 rounded-full object-cover border border-slate-700">
-                    <div>
-                        <span class="bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full text-xs font-medium">Gerência</span>
-                        <h3 class="text-xl font-bold mt-2">Francisli</h3>
-                        <p class="text-sm text-slate-400 mt-2">Responsável pela condução estratégica da Engenharia Clínica, promovendo excelência operacional e governança.</p>
+            <!-- Valores -->
+            <div class="bg-slate-900/80 p-8 rounded-2xl border border-slate-800/80 relative overflow-hidden">
+                <span class="text-xs font-semibold text-cyan-400 uppercase tracking-widest">Nossos Valores</span>
+                <h2 class="text-lg font-bold text-slate-100 mt-1 mb-4">Pilares de Atuação</h2>
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div class="flex items-center space-x-2 text-xs text-slate-300 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
+                        <i class="fa-solid fa-check text-cyan-400"></i> <span>Excelência</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs text-slate-300 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
+                        <i class="fa-solid fa-check text-cyan-400"></i> <span>Respeito</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs text-slate-300 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
+                        <i class="fa-solid fa-check text-cyan-400"></i> <span>Integridade</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs text-slate-300 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
+                        <i class="fa-solid fa-check text-cyan-400"></i> <span>Segurança</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs text-slate-300 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
+                        <i class="fa-solid fa-check text-cyan-400"></i> <span>Inovação</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs text-slate-300 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
+                        <i class="fa-solid fa-check text-cyan-400"></i> <span>Trabalho em Equipe</span>
                     </div>
                 </div>
-                <div class="bg-slate-900 p-8 rounded-xl border border-slate-800 flex items-center gap-6">
-                    <img src="imagens/Camila.jpg" class="w-36 h-36 rounded-full object-cover border border-slate-700">
+            </div>
+        </section>
+
+        <!-- Estrutura Organizacional / Liderança -->
+        <section class="space-y-6">
+            <div class="text-center space-y-1">
+                <span class="text-xs font-semibold text-cyan-400 uppercase tracking-widest">Governança</span>
+                <h2 class="text-xl font-bold text-slate-100">Estrutura Organizacional</h2>
+            </div>
+
+            <!-- Nível 1: Gerência -->
+            <div class="max-w-xl mx-auto">
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 card-hover flex items-center gap-6">
+                    <img src="../imagens/francisli.jpg" class="w-32 h-32 rounded-full object-cover border-2 border-cyan-500/30 shrink-0" alt="Francisli">
                     <div>
-                        <span class="bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full text-xs font-medium">Coordenação Operacional</span>
-                        <h3 class="text-xl font-bold mt-2">Camila</h3>
-                        <p class="text-sm text-slate-400 mt-2">Atuação focada na gestão operacional, planejamento, organização de processos e resultados.</p>
+                        <span class="bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full text-[11px] font-semibold">Gerência de Engenharia Clínica</span>
+                        <h3 class="text-lg font-bold text-slate-100 mt-2">Francisli</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">Condução estratégica, governança corporativa e excelência na gestão do parque tecnológico.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conexão Visual -->
+            <div class="flex justify-center my-[-10px]">
+                <div class="w-0.5 h-8 bg-slate-800"></div>
+            </div>
+
+            <!-- Nível 2: Coordenação -->
+            <div class="max-w-xl mx-auto">
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 card-hover flex items-center gap-6">
+                    <img src="../imagens/Camila.jpg" class="w-28 h-28 rounded-full object-cover border-2 border-cyan-500/30 shrink-0" alt="Camila">
+                    <div>
+                        <span class="bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full text-[11px] font-semibold">Coordenação Operacional</span>
+                        <h3 class="text-lg font-bold text-slate-100 mt-2">Camila</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">Planejamento operacional, organização de fluxos, manutenções e alinhamento de resultados.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Equipe -->
-        <section>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <!-- Card Danilo -->
-                <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 card-hover flex flex-col items-center text-center">
-                    <img src="imagens/danilo.jpg" class="w-24 h-24 rounded-lg object-cover mb-4">
-                    <h3 class="font-bold">Danilo Costa</h3>
-                    <p class="text-xs text-cyan-400 mb-3">Assistente Administrativo e Apoio Estratégico</p>
-                    <p class="text-xs text-slate-400 leading-relaxed">Atuação voltada ao suporte administrativo, gestão documental, indicadores, rastreabilidade e melhoria contínua.</p>
+        <!-- Conexão Visual com a Equipe -->
+        <div class="flex justify-center my-[-10px]">
+            <div class="w-0.5 h-8 bg-slate-800"></div>
+        </div>
+
+        <!-- Nível 3: Equipe Técnica e Apoio -->
+        <section class="space-y-6">
+            <div class="text-center space-y-1.5">
+                <span class="text-xs font-semibold text-cyan-400 uppercase tracking-widest">Nosso Time</span>
+                <h3 class="text-xl font-bold text-slate-100">Profissionais Comprometidos</h3>
+                <p class="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+                    Profissionais comprometidos com a excelência, segurança, inovação e melhoria contínua dos processos da Engenharia Clínica.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                
+                <!-- Danilo -->
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 card-hover flex flex-col items-center text-center">
+                    <img src="../imagens/danilo.jpg" class="w-20 h-20 rounded-full object-cover mb-3 border border-slate-700" alt="Danilo Costa">
+                    <h4 class="font-bold text-sm text-slate-200">Danilo Costa</h4>
+                    <p class="text-[11px] text-cyan-400 font-medium mb-2">Assistente Administrativo e Apoio Estratégico</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Suporte administrativo, indicadores, rastreabilidade via QR Code e gestão documental.</p>
                 </div>
-                <!-- Repetir lógica para Ivan, Kamila, Lidia -->
+
+                <!-- Ivan -->
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 card-hover flex flex-col items-center text-center">
+                    <img src="../imagens/ivan.jpg" class="w-20 h-20 rounded-full object-cover mb-3 border border-slate-700" alt="Ivan">
+                    <h4 class="font-bold text-sm text-slate-200">Ivan</h4>
+                    <p class="text-[11px] text-cyan-400 font-medium mb-2">Operações / Técnico</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Atendimento a chamados críticos, calibrações e suporte técnico corretivo e preventivo.</p>
+                </div>
+
+                <!-- Kamila -->
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 card-hover flex flex-col items-center text-center">
+                    <img src="../imagens/kamila.jpg" class="w-20 h-20 rounded-full object-cover mb-3 border border-slate-700" alt="Kamila">
+                    <h4 class="font-bold text-sm text-slate-200">Kamila</h4>
+                    <p class="text-[11px] text-cyan-400 font-medium mb-2">Analista / Processos</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Gestão de peças, inspeções de segurança e otimização dos fluxos operacionais.</p>
+                </div>
+
+                <!-- Lidia -->
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 card-hover flex flex-col items-center text-center">
+                    <img src="../imagens/Lidia.PNG" class="w-20 h-20 rounded-full object-cover mb-3 border border-slate-700" alt="Lidia">
+                    <h4 class="font-bold text-sm text-slate-200">Lidia</h4>
+                    <p class="text-[11px] text-cyan-400 font-medium mb-2">Analista / Logística</p>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">Controle de inventário, relatórios de disponibilidade e interface com fornecedores.</p>
+                </div>
+
             </div>
         </section>
 
-        <!-- Frase Institucional -->
-        <section class="text-center border-t border-slate-800 pt-12">
-            <p class="text-slate-400 italic max-w-2xl mx-auto">
-                "A Engenharia Clínica atua para garantir a disponibilidade, segurança e eficiência dos recursos tecnológicos que apoiam a excelência assistencial e operacional."
-            </p>
+        <!-- Rodapé Institucional -->
+        <section class="text-center border-t border-slate-800 pt-10 space-y-2">
+            <p class="text-xs font-bold tracking-widest text-cyan-400 uppercase">SIGEM Enterprise • Engenharia Clínica</p>
+            <p class="text-xs text-slate-500">Excelência • Segurança • Inovação</p>
         </section>
     </main>
+
 </body>
 </html>
