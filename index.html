@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIGEM Enterprise - War Room Operacional</title>
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -22,124 +22,136 @@
             }
         }
     </script>
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome para Ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex">
 
-    <!-- MENU LATERAL (SIDEBAR LIMPA) -->
+    <!-- MENU LATERAL (SIDEBAR) PADRONIZADO -->
     <aside class="w-64 bg-slate-900 border-r border-slate-800 flex flex-col justify-between hidden md:flex">
         <div>
-            <!-- Logo / Título -->
-            <div class="p-5 border-b border-slate-800 flex items-center space-x-3">
-                <div class="bg-cyan-500/10 text-cyan-400 p-2 rounded-lg border border-cyan-500/20">
-                    <i class="fa-solid fa-hospital text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-sm tracking-wide text-white">SIGEM ENTERPRISE</h1>
-                    <p class="text-[10px] text-slate-400">War Room Operacional</p>
-                </div>
+            <!-- Logo / Topo da Sidebar -->
+            <div class="h-16 flex items-center px-6 border-b border-slate-800">
+                <span class="text-cyan-400 font-bold text-lg tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> SIGEM ENTERPRISE
+                </span>
             </div>
 
             <!-- Navegação -->
-            <nav class="p-3 space-y-1">
-                <a href="index.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                    <i class="fa-solid fa-chart-pie w-5"></i>
-                    <span>Dashboard</span>
+            <nav class="p-4 space-y-1">
+                <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors">
+                    <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
                 </a>
-                <a href="command.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-network-wired w-5"></i>
-                    <span>Command Center</span>
+                <a href="command.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors">
+                    <i class="fa-solid fa-satellite-dish w-5"></i> Command Center
                 </a>
-                <a href="central.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-boxes-stacked w-5"></i>
-                    <span>Central</span>
+                <a href="pecas/index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors">
+                    <i class="fa-solid fa-hospital w-5"></i> Central
                 </a>
-                <a href="cadastro.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-pen-to-square w-5"></i>
-                    <span>Cadastro</span>
+                <a href="pecas/cadastro.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors">
+                    <i class="fa-solid fa-pen-to-square w-5"></i> Cadastro
                 </a>
-                <a href="estoque.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-warehouse w-5"></i>
-                    <span>Estoque</span>
+                <a href="pecas/estoque.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors">
+                    <i class="fa-solid fa-boxes-stacked w-5"></i> Estoque
                 </a>
-                <a href="entradas.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-arrow-down-long w-5"></i>
-                    <span>Entradas</span>
+                <a href="pecas/entradas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors">
+                    <i class="fa-solid fa-arrow-right-to-bracket w-5"></i> Entradas
                 </a>
-                <a href="retiradas.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-arrow-up-long w-5"></i>
-                    <span>Retiradas</span>
+                <a href="pecas/retiradas.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors">
+                    <i class="fa-solid fa-arrow-right-from-bracket w-5"></i> Retiradas
                 </a>
-                <a href="historico.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-clock-rotate-left w-5"></i>
-                    <span>Histórico</span>
+                <a href="pecas/historico.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors">
+                    <i class="fa-solid fa-clock-rotate-left w-5"></i> Histórico
                 </a>
-                <a href="qrcenter.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-qrcode w-5"></i>
-                    <span>QR Center</span>
+                <a href="pecas/qr-center.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors">
+                    <i class="fa-solid fa-qrcode w-5"></i> QR Center
                 </a>
             </nav>
         </div>
 
-        <!-- Rodapé do Menu -->
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500 flex items-center justify-between">
-            <span>v2.4.0-PROD</span>
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                Online
-            </span>
+        <!-- Rodapé da Sidebar -->
+        <div class="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
+            v3.2.0 - War Room Ativo
         </div>
     </aside>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <!-- Header Superior -->
-        <header class="h-16 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                <button class="md:hidden text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-bars text-lg"></i>
-                </button>
-                <h2 class="text-sm font-semibold text-slate-200">Painel Geral de Operações</h2>
-            </div>
-            <div class="flex items-center space-x-3">
-                <span class="text-xs text-slate-400 hidden sm:inline">São Paulo, SP</span>
-                <div class="w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-xs">
-                    DC
-                </div>
+        <!-- Topbar -->
+        <header class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 sticky top-0 z-10">
+            <h1 class="text-lg font-semibold text-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-cyan-400"></i> Painel de Controle e Monitoramento
+            </h1>
+            <div class="flex items-center gap-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Sistema Operacional
+                </span>
             </div>
         </header>
 
-        <!-- Área de Métricas e Conteúdo -->
+        <!-- Corpo da Página -->
         <div class="p-6 space-y-6">
-            <!-- Cards de KPI -->
+            
+            <!-- Cards de KPIs -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-                    <p class="text-xs text-slate-400">Inventário Geral</p>
-                    <h3 class="text-2xl font-bold text-white mt-1">99,8%</h3>
-                    <span class="text-[10px] text-emerald-400 font-medium"><i class="fa-solid fa-arrow-up"></i> +0.2% esta semana</span>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Inventário</p>
+                    <p class="text-2xl font-bold text-cyan-400 mt-1">99,8%</p>
                 </div>
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-                    <p class="text-xs text-slate-400">Rastreabilidade</p>
-                    <h3 class="text-2xl font-bold text-white mt-1">100%</h3>
-                    <span class="text-[10px] text-emerald-400 font-medium">Ativos mapeados</span>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Rastreabilidade</p>
+                    <p class="text-2xl font-bold text-cyan-400 mt-1">100%</p>
                 </div>
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-                    <p class="text-xs text-slate-400">Parque Crítico</p>
-                    <h3 class="text-2xl font-bold text-white mt-1">4.532</h3>
-                    <span class="text-[10px] text-cyan-400 font-medium">Equipamentos ativos</span>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Parque Crítico</p>
+                    <p class="text-2xl font-bold text-cyan-400 mt-1">4.532</p>
                 </div>
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-                    <p class="text-xs text-slate-400">SLA Global</p>
-                    <h3 class="text-2xl font-bold text-white mt-1">96%</h3>
-                    <span class="text-[10px] text-emerald-400 font-medium">Dentro do prazo</span>
+                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">SLA Global</p>
+                    <p class="text-2xl font-bold text-cyan-400 mt-1">96%</p>
                 </div>
             </div>
 
-            <!-- Bloco Central / Seção de Avisos -->
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                <h3 class="text-base font-bold text-white mb-2">Bem-vindo ao SIGEM Enterprise</h3>
-                <p class="text-sm text-slate-400">O menu lateral foi limpo com sucesso, mantendo apenas as seções essenciais de operação, controle de estoque e monitoramento central.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Seção Visual Principal -->
+                <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-6">
+                    <h2 class="text-base font-semibold text-slate-200 mb-4">Monitoramento Hospitalar em Tempo Real</h2>
+                    <div class="rounded-lg overflow-hidden border border-slate-800 mb-4 bg-slate-950 p-4 flex items-center justify-center min-h-[250px]">
+                        <div class="text-center text-slate-400">
+                            <i class="fa-solid fa-satellite-dish text-cyan-400 text-3xl mb-2"></i>
+                            <p class="text-sm">War Room Operacional - Conectado ao Core</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-400">
+                        O painel consolida as principais frentes da engenharia clínica e materiais, garantindo total transparência e agilidade na tomada de decisões operacionais.
+                    </p>
+                </div>
+
+                <!-- Status Lateral / Resumo -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-base font-semibold text-slate-200 mb-4">Atividade Recente</h2>
+                        <ul class="space-y-3 text-sm text-slate-300">
+                            <li class="flex items-center gap-3 pb-3 border-b border-slate-800">
+                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                                <span>Sincronização de QR Codes concluída.</span>
+                            </li>
+                            <li class="flex items-center gap-3 pb-3 border-b border-slate-800">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                                <span>Manutenção preventiva programada (Setor B).</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="fa-solid fa-arrow-right-to-bracket text-cyan-400"></i>
+                                <span>Nova entrada de materiais registrada.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-400 text-center">
+                        Painel atualizado em tempo real.
+                    </div>
+                </div>
             </div>
+
         </div>
     </main>
 
