@@ -1,579 +1,100 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIGEM - Sistema de Gestão de Materiais e Engenharia Clínica</title>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Html5-Qrcode CDN -->
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #0284c7;
-            --primary-dark: #0369a1;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --border-color: #e2e8f0;
-            --danger: #dc2626;
-            --danger-bg: #fef2f2;
-            --success: #10b981;
-            --warning: #f59e0b;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: var(--bg-color);
-            color: var(--text-color);
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: var(--primary-dark);
-        }
-
-        /* Abas de Navegação */
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            background: #e2e8f0;
-            padding: 8px;
-            border-radius: 8px;
-        }
-
-        .tabs button {
-            padding: 8px 12px;
-            border: none;
-            cursor: pointer;
-            background: var(--card-bg);
-            font-weight: 600;
-            font-size: 12px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .tabs button:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .container {
-            background: var(--card-bg);
-            padding: 24px;
-            margin-top: 12px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            min-height: 500px;
-        }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .card {
-            background: #f1f5f9;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
-        }
-
-        .card.alert { border-left-color: var(--danger); background: var(--danger-bg); }
-        .card.success { border-left-color: var(--success); background: #ecfdf5; }
-        .card.warning { border-left-color: var(--warning); background: #fffbeb; }
-
-        .card h4 { margin: 0 0 8px 0; font-size: 12px; color: #64748b; text-transform: uppercase; }
-        .card .value { font-size: 22px; font-weight: bold; color: var(--text-color); }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .card-box {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-        }
-
-        .card-box.wide { grid-column: span 2; }
-        @media (max-width: 768px) { .card-box.wide { grid-column: span 1; } }
-
-        .card-box h3 { margin-top: 0; font-size: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
-
-        ul { list-style: none; padding: 0; margin: 0; }
-        li { padding: 10px 12px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; font-size: 14px; }
-        li:nth-child(even) { background: #f8fafc; }
-
-        .action-bar {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .btn:hover { background: var(--primary-dark); }
-        .btn-success { background: var(--success); }
-        .btn-success:hover { background: #059669; }
-        .btn-danger { background: var(--danger); }
-        .btn-danger:hover { background: #b91c1c; }
-
-        input, select { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; }
+        .fade-in { opacity: 0; transform: translateY(10px); transition: all 0.5s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased p-4">
 
-    <header>
-        <h1>SIGEM - Engenharia Clínica Enterprise</h1>
-        <div>
-            <span id="user-info" style="font-size: 13px; font-weight: bold; color: var(--primary-dark); margin-right: 15px;">👤 Danilo (Administrador)</span>
-            <span id="status-sistema" style="font-size: 13px; color: var(--success);">🟢 Sincronizado (Tempo Real)</span>
+    <div class="max-w-lg mx-auto space-y-8">
+        
+        <!-- Header -->
+        <header class="text-center space-y-1 mt-4">
+            <h1 class="text-3xl font-extrabold tracking-widest text-white">SIGEM QR</h1>
+            <p class="text-cyan-400 text-[10px] uppercase tracking-[3px] font-medium">Controle Operacional de Ativos</p>
+        </header>
+
+        <!-- Ação Principal -->
+        <section id="scanArea" class="bg-slate-900 border border-slate-800 p-6 rounded-2xl text-center shadow-xl">
+            <div class="h-40 border-2 border-dashed border-slate-700 rounded-xl mb-4 flex items-center justify-center text-slate-500">
+                <i class="fa-solid fa-qrcode text-5xl"></i>
+            </div>
+            <button onclick="realizarScan()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-cyan-900/20">
+                <i class="fa-solid fa-camera mr-2"></i> ESCANEAR QR CODE
+            </button>
+        </section>
+
+        <!-- Área de Dados (Escondida e com Animação) -->
+        <div id="dadosEquipamento" class="fade-in hidden space-y-6">
+            
+            <!-- Card Principal -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
+                <div class="flex items-center gap-4 mb-6">
+                    <img src="imagens/equipamentos-medicos.jpg" class="w-20 h-20 rounded-lg object-cover border border-slate-700">
+                    <div>
+                        <h2 class="text-lg font-bold leading-tight">Analisador Hematológico</h2>
+                        <span class="bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-lg font-bold text-xs inline-block mt-2">YUMI-0003</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                        <p class="text-[9px] text-slate-500 uppercase font-bold">Setor</p>
+                        <p class="text-xs font-semibold">Hematologia</p>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                        <p class="text-[9px] text-slate-500 uppercase font-bold">Unidade</p>
+                        <p class="text-xs font-semibold">Penha</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulário -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                <select class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-sm focus:border-cyan-500 outline-none">
+                    <option>Sensor ECG</option>
+                    <option>Cabo ECG</option>
+                </select>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" placeholder="Qtd" class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-sm">
+                    <input type="text" placeholder="Nº OS" class="bg-slate-950 border border-slate-800 p-3 rounded-lg text-sm">
+                </div>
+                <input type="text" value="Danilo Costa" readonly class="w-full bg-slate-950 border border-slate-800 p-3 rounded-lg text-sm text-slate-500">
+                
+                <div class="bg-slate-950 border border-slate-800 rounded-lg p-3 text-center text-xs font-mono text-cyan-400">
+                    SIGEM-20260818-0001
+                </div>
+
+                <button class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 rounded-xl uppercase tracking-widest text-sm transition-all">
+                    Registrar Movimentação
+                </button>
+            </div>
+
+            <!-- Última Movimentação -->
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <p class="text-[10px] text-cyan-400 uppercase font-bold mb-2">Última Movimentação</p>
+                <div class="grid grid-cols-2 gap-2 text-xs text-slate-300">
+                    <p>Data: 18/08/2026</p>
+                    <p>Peça: Sensor ECG</p>
+                    <p>Qtd: 1</p>
+                    <p>OS: OS-2026-001</p>
+                </div>
+            </div>
         </div>
-    </header>
-
-    <nav class="tabs">
-        <button onclick="showTab('comando')">Centro de Comando</button>
-        <button onclick="showTab('inteligencia')">Centro de Inteligência</button>
-        <button onclick="showTab('alertas')">🚨 Alertas</button>
-        <button onclick="showTab('estoque')">Estoque & ABC</button>
-        <button onclick="showTab('compras')">Compras</button>
-        <button onclick="showTab('equipamentos')">Equipamentos</button>
-        <button onclick="showTab('preventivas')">Preventivas</button>
-        <button onclick="showTab('contratos')">Contratos</button>
-        <button onclick="showTab('qrcode')">Leitor QR</button>
-        <button onclick="showTab('usuarios')">Usuários</button>
-        <button onclick="showTab('tv')">Modo TV</button>
-        <button onclick="showTab('admin')">Admin</button>
-    </nav>
-
-    <div id="tab-content" class="container">
-        <!-- Conteúdo dinâmico -->
     </div>
 
     <script>
-        // ==========================================
-        // BANCO DE DADOS SIGEM ELITE (COM REALTIME)
-        // ==========================================
-        const SIGEM_DB = {
-            materiais: [
-                { id: 1, nome: 'Sensor SpO2', estoque: 2, minimo: 5, valor: 350.00, fornecedor: 'MedTech SP', curva: 'A' },
-                { id: 2, nome: 'Cabo ECG', estoque: 6, minimo: 3, valor: 180.00, fornecedor: 'Biosul Equipamentos', curva: 'B' },
-                { id: 3, nome: 'Módulo de Pressão', estoque: 1, minimo: 2, valor: 1200.00, fornecedor: 'MedTech SP', curva: 'A' },
-                { id: 4, nome: 'Bateria Desfibrilador', estoque: 4, minimo: 4, valor: 850.00, fornecedor: 'LifeCare Brasil', curva: 'A' },
-                { id: 5, nome: 'Eletrodo Descartável (Cx)', estoque: 25, minimo: 10, valor: 65.00, fornecedor: 'Biosul Equipamentos', curva: 'C' }
-            ],
-            equipamentos: [
-                { patrimonio: '90506731291', nome: 'Monitor MX800', setor: 'UTI', criticidade: 'CRÍTICO', disponibilidade: 98.5, falhas: 12, custoAcumulado: 7200.00, ultimaManutencao: '15/08/2026', proximaPreventiva: '15/09/2026', diasRestantes: 29 },
-                { patrimonio: '88210492104', nome: 'Desfibrilador DEA', setor: 'Pronto Socorro', criticidade: 'ALTA', disponibilidade: 99.1, falhas: 5, custoAcumulado: 4250.00, ultimaManutencao: '10/08/2026', proximaPreventiva: '20/08/2026', diasRestantes: 3 },
-                { patrimonio: '77319283102', nome: 'Ultrassom CX50', setor: 'Cardiologia', criticidade: 'MÉDIO', disponibilidade: 96.0, falhas: 3, custoAcumulado: 3100.00, ultimaManutencao: '01/08/2026', proximaPreventiva: '01/09/2026', diasRestantes: 15 }
-            ],
-            contratos: [
-                { fornecedor: 'MedTech SP', contrato: 'CTR-2026/01', vencimento: '15/12/2026', valor: 45000.00, responsavel: 'Carlos Lima' },
-                { fornecedor: 'Biosul Equipamentos', contrato: 'CTR-2025/89', vencimento: '30/10/2026', valor: 28000.00, responsavel: 'Ana Paula' },
-                { fornecedor: 'LifeCare Brasil', contrato: 'CTR-2026/12', vencimento: '10/09/2026', valor: 62000.00, responsavel: 'Danilo Costa' }
-            ],
-            usuarios: [
-                { nome: 'Danilo Costa', perfil: 'Administrador' },
-                { nome: 'Ramiro Silva', perfil: 'Gestor' },
-                { nome: 'Samuel Souza', perfil: 'Técnico' },
-                { nome: 'Recepção Hospital', perfil: 'Consulta' }
-            ],
-            movimentacoes: [
-                { id: 101, os: 'OS-4091', tecnico: 'Danilo', patrimonio: '90506731291', item: 'Sensor SpO2', quantidade: 1, tipo: 'SAÍDA', data: '17/08/2026 10:00' },
-                { id: 102, os: 'OS-4088', tecnico: 'Ramiro', patrimonio: '88210492104', item: 'Cabo ECG', quantidade: 2, tipo: 'DEVOLUÇÃO', data: '16/08/2026 14:30' }
-            ],
-            compras: [],
-            indicadores: {
-                mttr: "2h 45m",
-                slaAtingido: 96,
-                valorConsumidoMes: 14520.00,
-                valorCompradoMes: 22800.00
-            },
-
-            getValorEstoque() { return this.materiais.reduce((t, m) => t + (m.estoque * m.valor), 0); },
-            getItensCriticos() { return this.materiais.filter(m => m.estoque <= m.minimo); },
-            
-            getAlertas() {
-                return {
-                    estoqueCritico: this.getItensCriticos().length,
-                    comprasPendentes: this.compras.filter(c => c.status === "PENDENTE").length,
-                    osAtrasadas: 2,
-                    equipamentosSemManutencao: this.equipamentos.filter(e => e.falhas > 10).length,
-                    manutencoesVencendo: this.equipamentos.filter(e => e.diasRestantes <= 5).length
-                };
-            },
-
-            verificarComprasAutomaticas() {
-                this.materiais.forEach(m => {
-                    if (m.estoque <= m.minimo) {
-                        const jaExiste = this.compras.find(c => c.item === m.nome && c.status === 'PENDENTE');
-                        if (!jaExiste) {
-                            this.compras.push({
-                                item: m.nome,
-                                qtdSugerida: (m.minimo * 2) - m.estoque,
-                                fornecedor: m.fornecedor,
-                                status: 'PENDENTE',
-                                data: new Date().toLocaleDateString('pt-BR')
-                            });
-                        }
-                    }
-                });
-            },
-
-            registrarMovimentacao(mov) {
-                this.movimentacoes.unshift(mov);
-                // Atualiza o estoque do material correspondente
-                const mat = this.materiais.find(m => m.nome === mov.item);
-                if (mat) {
-                    if (mov.tipo === 'SAÍDA') mat.estoque = Math.max(0, mat.estoque - mov.quantidade);
-                    if (mov.tipo === 'DEVOLUÇÃO' || mov.tipo === 'ENTRADA') mat.estoque += mov.quantidade;
-                }
-                this.verificarComprasAutomaticas();
-                this.salvar();
-                atualizarTudo();
-            },
-
-            salvar() { localStorage.setItem("sigem_elite_db", JSON.stringify(this)); }
-        };
-
-        const salvo = localStorage.getItem("sigem_elite_db");
-        if (salvo) { try { Object.assign(SIGEM_DB, JSON.parse(salvo)); } catch(e){} }
-        SIGEM_DB.verificarComprasAutomaticas();
-
-        // ==========================================
-        // MOTOR DE ATUALIZAÇÃO EM TEMPO REAL (realtime.js)
-        // ==========================================
-        function atualizarTudo() {
-            SIGEM_DB.verificarComprasAutomaticas();
-            const abaAtual = document.body.dataset.activeTab || "comando";
-            showTab(abaAtual);
+        function realizarScan() {
+            const el = document.getElementById("dadosEquipamento");
+            el.classList.remove('hidden');
+            setTimeout(() => { el.classList.add('visible'); }, 50);
         }
-
-        async function recarregarDadosExternos() {
-            // Ponto de integração futura com pastas /dados/*.xlsx
-            // await carregarMateriais();
-            // await carregarEquipamentos();
-            // await carregarFornecedores();
-            atualizarTudo();
-        }
-
-        // ==========================================
-        // CONTROLADOR DE ABAS E RENDERIZAÇÃO
-        // ==========================================
-        function showTab(tabName) {
-            document.body.dataset.activeTab = tabName;
-            const container = document.getElementById('tab-content');
-            let html = `<h2>${tabName.toUpperCase()}</h2>`;
-
-            switch(tabName) {
-                case 'comando':
-                    const alertas = SIGEM_DB.getAlertas();
-                    html += `
-                        <div class="cards-grid">
-                            <div class="card">
-                                <h4>Valor Total Estoque</h4>
-                                <div class="value">R$ ${SIGEM_DB.getValorEstoque().toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
-                            </div>
-                            <div class="card ${alertas.estoqueCritico > 0 ? 'alert' : ''}">
-                                <h4>Itens Críticos</h4>
-                                <div class="value">${alertas.estoqueCritico}</div>
-                            </div>
-                            <div class="card success">
-                                <h4>SLA de Atendimento</h4>
-                                <div class="value">${SIGEM_DB.indicadores.slaAtingido}%</div>
-                            </div>
-                            <div class="card warning">
-                                <h4>Alertas Ativos</h4>
-                                <div class="value">${alertas.estoqueCritico + alertas.manutencoesVencendo}</div>
-                            </div>
-                        </div>
-
-                        <div class="dashboard-grid">
-                            <div class="card-box">
-                                <h3>⚡ Painel Executivo Rápido</h3>
-                                <ul>
-                                    <li><span>MTTR (Tempo Médio de Reparo)</span> <strong>${SIGEM_DB.indicadores.mttr}</strong></li>
-                                    <li><span>Valor Consumido no Mês</span> <strong>R$ ${SIGEM_DB.indicadores.valorConsumidoMes.toFixed(2)}</strong></li>
-                                    <li><span>Contratos Vigentes</span> <strong>${SIGEM_DB.contratos.length} ativos</strong></li>
-                                </ul>
-                            </div>
-                            <div class="card-box">
-                                <h3>🚨 Alertas Prioritários</h3>
-                                <ul>
-                                    <li><span>Manutenções Vencendo (&le; 5 dias)</span> <strong style="color: var(--warning);">${alertas.manutencoesVencendo} equipamentos</strong></li>
-                                    <li><span>Compras Pendentes</span> <strong style="color: var(--danger);">${alertas.comprasPendentes} ordens</strong></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="action-bar">
-                            <button class="btn" onclick="simularRetiradaRapida()">🧪 Simular Retirada de Peça (Teste Realtime)</button>
-                        </div>
-                    `;
-                    break;
-
-                case 'inteligencia':
-                    html += `
-                        <div class="dashboard-grid">
-                            <div class="card-box">
-                                <h3>📊 Centro de Inteligência Operacional</h3>
-                                <ul>
-                                    <li><span>MTTR Global</span> <strong>${SIGEM_DB.indicadores.mttr}</strong></li>
-                                    <li><span>SLA de OS</span> <strong>${SIGEM_DB.indicadores.slaAtingido}%</strong></li>
-                                    <li><span>Valor Total em Estoque</span> <strong>R$ ${SIGEM_DB.getValorEstoque().toFixed(2)}</strong></li>
-                                    <li><span>Valor Consumido (Mês)</span> <strong>R$ ${SIGEM_DB.indicadores.valorConsumidoMes.toFixed(2)}</strong></li>
-                                </ul>
-                            </div>
-                            <div class="card-box">
-                                <h3>🏆 Rankings & Estatísticas</h3>
-                                <ul>
-                                    <li><span>Top Peça Utilizada</span> <strong>Sensor SpO2</strong></li>
-                                    <li><span>Top Técnico</span> <strong>Danilo Costa</strong></li>
-                                    <li><span>Top Fornecedor</span> <strong>MedTech SP</strong></li>
-                                    <li><span>Equipamento mais Crítico</span> <strong>MX800 (UTI)</strong></li>
-                                </ul>
-                            </div>
-                        </div>
-                    `;
-                    break;
-
-                case 'alertas':
-                    const alt = SIGEM_DB.getAlertas();
-                    html += `
-                        <div class="cards-grid">
-                            <div class="card alert">
-                                <h4>Estoque Crítico</h4>
-                                <div class="value">${alt.estoqueCritico} itens</div>
-                            </div>
-                            <div class="card warning">
-                                <h4>Compras Pendentes</h4>
-                                <div class="value">${alt.comprasPendentes} ordens</div>
-                            </div>
-                            <div class="card alert">
-                                <h4>OS Atrasadas</h4>
-                                <div class="value">${alt.osAtrasadas} OS</div>
-                            </div>
-                            <div class="card warning">
-                                <h4>Manutenções Vencendo</h4>
-                                <div class="value">${alt.manutencoesVencendo} máquinas</div>
-                            </div>
-                        </div>
-                    `;
-                    break;
-
-                case 'estoque':
-                    html += `
-                        <ul>` + SIGEM_DB.materiais.map(m => `
-                            <li>
-                                <span><strong>[Curva ${m.curva}]</strong> ${m.nome} — Forn: ${m.fornecedor}</span>
-                                <span>Saldo: <strong style="color: ${m.estoque <= m.minimo ? 'var(--danger)' : 'inherit'}">${m.estoque}</strong> (Mín: ${m.minimo}) | R$ ${m.valor.toFixed(2)}</span>
-                            </li>
-                        `).join('') + `</ul>
-                    `;
-                    break;
-
-                case 'compras':
-                    html += `
-                        <ul>` + SIGEM_DB.compras.map(c => `
-                            <li>
-                                <span><strong>${c.item}</strong> — ${c.fornecedor} | Sugestão Automática: <strong>+${c.qtdSugerida} un</strong> (${c.data})</span>
-                                <span style="color: var(--warning); font-weight: bold;">${c.status}</span>
-                            </li>
-                        `).join('') + `</ul>
-                        <div class="action-bar">
-                            <button class="btn btn-success" onclick="aprovarCompras()">✅ Aprovar Todas as Compras</button>
-                        </div>
-                    `;
-                    break;
-
-                case 'equipamentos':
-                    html += `
-                        <ul>` + SIGEM_DB.equipamentos.map(e => `
-                            <li>
-                                <span><strong>${e.patrimonio}</strong> — ${e.nome} (${e.setor}) | <strong>Disp: ${e.disponibilidade}%</strong></span>
-                                <span style="color: var(--danger); font-weight: bold;">[${e.criticidade}] — ${e.falhas} falhas</span>
-                            </li>
-                        `).join('') + `</ul>
-                    `;
-                    break;
-
-                case 'preventivas':
-                    html += `
-                        <ul>` + SIGEM_DB.equipamentos.map(e => `
-                            <li>
-                                <span><strong>${e.patrimonio}</strong> — ${e.nome} (${e.setor})</span>
-                                <span style="color: ${e.diasRestantes <= 5 ? 'var(--danger)' : 'var(--success)'}; font-weight: bold;">Próxima: ${e.proximaPreventiva} (${e.diasRestantes} dias restantes)</span>
-                            </li>
-                        `).join('') + `</ul>
-                    `;
-                    break;
-
-                case 'contratos':
-                    html += `
-                        <ul>` + SIGEM_DB.contratos.map(c => `
-                            <li>
-                                <span><strong>${c.fornecedor}</strong> | Contrato: ${c.contrato} | Resp: ${c.responsavel}</span>
-                                <span>Vencimento: <strong>${c.vencimento}</strong> | R$ ${c.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
-                            </li>
-                        `).join('') + `</ul>
-                    `;
-                    break;
-
-                case 'qrcode':
-                    html += `
-                        <div class="dashboard-grid">
-                            <div class="card-box">
-                                <h3>📷 Leitor de QR Code / Patrimônio via Câmera</h3>
-                                <div id="reader" style="width: 100%; max-width: 400px; margin: 10px 0;"></div>
-                                <button class="btn btn-success" onclick="iniciarLeitorQR()">Iniciar Câmera</button>
-                                <div id="scan-resultado" style="margin-top: 15px; font-weight: bold; color: var(--primary-dark);"></div>
-                            </div>
-                            <div class="card-box">
-                                <h3>Simulador de Bipagem Rápida</h3>
-                                <ul>
-                                    <li onclick="processarLeitura('90506731291')" style="cursor:pointer;">Monitor MX800 (UTI) <code>90506731291</code></li>
-                                    <li onclick="processarLeitura('88210492104')" style="cursor:pointer;">Desfibrilador DEA (PS) <code>88210492104</code></li>
-                                </ul>
-                            </div>
-                        </div>
-                    `;
-                    break;
-
-                case 'usuarios':
-                    html += `
-                        <ul>` + SIGEM_DB.usuarios.map(u => `
-                            <li><span><strong>${u.nome}</strong></span> <span style="color: var(--primary); font-weight: bold;">${u.perfil}</span></li>
-                        `).join('') + `</ul>
-                    `;
-                    break;
-
-                case 'tv':
-                    html += `
-                        <div style="text-align: center; padding: 20px;">
-                            <h2 style="color: var(--primary-dark);">📺 SIGEM - Modo TV Corporativa (Painel em Tempo Real)</h2>
-                            <div class="cards-grid" style="margin-top: 25px;">
-                                <div class="card"><h4>SLA</h4><div class="value">${SIGEM_DB.indicadores.slaAtingido}%</div></div>
-                                <div class="card"><h4>MTTR</h4><div class="value">${SIGEM_DB.indicadores.mttr}</div></div>
-                                <div class="card alert"><h4>Itens Críticos</h4><div class="value">${SIGEM_DB.getItensCriticos().length}</div></div>
-                                <div class="card success"><h4>Disponibilidade Média</h4><div class="value">97.8%</div></div>
-                            </div>
-                        </div>
-                    `;
-                    break;
-
-                case 'admin':
-                    html += `
-                        <div class="action-bar">
-                            <button class="btn" onclick="baixarBackupJSON()">Exportar JSON</button>
-                            <button class="btn" onclick="alert('Exportação Excel gerada com sucesso!')">Exportar Excel</button>
-                            <button class="btn" onclick="alert('Exportação PDF gerada com sucesso!')">Exportar PDF</button>
-                            <button class="btn btn-danger" onclick="localStorage.clear(); location.reload();">Resetar Sistema</button>
-                        </div>
-                    `;
-                    break;
-            }
-
-            container.innerHTML = html;
-        }
-
-        // ==========================================
-        // FUNÇÕES DE APOIO E SIMULAÇÃO
-        // ==========================================
-        function simularRetiradaRapida() {
-            SIGEM_DB.registrarMovimentacao({
-                os: 'OS-' + Math.floor(Math.random() * 9000 + 1000),
-                tecnico: 'Danilo',
-                patrimonio: '90506731291',
-                item: 'Sensor SpO2',
-                quantidade: 1,
-                tipo: 'SAÍDA',
-                data: new Date().toLocaleString('pt-BR')
-            });
-            alert("Retirada simulada com sucesso! Estoque, compras automáticas e alertas atualizados em tempo real.");
-        }
-
-        function aprovarCompras() {
-            SIGEM_DB.compras.forEach(c => c.status = 'APROVADO');
-            SIGEM_DB.salvar();
-            atualizarTudo();
-            alert("Compras aprovadas com sucesso!");
-        }
-
-        let html5QrCode = null;
-        function iniciarLeitorQR() {
-            if (html5QrCode) { html5QrCode.stop().catch(() => {}); }
-            html5QrCode = new Html5Qrcode("reader");
-            html5QrCode.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: 250 },
-                (decodedText) => {
-                    processarLeitura(decodedText);
-                    html5QrCode.stop();
-                }
-            ).catch(err => { alert("Erro ao acessar a câmera: " + err); });
-        }
-
-        function processarLeitura(codigo) {
-            const eq = SIGEM_DB.equipamentos.find(e => e.patrimonio === codigo || e.nome.toLowerCase().includes(codigo.toLowerCase()));
-            const res = document.getElementById('scan-resultado');
-            if (!res) { alert("Lido: " + codigo); return; }
-            if (eq) {
-                res.innerHTML = `✓ Equipamento Localizado: ${eq.nome} (${eq.setor}) | Criticidade: ${eq.criticidade} | Disp: ${eq.disponibilidade}%`;
-            } else {
-                res.innerHTML = `Código Lido: ${codigo} (Nenhum equipamento vinculado)`;
-            }
-            atualizarTudo();
-        }
-
-        function baixarBackupJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(SIGEM_DB, null, 2));
-            const dl = document.createElement('a');
-            dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", "sigem_elite_backup.json");
-            document.body.appendChild(dl);
-            dl.click();
-            dl.remove();
-        }
-
-        // Inicialização e Heartbeat em Tempo Real (5s)
-        window.onload = () => {
-            SIGEM_DB.verificarComprasAutomaticas();
-            showTab('comando');
-
-            // Intervalo de atualização em tempo real (Nível 2)
-            setInterval(() => {
-                const abaAtual = document.body.dataset.activeTab || "comando";
-                // Mantém a aba ativa atualizada ciclicamente sem perder estado
-                showTab(abaAtual);
-            }, 5000);
-        };
     </script>
 </body>
 </html>
